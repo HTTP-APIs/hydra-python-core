@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: hydraspec
+Version: 0.1
+Summary: Core functions for Hydrus
+Home-page: https://github.com/HTTP-APIs/hydra-python-core
+License: MIT
+Description: # hydra-python-core
+        This library provides the core functions to implement Hydra Official Specification in Python.
+        
+        
+        *Porting out from hydrus the hydraspecs directory*
+        
+Platform: UNKNOWN
+Description-Content-Type: text/markdown

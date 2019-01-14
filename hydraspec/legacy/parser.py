@@ -2,7 +2,7 @@
 import json
 import sys
 
-from hydrus.hydraspec.crud_template import template
+from hydraspec.legacy.crud_template import template
 from hydrus.metadata.subsystem.subsystem_vocab_jsonld import subsystem_data
 import pprint
 

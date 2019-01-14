@@ -1,0 +1,11 @@
+README.md
+setup.py
+hydraspec/__init__.py
+hydraspec/doc_maker.py
+hydraspec/doc_writer.py
+hydraspec/doc_writer_sample.py
+hydraspec.egg-info/PKG-INFO
+hydraspec.egg-info/SOURCES.txt
+hydraspec.egg-info/dependency_links.txt
+hydraspec.egg-info/not-zip-safe
+hydraspec.egg-info/top_level.txt
