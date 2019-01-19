@@ -13,7 +13,7 @@ Currently the library mainly consists of 2 modules `doc_writer` and `doc_maker` 
 To install the library:
 
 ```bash
-pip install git+https://github.com/hydra-python-core#egg=hydra_python_core
+pip install git+https://github.com/HTTP-APIs/hydra-python-core.git#egg=hydra_python_core
 ```
 
 **Note :-** If using hydrus, the library doesn't need to be installed separately as it is already a part of `requirements.txt` for hydrus.
