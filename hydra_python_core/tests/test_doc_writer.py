@@ -1,5 +1,5 @@
 import unittest
-from hydrus.hydraspec import doc_writer
+from hydra_python_core import doc_writer
 from unittest.mock import MagicMock, patch
 
 
@@ -59,7 +59,7 @@ class TestDocWriter(unittest.TestCase):
         }
         self.assertEqual(expected_context, context.generate())
 
-    @patch('hydrus.hydraspec.doc_writer.HydraEntryPoint',
+    @patch('hydra_python_core.doc_writer.HydraEntryPoint',
            spec=doc_writer.HydraEntryPoint)
     def test_context_with_entrypoint(self, mock_entry):
         """
@@ -88,13 +88,13 @@ class TestDocWriter(unittest.TestCase):
 
         mocked_hydra_class = MagicMock()
         with patch(
-                'hydrus.hydraspec.doc_writer.HydraClass',
+                'hydra_python_core.doc_writer.HydraClass',
                 mocked_hydra_class, spec_set=doc_writer.HydraClass):
             mocked_hydra_property = MagicMock()
             mocked_hydra_class.id_ = "vocab:Pet"
             mocked_hydra_class.title = "Pet"
             mocked_hydra_class.desc = "Pet"
-            with patch('hydrus.hydraspec.doc_writer.HydraClassProp', mocked_hydra_property,
+            with patch('hydra_python_core.doc_writer.HydraClassProp', mocked_hydra_property,
                        spec_set=doc_writer.HydraClassProp):
                 mocked_hydra_property.prop = ""
                 mocked_hydra_property.readonly = "true"
@@ -119,8 +119,8 @@ class TestDocWriter(unittest.TestCase):
 
                 self.assertEqual(expected_context, context.generate())
 
-    @patch('hydrus.hydraspec.doc_writer.HydraClass', spec=doc_writer.HydraClass)
-    @patch('hydrus.hydraspec.doc_writer.HydraCollection',
+    @patch('hydra_python_core.doc_writer.HydraClass', spec=doc_writer.HydraClass)
+    @patch('hydra_python_core.doc_writer.HydraCollection',
            spec=doc_writer.HydraCollection)
     def test_context_with_collection(self, hydra_class, hydra_collection):
         """
