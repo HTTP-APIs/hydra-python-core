@@ -28,3 +28,9 @@ To import the modules:
 from hydra_python_core import doc_writer
 from hydra_python_core import doc_maker
 ```
+
+### Testing
+
+```python
+python3 -m unittest discover
+```
