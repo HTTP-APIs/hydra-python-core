@@ -2,9 +2,9 @@
 create a HydraDoc object for it'''
 import re
 import json
-from hydrus.samples.doc_writer_sample import api_doc as sample_document
-from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
-from hydrus.hydraspec.doc_writer import HydraStatus
+from hydra_python_core.doc_writer_sample import api_doc as sample_document
+from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from hydra_python_core.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
