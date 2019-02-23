@@ -1,14 +1,14 @@
-'''Contsructor to take a Python dict containing an API Documentation and
-create a HydraDoc object for it'''
+"""Contsructor to take a Python dict containing an API Documentation and
+create a HydraDoc object for it
+"""
 import re
 import json
-from samples.doc_writer_sample import api_doc as sample_document
 from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 from hydra_python_core.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
-def error_mapping(body: str = None) -> str:
+def error_mapping(body: str=None) -> str:
     """Function returns starting error message based on its body type.
     :param body: Params type for error message
     :return string: Error message for input key
@@ -357,8 +357,3 @@ def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
     status = HydraStatus(result["statusCode"],
                          result["title"], result["description"])
     return status
-
-
-if __name__ == "__main__":
-    api_doc = create_doc(sample_document.generate())
-    print(json.dumps(api_doc.generate(), indent=4, sort_keys=True))
