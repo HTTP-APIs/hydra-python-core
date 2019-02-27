@@ -24,3 +24,38 @@ class TestGetEntrypoint(unittest.TestCase):
         mock_re.match.return_value = None
         self.assertRaises(SyntaxError, doc_maker.get_entrypoint, self.doc)
 
+
+class TestCreateClass(unittest.TestCase):
+
+    def setUp(self):
+        self.doc = hydra_doc_sample.doc
+
+    @patch('hydra_python_core.doc_maker.re')
+    def test_validations(self, mock_re):
+        class_dict = self.doc["supportedClass"][0]
+        exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
+                        'http://www.w3.org/ns/hydra/core#Collection',
+                        'vocab:EntryPoint']
+
+        entrypoint = doc_maker.get_entrypoint(self.doc)
+        class_id = class_dict.pop("@id", None)
+
+        # Check if returning None when class id is a BaseClass or an EntryPoint
+        for id_ in exclude_list:
+            class_dict["@id"] = id_
+            self.assertEqual((None, None, None), doc_maker.create_class(entrypoint, class_dict))
+
+        class_dict["@id"] = class_id
+
+        # Check if returning None when any key is not of proper format
+        mock_re.match.return_value = None
+        self.assertEqual((None, None, None), doc_maker.create_class(entrypoint, class_dict))
+
+    def test_doc_keys(self):
+
+        doc_keys = {
+            "supportedProperty": False,
+            "title": False,
+            "description": False,
+            "supportedOperation": False
+        }
