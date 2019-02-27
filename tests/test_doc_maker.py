@@ -110,3 +110,40 @@ class TestCollectionInEndpoint(unittest.TestCase):
         label = property_.pop("label")
         self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
         property_["label"] = label
+
+
+class TestCreateDoc(unittest.TestCase):
+
+    #TODO: check if server url and api name is passed as parameter
+
+    def setUp(self):
+        self.doc = hydra_doc_sample.doc
+
+    @patch('hydra_python_core.doc_maker.re')
+    def test_validations(self, mock_re):
+
+        # Check if proper error raised when no "@id" key is present
+        id_ = self.doc.pop("@id", None)
+        self.assertRaises(SyntaxError, doc_maker.create_doc, self.doc)
+        self.doc["@id"] = id_
+
+        # Check if proper exception is raised if any key is not of proper format
+        mock_re.match.return_value = None
+        self.assertRaises(SyntaxError, doc_maker.create_doc, self.doc)
+
+    def test_doc_keys(self):
+
+        doc_keys = {
+            "description": False,
+            "title": False,
+            "supportedClass": False,
+            "@context": False,
+            "possibleStatus": False
+        }
+
+        doc_maker.input_key_check = MagicMock()
+        # Remove keys one at a time and check if errors are raised
+        for key in doc_keys.keys():
+            val = self.doc.pop(key, None)
+            self.assertRaises(SyntaxError, doc_maker.create_doc, self.doc)
+            self.doc[key] = val
