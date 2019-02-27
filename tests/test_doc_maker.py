@@ -85,3 +85,28 @@ class TestClassInEndPoint(unittest.TestCase):
         label = property_.pop("label")
         self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
         property_["label"] = label
+
+
+class TestCollectionInEndpoint(unittest.TestCase):
+
+    def setUp(self):
+        self.doc = hydra_doc_sample.doc
+
+    def test_validations(self):
+        class_dict = self.doc["supportedClass"][0]
+        entrypoint = doc_maker.get_entrypoint(self.doc)
+
+        # check if proper exception is raised when supportedProperty key is not present in entrypoint
+        properties = entrypoint.pop("supportedProperty")
+        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+
+        # check if proper exception is raised when property key is not present
+        property_ = properties[0].pop("property")
+        entrypoint["supportedProperty"] = properties
+        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+
+        # check if exception is raised when no label key is found in property
+        properties[0]["property"] = property_
+        label = property_.pop("label")
+        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+        property_["label"] = label
