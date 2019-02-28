@@ -1,4 +1,5 @@
 import unittest
+import re
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
@@ -140,6 +141,7 @@ class TestClassInEndPoint(unittest.TestCase):
         expected_output = (False, None)
         self.assertEqual(doc_maker.class_in_endpoint(class_dict, entrypoint), expected_output)
 
+        # Only the title of the class is needed in the method
         class_dict["title"] = "Order"
         expected_output = (True, '/store/order')
         self.assertEqual(doc_maker.class_in_endpoint(class_dict, entrypoint), expected_output)
@@ -169,10 +171,27 @@ class TestCollectionInEndpoint(unittest.TestCase):
         self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
         property_["label"] = label
 
+    def test_output(self):
+        entrypoint = doc_maker.get_entrypoint(self.doc)
+        class_dict = {
+            "@id": "vocab:Pet",
+            "@type": "hydra:Class",
+            "title": "Pet",
+            "description": "Pet",
+            "supportedProperty": [],
+            "supportedOperation": [],
+        }
+
+        expected_output = (True, '/pet')
+        self.assertEqual(doc_maker.collection_in_endpoint(class_dict, entrypoint), expected_output)
+
+        # Only the title of the class is needed in the method
+        class_dict["title"] = "Order"
+        expected_output = (False, None)
+        self.assertEqual(doc_maker.collection_in_endpoint(class_dict, entrypoint), expected_output)
+
 
 class TestCreateDoc(unittest.TestCase):
-
-    #TODO: check if server url and api name is passed as parameter
 
     def setUp(self):
         self.doc = hydra_doc_sample.doc
@@ -188,3 +207,32 @@ class TestCreateDoc(unittest.TestCase):
         # Check if proper exception is raised if any key is not of proper format
         mock_re.match.return_value = None
         self.assertRaises(SyntaxError, doc_maker.create_doc, self.doc)
+
+    @patch('hydra_python_core.doc_maker.HydraDoc', spec_set=doc_maker.HydraDoc)
+    def test_output(self, mock_doc):
+        server_url = "test_url"
+        api_name = "test_api"
+
+        class_count = 0
+
+        # find out the number of classes
+        for class_ in self.doc["supportedClass"]:
+            collection = re.match(r'(.*)Collection(.*)', class_["title"], re.M | re.I)
+            if not collection:
+                class_count += 1
+
+        # check if apidoc has been created with proper args
+        doc_maker.create_doc(self.doc, server_url, api_name)
+        mock_doc.assert_called_once_with(api_name, self.doc["title"], self.doc["description"],
+                                         api_name, server_url)
+
+        # check if all context keys has been added to apidoc
+        self.assertEqual(mock_doc.return_value.add_to_context.call_count, len(self.doc["@context"].keys()))
+
+        # check if all classes has been added to apidoc
+        self.assertEqual(mock_doc.return_value.add_supported_class.call_count, class_count - 2)
+
+        # check if all base resource and classes has been added
+        mock_doc.return_value.add_baseResource.assert_called_once()
+        mock_doc.return_value.add_baseCollection.assert_called_once()
+        mock_doc.return_value.gen_EntryPoint.assert_called_once()
