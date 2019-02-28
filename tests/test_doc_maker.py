@@ -95,8 +95,10 @@ class TestCreateClass(unittest.TestCase):
         mock_class.assert_called_once_with('Pet', 'Pet', 'Pet', None, False)
 
         # check if properties and operations has been added to the hydra class
-        self.assertEqual(mock_class.return_value.add_supported_op.call_count, 1)
-        self.assertEqual(mock_class.return_value.add_supported_prop.call_count, 1)
+        self.assertEqual(mock_class.return_value.add_supported_op.call_count,
+                         len(class_dict["supportedOperation"]))
+        self.assertEqual(mock_class.return_value.add_supported_prop.call_count,
+                         len(class_dict["supportedProperty"]))
 
         self.assertEqual(collection, expected_collection)
         self.assertEqual(collection_path, expected_path)
