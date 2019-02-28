@@ -2,7 +2,7 @@ import unittest
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
-from hydra_python_core import doc_maker
+from hydra_python_core import doc_maker, doc_writer
 from samples import hydra_doc_sample
 
 
@@ -51,14 +51,54 @@ class TestCreateClass(unittest.TestCase):
         mock_re.match.return_value = None
         self.assertEqual((None, None, None), doc_maker.create_class(entrypoint, class_dict))
 
-    def test_doc_keys(self):
+    @patch('hydra_python_core.doc_maker.HydraClass', spec_set=doc_maker.HydraClass)
+    def test_output(self, mock_class):
 
-        doc_keys = {
-            "supportedProperty": False,
-            "title": False,
-            "description": False,
-            "supportedOperation": False
+        entrypoint = doc_maker.get_entrypoint(self.doc)
+        class_dict = {
+            "@id": "vocab:Pet",
+            "@type": "hydra:Class",
+            "title": "Pet",
+            "description": "Pet",
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "id",
+                    "writeonly": "true"
+                }
+            ],
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/UpdateAction",
+                    "expects": "vocab:Pet",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "Invalid input",
+                            "statusCode": 405
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                }
+            ],
         }
+        expected_collection = True
+        expected_path = '/pet'
+
+        # run the function and check if HydraClass has been instantiated
+        class_, collection, collection_path = doc_maker.create_class(entrypoint, class_dict)
+        mock_class.assert_called_once_with('Pet', 'Pet', 'Pet', None, False)
+
+        # check if properties and operations has been added to the hydra class
+        self.assertEqual(mock_class.return_value.add_supported_op.call_count, 1)
+        self.assertEqual(mock_class.return_value.add_supported_prop.call_count, 1)
+
+        self.assertEqual(collection, expected_collection)
+        self.assertEqual(collection_path, expected_path)
 
 
 class TestClassInEndPoint(unittest.TestCase):
@@ -130,20 +170,3 @@ class TestCreateDoc(unittest.TestCase):
         # Check if proper exception is raised if any key is not of proper format
         mock_re.match.return_value = None
         self.assertRaises(SyntaxError, doc_maker.create_doc, self.doc)
-
-    def test_doc_keys(self):
-
-        doc_keys = {
-            "description": False,
-            "title": False,
-            "supportedClass": False,
-            "@context": False,
-            "possibleStatus": False
-        }
-
-        doc_maker.input_key_check = MagicMock()
-        # Remove keys one at a time and check if errors are raised
-        for key in doc_keys.keys():
-            val = self.doc.pop(key, None)
-            self.assertRaises(SyntaxError, doc_maker.create_doc, self.doc)
-            self.doc[key] = val
