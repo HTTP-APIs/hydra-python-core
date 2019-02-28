@@ -101,6 +101,8 @@ class TestCreateClass(unittest.TestCase):
         self.assertEqual(collection, expected_collection)
         self.assertEqual(collection_path, expected_path)
 
+        self.assertIsInstance(class_, doc_writer.HydraClass)
+
 
 class TestClassInEndPoint(unittest.TestCase):
 
@@ -222,7 +224,7 @@ class TestCreateDoc(unittest.TestCase):
                 class_count += 1
 
         # check if apidoc has been created with proper args
-        doc_maker.create_doc(self.doc, server_url, api_name)
+        apidoc = doc_maker.create_doc(self.doc, server_url, api_name)
         mock_doc.assert_called_once_with(api_name, self.doc["title"], self.doc["description"],
                                          api_name, server_url)
 
@@ -236,6 +238,8 @@ class TestCreateDoc(unittest.TestCase):
         mock_doc.return_value.add_baseResource.assert_called_once()
         mock_doc.return_value.add_baseCollection.assert_called_once()
         mock_doc.return_value.gen_EntryPoint.assert_called_once()
+
+        self.assertIsInstance(apidoc, doc_writer.HydraDoc)
 
 
 class TestCreateProperty(unittest.TestCase):
@@ -263,9 +267,11 @@ class TestCreateProperty(unittest.TestCase):
 
         mock_prop.reset_mock()
         property_["property"] = "test"
-        doc_maker.create_property(property_)
+        obj = doc_maker.create_property(property_)
         mock_prop.assert_called_once_with(property_["property"], property_["title"],
                                           required=False, read=False, write=True)
+
+        self.assertIsInstance(obj, doc_writer.HydraClassProp)
 
 
 class TestCreateOperation(unittest.TestCase):
@@ -295,8 +301,10 @@ class TestCreateOperation(unittest.TestCase):
 
         mock_op.reset_mock()
         op["returns"] = "test"
-        doc_maker.create_operation(op)
+        obj = doc_maker.create_operation(op)
         mock_op.assert_called_once_with(op["title"], op["method"], "test", "test", op["possibleStatus"])
+
+        self.assertIsInstance(obj, doc_writer.HydraClassOp)
 
 
 class TestCreateStatus(unittest.TestCase):
