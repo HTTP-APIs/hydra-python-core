@@ -252,14 +252,48 @@ class TestCreateProperty(unittest.TestCase):
         }
 
         doc_maker.create_property(property_)
-        mock_prop.assert_called_once_with("", "code", required=False, read=True, write=True)
+        mock_prop.assert_called_once_with(property_["property"], property_["title"],
+                                          required=False, read=True, write=True)
 
         mock_prop.reset_mock()
         property_["readonly"] = "false"
         doc_maker.create_property(property_)
-        mock_prop.assert_called_once_with("", "code", required=False, read=False, write=True)
+        mock_prop.assert_called_once_with(property_["property"], property_["title"],
+                                          required=False, read=False, write=True)
 
         mock_prop.reset_mock()
         property_["property"] = "test"
         doc_maker.create_property(property_)
-        mock_prop.assert_called_once_with("test", "code", required=False, read=False, write=True)
+        mock_prop.assert_called_once_with(property_["property"], property_["title"],
+                                          required=False, read=False, write=True)
+
+
+class TestCreateOperation(unittest.TestCase):
+
+    @patch('hydra_python_core.doc_maker.HydraClassOp', spec_set=doc_maker.HydraClassOp)
+    def test_output(self, mock_op):
+        op = {
+            "@type": "http://schema.org/UpdateAction",
+            "expects": "null",
+            "method": "POST",
+            "possibleStatus": [
+                {
+                    "description": "successful operation",
+                    "statusCode": 200
+                }
+            ],
+            "returns": "null",
+            "title": "uploads an image"
+        }
+        doc_maker.create_operation(op)
+        mock_op.assert_called_once_with(op["title"], op["method"], None, None, op["possibleStatus"])
+
+        mock_op.reset_mock()
+        op["expects"] = "test"
+        doc_maker.create_operation(op)
+        mock_op.assert_called_once_with(op["title"], op["method"], "test", None, op["possibleStatus"])
+
+        mock_op.reset_mock()
+        op["returns"] = "test"
+        doc_maker.create_operation(op)
+        mock_op.assert_called_once_with(op["title"], op["method"], "test", "test", op["possibleStatus"])
