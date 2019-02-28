@@ -236,3 +236,30 @@ class TestCreateDoc(unittest.TestCase):
         mock_doc.return_value.add_baseResource.assert_called_once()
         mock_doc.return_value.add_baseCollection.assert_called_once()
         mock_doc.return_value.gen_EntryPoint.assert_called_once()
+
+
+class TestCreateProperty(unittest.TestCase):
+
+    @patch('hydra_python_core.doc_maker.HydraClassProp', spec_set=doc_maker.HydraClassProp)
+    def test_output(self, mock_prop):
+        property_ = {
+            "@type": "SupportedProperty",
+            "property": "",
+            "readonly": "true",
+            "required": "false",
+            "title": "code",
+            "writeonly": "true"
+        }
+
+        doc_maker.create_property(property_)
+        mock_prop.assert_called_once_with("", "code", required=False, read=True, write=True)
+
+        mock_prop.reset_mock()
+        property_["readonly"] = "false"
+        doc_maker.create_property(property_)
+        mock_prop.assert_called_once_with("", "code", required=False, read=False, write=True)
+
+        mock_prop.reset_mock()
+        property_["property"] = "test"
+        doc_maker.create_property(property_)
+        mock_prop.assert_called_once_with("test", "code", required=False, read=False, write=True)
