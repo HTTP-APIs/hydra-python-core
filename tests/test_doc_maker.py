@@ -297,3 +297,19 @@ class TestCreateOperation(unittest.TestCase):
         op["returns"] = "test"
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(op["title"], op["method"], "test", "test", op["possibleStatus"])
+
+
+class TestCreateStatus(unittest.TestCase):
+
+    @patch('hydra_python_core.doc_maker.HydraStatus', spec_set=doc_maker.HydraStatus)
+    def test_output(self, mock_status):
+        status = {
+            "title": "test",
+            "description": "null",
+            "statusCode": 405
+        }
+
+        obj = doc_maker.create_status(status)
+        mock_status.assert_called_once_with(status["statusCode"], status["title"], None)
+
+        self.assertIsInstance(obj, doc_writer.HydraStatus)
