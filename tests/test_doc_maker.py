@@ -126,6 +126,24 @@ class TestClassInEndPoint(unittest.TestCase):
         self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
         property_["label"] = label
 
+    def test_output(self):
+        entrypoint = doc_maker.get_entrypoint(self.doc)
+        class_dict = {
+            "@id": "vocab:Pet",
+            "@type": "hydra:Class",
+            "title": "Pet",
+            "description": "Pet",
+            "supportedProperty": [],
+            "supportedOperation": [],
+        }
+
+        expected_output = (False, None)
+        self.assertEqual(doc_maker.class_in_endpoint(class_dict, entrypoint), expected_output)
+
+        class_dict["title"] = "Order"
+        expected_output = (True, '/store/order')
+        self.assertEqual(doc_maker.class_in_endpoint(class_dict, entrypoint), expected_output)
+
 
 class TestCollectionInEndpoint(unittest.TestCase):
 
