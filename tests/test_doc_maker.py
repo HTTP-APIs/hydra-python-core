@@ -323,3 +323,7 @@ class TestCreateStatus(unittest.TestCase):
         mock_status.assert_called_once_with(status["statusCode"], status["title"], None)
 
         self.assertIsInstance(obj, doc_writer.HydraStatus)
+
+
+if __name__ == '__main__':
+    unittest.main()
