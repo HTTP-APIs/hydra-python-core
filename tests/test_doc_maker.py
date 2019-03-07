@@ -2,18 +2,23 @@ import unittest
 import re
 
 from unittest.mock import patch
-from unittest.mock import MagicMock
 from hydra_python_core import doc_maker, doc_writer
 from samples import hydra_doc_sample
 
 
 class TestGetEntrypoint(unittest.TestCase):
+    """
+        Test Class for get_entrypoint method
+    """
 
     def setUp(self):
         self.doc = hydra_doc_sample.doc
 
     @patch('hydra_python_core.doc_maker.re')
     def test_validations(self, mock_re):
+        """
+            Test method to check if exceptions are raised if the doc has missing keys or syntax errors
+        """
 
         # check if proper exception is raised when no "@id" key is present in any supported class
         id_ = self.doc["supportedClass"][0].pop("@id")
@@ -27,12 +32,19 @@ class TestGetEntrypoint(unittest.TestCase):
 
 
 class TestCreateClass(unittest.TestCase):
+    """
+        Test Class for create_class method
+    """
 
     def setUp(self):
         self.doc = hydra_doc_sample.doc
 
     @patch('hydra_python_core.doc_maker.re')
     def test_validations(self, mock_re):
+        """
+            Test method to check if the functions returns None if class_dict is a base class or has syntax errors
+        """
+
         class_dict = self.doc["supportedClass"][0]
         exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
                         'http://www.w3.org/ns/hydra/core#Collection',
@@ -54,6 +66,10 @@ class TestCreateClass(unittest.TestCase):
 
     @patch('hydra_python_core.doc_maker.HydraClass', spec_set=doc_maker.HydraClass)
     def test_output(self, mock_class):
+        """
+            Test method to check if HydraClass is instantiated with proper arguments and
+            properties and operations have been added to it.
+        """
 
         entrypoint = doc_maker.get_entrypoint(self.doc)
         class_dict = {
@@ -107,11 +123,18 @@ class TestCreateClass(unittest.TestCase):
 
 
 class TestClassInEndPoint(unittest.TestCase):
+    """
+        Test Class for class_in_endpoint method
+    """
 
     def setUp(self):
         self.doc = hydra_doc_sample.doc
 
     def test_validations(self):
+        """
+            Test method to check if proper exceptions are raised when entrypoint has missing keys or
+            contains syntax errors
+        """
 
         class_dict = self.doc["supportedClass"][0]
         entrypoint = doc_maker.get_entrypoint(self.doc)
@@ -132,6 +155,10 @@ class TestClassInEndPoint(unittest.TestCase):
         property_["label"] = label
 
     def test_output(self):
+        """
+            Test method to check if proper output is obtained when class title is manipulated
+        """
+
         entrypoint = doc_maker.get_entrypoint(self.doc)
         class_dict = {
             "@id": "vocab:Pet",
@@ -152,11 +179,19 @@ class TestClassInEndPoint(unittest.TestCase):
 
 
 class TestCollectionInEndpoint(unittest.TestCase):
+    """
+        Test Class for collection_in_endpoint method
+    """
 
     def setUp(self):
         self.doc = hydra_doc_sample.doc
 
     def test_validations(self):
+        """
+            Test method to check if proper exceptions are raised when entrypoint has missing keys or
+            contains syntax errors
+        """
+
         class_dict = self.doc["supportedClass"][0]
         entrypoint = doc_maker.get_entrypoint(self.doc)
 
@@ -176,6 +211,10 @@ class TestCollectionInEndpoint(unittest.TestCase):
         property_["label"] = label
 
     def test_output(self):
+        """
+            Test method to check if proper output is obtained when class title is manipulated
+        """
+
         entrypoint = doc_maker.get_entrypoint(self.doc)
         class_dict = {
             "@id": "vocab:Pet",
@@ -196,12 +235,18 @@ class TestCollectionInEndpoint(unittest.TestCase):
 
 
 class TestCreateDoc(unittest.TestCase):
+    """
+        Test Class for create_doc method
+    """
 
     def setUp(self):
         self.doc = hydra_doc_sample.doc
 
     @patch('hydra_python_core.doc_maker.re')
     def test_validations(self, mock_re):
+        """
+            Test method to check if exceptions are raised if doc has missing keys or contain syntax errors
+        """
 
         # Check if proper error raised when no "@id" key is present
         id_ = self.doc.pop("@id", None)
@@ -214,6 +259,11 @@ class TestCreateDoc(unittest.TestCase):
 
     @patch('hydra_python_core.doc_maker.HydraDoc', spec_set=doc_maker.HydraDoc)
     def test_output(self, mock_doc):
+        """
+            Test method to check if HydraDoc are instantiated with proper arguments and all necessary
+            functions are called.
+        """
+
         server_url = "test_url"
         api_name = "test_api"
 
@@ -245,9 +295,17 @@ class TestCreateDoc(unittest.TestCase):
 
 
 class TestCreateProperty(unittest.TestCase):
+    """
+        Test Class for create_property method
+    """
 
     @patch('hydra_python_core.doc_maker.HydraClassProp', spec_set=doc_maker.HydraClassProp)
     def test_output(self, mock_prop):
+        """
+            Test method to check if HydraClassProp is instantiated with proper agruments with
+            different input
+        """
+
         property_ = {
             "@type": "SupportedProperty",
             "property": "",
@@ -277,9 +335,17 @@ class TestCreateProperty(unittest.TestCase):
 
 
 class TestCreateOperation(unittest.TestCase):
+    """
+        Test Class for create_operation method
+    """
 
     @patch('hydra_python_core.doc_maker.HydraClassOp', spec_set=doc_maker.HydraClassOp)
     def test_output(self, mock_op):
+        """
+            Test method to check if HydraClassOp is instantiated with proper agruments with
+            different input
+        """
+
         op = {
             "@type": "http://schema.org/UpdateAction",
             "expects": "null",
@@ -310,9 +376,17 @@ class TestCreateOperation(unittest.TestCase):
 
 
 class TestCreateStatus(unittest.TestCase):
+    """
+        Test Class for create_status method
+    """
 
     @patch('hydra_python_core.doc_maker.HydraStatus', spec_set=doc_maker.HydraStatus)
     def test_output(self, mock_status):
+        """
+            Test method to check if HydraStatus is instantiated with proper agruments with
+            different input
+        """
+
         status = {
             "title": "test",
             "description": "null",
