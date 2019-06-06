@@ -525,16 +525,29 @@ class HydraStatus():
         self.title = title
         self.desc = desc
 
-    def generate(self) -> Dict[str, Any]:
+    def generate(self, status_type: str = "Status") -> Dict[str, Any]:
         """Get as Python dict."""
         status = {
             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-            "@type": "Status",
+            "@type": status_type,
             "statusCode": self.code,
             "title": self.title,
             "description": self.desc,
         }
         return status
+
+
+class HydraError(HydraStatus):
+    """Class for Hydra Error to represent error details."""
+
+    def __init__(self, code: str, title: str, desc: str) -> None:
+        """Create method"""
+        super().__init__(self, code, title, desc)
+
+    def generate(self) -> Dict[str, Any]:
+        """Get error response body"""
+        error = HydraStatus.generate(self, status_type="Error")
+        return error
 
 
 class Context():
