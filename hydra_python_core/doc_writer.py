@@ -519,7 +519,7 @@ class EntryPointOp():
 class HydraStatus():
     """Class for possibleStatus in Hydra Doc."""
 
-    def __init__(self, code: str, title: str, desc: str) -> None:
+    def __init__(self, code: int, title: str, desc: str) -> None:
         """Create method."""
         self.code = code
         self.title = title
@@ -540,9 +540,9 @@ class HydraStatus():
 class HydraError(HydraStatus):
     """Class for Hydra Error to represent error details."""
 
-    def __init__(self, code: str, title: str, desc: str) -> None:
+    def __init__(self, code: int, title: str, desc: str) -> None:
         """Create method"""
-        super().__init__(self, code, title, desc)
+        super().__init__(code, title, desc)
 
     def generate(self) -> Dict[str, Any]:
         """Get error response body"""
