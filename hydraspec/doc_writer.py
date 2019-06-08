@@ -332,7 +332,7 @@ class HydraEntryPoint():
         self.entrypoint = HydraClass(
             "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
         self.entrypoint.add_supported_op(EntryPointOp(
-            "_:entry_point", "GET", "The APIs main entry point.", None, None, "vocab:EntryPoint"))
+            "_:entry_point", "GET", "The APIs main entry point.", None, None, type_="vocab:EntryPoint"))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -418,7 +418,7 @@ class EntryPointCollection():
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.id_.lower(), op.method,
-                                     op.desc, op.expects, op.returns, op.status, type_=op.type_)
+                                     op.desc, op.expects, op.returns, op.possible_status, type_=op.type_)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
         return object_
@@ -457,7 +457,7 @@ class EntryPointClass():
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.title.lower(), op.method,
-                                     None, op.expects, op.returns, op.status, label=op.title)
+                                     None, op.expects, op.returns, op.possible_status, label=op.title)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
         return object_
@@ -471,7 +471,7 @@ class EntryPointOp():
                  method: str,
                  desc: str,
                  expects: Optional[str],
-                 returns: str,
+                 returns: Optional[str],
                  possible_status: List[Union['HydraStatus', 'HydraError']]=[],
                  type_: Optional[str] = None,
                  label: str = "",
