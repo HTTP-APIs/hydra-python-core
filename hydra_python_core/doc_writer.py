@@ -529,7 +529,7 @@ class HydraStatus():
         """Get as Python dict."""
         status = {
             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-            "@type": "Status",
+            "@type": status_type,
             "statusCode": self.code,
             "title": self.title,
             "description": self.desc,
