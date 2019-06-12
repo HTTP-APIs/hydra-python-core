@@ -516,6 +516,53 @@ class EntryPointOp():
         return prop
 
 
+class IriTemplateMapping():
+    """Class for hydra IriTemplateMapping"""
+
+    def __init__(self,
+                 variable: str,
+                 prop: str,
+                 required: bool = False):
+        self.variable = variable
+        self.prop = prop
+        self.required = required
+
+    def generate(self) -> Dict[str, Any]:
+        """Get IriTemplateMapping as a python dict"""
+        iri_template_mapping = {
+            "@type": "IriTemplateMapping",
+            "variable": self.variable,
+            "property": self.prop,
+            "required": self.required
+        }
+        return iri_template_mapping
+
+
+class HydraIriTemplate():
+    """Class for hydra IriTemplates"""
+
+    def __init__(self,
+                 template: str,
+                 iri_mapping: List[IriTemplateMapping] = [],
+                 basic_representation: bool = True):
+        self.template = template
+        if basic_representation:
+            self.variable_rep = "hydra:BasicRepresentation"
+        else:
+            self.variable_rep = "hydra:ExplicitRepresentation"
+        self.mapping = iri_mapping
+
+    def generate(self) -> Dict[str, Any]:
+        """Get IriTemplate as a python dict"""
+        iri_template = {
+            "@type": "IriTemplate",
+            "template": self.template,
+            "variableRepresentation": self.variable_rep,
+            "mapping": [x.generate() for x in self.mapping]
+        }
+        return iri_template
+
+
 class HydraStatus():
     """Class for possibleStatus in Hydra Doc."""
 
