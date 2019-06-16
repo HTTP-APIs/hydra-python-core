@@ -334,10 +334,13 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
     result = {}
     for k, literal in doc_keys.items():
         result[k] = input_key_check(supported_op, k, "supported_op", literal)
-
+    possible_statuses = list()
+    for status in result["possibleStatus"]:
+        status_obj = create_status(status)
+        possible_statuses.append(status_obj)
     # Create the HydraClassOp object
     op_ = HydraClassOp(result["title"], result["method"],
-                       result["expects"], result["returns"], result["possibleStatus"])
+                       result["expects"], result["returns"], possible_statuses)
     return op_
 
 
