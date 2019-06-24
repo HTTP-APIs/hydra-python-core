@@ -15,13 +15,15 @@ class HydraDoc():
         self.parsed_classes = dict()  # type: Dict[str, Any]
         self.other_classes = list()  # type: List[HydraClass]
         self.collections = dict()  # type: Dict[str, Any]
-        self.possible_status = list()  # type: List[Union[HydraStatus,HydraError]]
+        # type: List[Union[HydraStatus,HydraError]]
+        self.possible_status = list()
         self.entrypoint = HydraEntryPoint(base_url, entrypoint)
         self.desc = desc
 
     def add_supported_class(
             self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
-            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True) -> None:
+            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True
+            ) -> None:
         """Add a new supportedClass.
 
         Raises:
@@ -268,8 +270,8 @@ class HydraCollection():
                                         "PUT", "Create new {} entity".format(
                                             self.class_.title),
                                         self.class_.id_, self.class_.id_,
-                                        [HydraStatus(code=201,desc="If the {} entity was created"
-                                          "successfully.".format(self.class_.title))]
+                                        [HydraStatus(code=201, desc="If the {} entity was created"
+                                                     "successfully.".format(self.class_.title))]
                                         )
             self.supportedOperation.append(post_op)
 
@@ -332,7 +334,8 @@ class HydraEntryPoint():
         self.entrypoint = HydraClass(
             "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
         self.entrypoint.add_supported_op(EntryPointOp(
-            "_:entry_point", "GET", "The APIs main entry point.", None, None, type_="vocab:EntryPoint"))
+            "_:entry_point", "GET", "The APIs main entry point.", None, None,
+            type_="vocab:EntryPoint"))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -418,7 +421,8 @@ class EntryPointCollection():
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.id_.lower(), op.method,
-                                     op.desc, op.expects, op.returns, op.possible_status, type_=op.type_)
+                                     op.desc, op.expects, op.returns, op.possible_status,
+                                     type_=op.type_)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
         return object_
@@ -457,7 +461,8 @@ class EntryPointClass():
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.title.lower(), op.method,
-                                     None, op.expects, op.returns, op.possible_status, label=op.title)
+                                     None, op.expects, op.returns, op.possible_status,
+                                     label=op.title)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
         return object_
