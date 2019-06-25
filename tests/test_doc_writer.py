@@ -134,7 +134,8 @@ class TestDocWriter(unittest.TestCase):
 
         mocked_hydra_collection = hydra_collection()
         mocked_hydra_collection.class_ = mocked_hydra_class
-        mocked_hydra_collection.name = "{}Collection".format(mocked_hydra_class.title)
+        mocked_hydra_collection.name = "{}Collection".format(
+            mocked_hydra_class.title)
         context = doc_writer.Context(
             'http://petstore.swagger.io/v2',
             collection=mocked_hydra_collection)
@@ -147,6 +148,7 @@ class TestDocWriter(unittest.TestCase):
         }
 
         self.assertEqual(expected_context, context.generate())
+
 
 if __name__ == '__main__':
     unittest.main()
