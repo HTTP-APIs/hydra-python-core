@@ -34,7 +34,6 @@ doc = {
             "@type": "@id"
         },
         "statusCode": "hydra:statusCode",
-        "statusCodes": "hydra:statusCodes",
         "subClassOf": {
             "@id": "rdfs:subClassOf",
             "@type": "@id"
@@ -67,7 +66,8 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Operation successful.",
+                            "description": "",
                             "statusCode": 200
                         }
                     ],
@@ -114,7 +114,8 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Successful Operation",
+                            "title": "Successful Operation.",
+                            "description": "",
                             "statusCode": 200
                         }
                     ],
@@ -127,15 +128,18 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation.",
+                            "description": "",
                             "statusCode": 200
                         },
                         {
-                            "description": "Invalid username supplied",
+                            "title": "Invalid username supplied",
+                            "description": "",
                             "statusCode": 400
                         },
                         {
-                            "description": "User not found",
+                            "title": "User not found",
+                            "description": "",
                             "statusCode": 404
                         }
                     ],
@@ -148,7 +152,8 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Invalid user supplied",
+                            "title": "Invalid user supplied",
+                            "description": "",
                             "statusCode": 400
                         }
                     ],
@@ -235,11 +240,13 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation",
+                            "description": "",
                             "statusCode": 200
                         },
                         {
-                            "description": "Invalid Order",
+                            "title": "Invalid Order",
+                            "description": "",
                             "statusCode": 400
                         }
                     ],
@@ -252,15 +259,18 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation",
+                            "description": "",
                             "statusCode": 200
                         },
                         {
-                            "description": "Invalid ID supplied",
+                            "title": "Invalid ID supplied",
+                            "description": "",
                             "statusCode": 400
                         },
                         {
-                            "description": "Order not found",
+                            "title": "Order not found",
+                            "description": "",
                             "statusCode": 404
                         }
                     ],
@@ -331,7 +341,8 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Invalid input",
+                            "title": "Invalid input",
+                            "description": "",
                             "statusCode": 405
                         }
                     ],
@@ -344,7 +355,8 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Invalid ID supplied",
+                            "title": "Invalid ID supplied",
+                            "description": "",
                             "statusCode": 400
                         }
                     ],
@@ -357,7 +369,8 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation",
+                            "description": "",
                             "statusCode": 200
                         }
                     ],
@@ -455,7 +468,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:UserCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:user_create",
@@ -464,9 +477,10 @@ doc = {
                     "expects": "vocab:User",
                     "method": "PUT",
                     "returns": "vocab:User",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the User entity was created successfully.",
+                            "title": "If the User entity was created successfully.",
+                            "description": "",
                             "statusCode": 201
                         }
                     ]
@@ -498,7 +512,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:PetCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:pet_create",
@@ -507,9 +521,10 @@ doc = {
                     "expects": "vocab:Pet",
                     "method": "PUT",
                     "returns": "vocab:Pet",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the Pet entity was created successfully.",
+                            "title": "If the Pet entity was created successfully.",
+                            "description": "",
                             "statusCode": 201
                         }
                     ]
@@ -540,7 +555,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "null",
-                    "statusCodes": "vocab:EntryPoint"
+                    "possibleStatus": "vocab:EntryPoint"
                 }
             ],
             "supportedProperty": [
@@ -563,9 +578,10 @@ doc = {
                                 "label": "uploads an image",
                                 "method": "POST",
                                 "returns": "vocab:ApiResponse",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "successful operation",
+                                        "title": "successful operation",
+                                        "description": "",
                                         "statusCode": 200
                                     }
                                 ]
@@ -595,13 +611,15 @@ doc = {
                                 "label": "Place an order for a pet",
                                 "method": "POST",
                                 "returns": "vocab:Order",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "successful operation",
+                                        "title": "Successful operation",
+                                        "description": "",
                                         "statusCode": 200
                                     },
                                     {
-                                        "description": "Invalid Order",
+                                        "title": "Invalid Order",
+                                        "description": "",
                                         "statusCode": 400
                                     }
                                 ]
@@ -614,17 +632,20 @@ doc = {
                                 "label": "Find purchase order by ID",
                                 "method": "GET",
                                 "returns": "vocab:Order",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "successful operation",
+                                        "title": "successful operation",
+                                        "description": "",
                                         "statusCode": 200
                                     },
                                     {
-                                        "description": "Invalid ID supplied",
+                                        "title": "Invalid ID supplied",
+                                        "description": "",
                                         "statusCode": 400
                                     },
                                     {
-                                        "description": "Order not found",
+                                        "title": "Order not found",
+                                        "description": "",
                                         "statusCode": 404
                                     }
                                 ]
@@ -653,7 +674,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:UserCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:user_create",
@@ -662,9 +683,10 @@ doc = {
                                 "expects": "vocab:User",
                                 "method": "PUT",
                                 "returns": "vocab:User",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the User entity was created successfully.",
+                                        "title": "If the User entity was created successfully.",
+                                        "description": "",
                                         "statusCode": 201
                                     }
                                 ]
@@ -693,7 +715,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:PetCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:pet_create",
@@ -702,9 +724,10 @@ doc = {
                                 "expects": "vocab:Pet",
                                 "method": "PUT",
                                 "returns": "vocab:Pet",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the Pet entity was created successfully.",
+                                        "title": "If the Pet entity was created successfully.",
+                                        "description": "",
                                         "statusCode": 201
                                     }
                                 ]

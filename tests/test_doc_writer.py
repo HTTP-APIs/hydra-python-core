@@ -21,7 +21,6 @@ class TestDocWriter(unittest.TestCase):
             "supportedClass": "hydra:supportedClass",
             "supportedProperty": "hydra:supportedProperty",
             "supportedOperation": "hydra:supportedOperation",
-            "statusCodes": "hydra:statusCodes",
             "label": "rdfs:label",
             "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
             "vocab": "https://hydrus.com/api/vocab#",
