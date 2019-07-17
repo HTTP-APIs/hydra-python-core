@@ -234,8 +234,8 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     doc_keys = {
         "property": False,
         "title": False,
-        "readonly": True,
-        "writeonly": True,
+        "readable": True,
+        "writeable": True,
         "required": True
     }
     result = {}
@@ -244,7 +244,7 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
             supported_prop, k, "supported_prop", literal)
     # Create the HydraClassProp object
     prop = HydraClassProp(result["property"], result["title"], required=result["required"],
-                          read=result["readonly"], write=result["writeonly"])
+                          read=result["readable"], write=result["writeable"])
     return prop
 
 

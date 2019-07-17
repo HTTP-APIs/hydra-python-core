@@ -27,7 +27,7 @@ doc = {
         },
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-        "readonly": "hydra:readonly",
+        "readable": "hydra:readable",
         "required": "hydra:required",
         "returns": {
             "@id": "hydra:returns",
@@ -43,7 +43,7 @@ doc = {
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
         "vocab": "http://petstore.swagger.io/v2/vocab#",
-        "writeonly": "hydra:writeonly"
+        "writeable": "hydra:writeable"
     },
     "@id": "http://petstore.swagger.io/v2/vocab",
     "@type": "ApiDocumentation",
@@ -79,26 +79,26 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "code",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "type",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "message",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "ApiResponse"
@@ -165,66 +165,66 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "username",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "firstName",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "lastName",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "email",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "password",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "phone",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "userStatus",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "User"
@@ -282,50 +282,50 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "petId",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "quantity",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "shipDate",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "status",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "complete",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "Order"
@@ -382,50 +382,50 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "category",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "true",
                     "title": "name",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "true",
                     "title": "photoUrls",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "tags",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "status",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "Pet"
@@ -439,10 +439,10 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "null",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "Collection"
@@ -491,10 +491,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The user",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "UserCollection"
@@ -535,10 +535,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The pet",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "PetCollection"
@@ -588,9 +588,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The Order Class",
@@ -652,9 +652,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The UserCollection collection",
@@ -693,9 +693,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The PetCollection collection",
@@ -734,9 +734,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "EntryPoint"

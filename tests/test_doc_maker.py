@@ -84,10 +84,10 @@ class TestCreateClass(unittest.TestCase):
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "supportedOperation": [
@@ -331,10 +331,10 @@ class TestCreateProperty(unittest.TestCase):
         property_ = {
             "@type": "SupportedProperty",
             "property": "",
-            "readonly": "true",
+            "readable": "true",
             "required": "false",
             "title": "code",
-            "writeonly": "true"
+            "writeable": "true"
         }
 
         doc_maker.create_property(property_)
@@ -342,7 +342,7 @@ class TestCreateProperty(unittest.TestCase):
                                           required=False, read=True, write=True)
 
         mock_prop.reset_mock()
-        property_["readonly"] = "false"
+        property_["readable"] = "false"
         doc_maker.create_property(property_)
         mock_prop.assert_called_once_with(property_["property"], property_["title"],
                                           required=False, read=False, write=True)

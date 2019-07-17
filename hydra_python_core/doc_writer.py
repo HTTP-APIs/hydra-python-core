@@ -191,8 +191,8 @@ class HydraClassProp():
             "title": self.title,
             "property": self.prop,
             "required": self.required,
-            "readonly": self.read,
-            "writeonly": self.write
+            "readable": self.read,
+            "writeable": self.write
         }
         if len(self.desc) > 0:
             prop["description"] = self.desc
@@ -416,8 +416,8 @@ class EntryPointCollection():
             "hydra:title": self.name.lower(),
             "hydra:description": "The {} collection".format(self.name,),
             "required": None,
-            "readonly": True,
-            "writeonly": False
+            "readable": True,
+            "writeable": False
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.id_.lower(), op.method,
@@ -456,8 +456,8 @@ class EntryPointClass():
             "hydra:title": self.name.lower(),
             "hydra:description": "The {} Class".format(self.name),
             "required": None,
-            "readonly": True,
-            "writeonly": False
+            "readable": True,
+            "writeable": False
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.title.lower(), op.method,
@@ -676,8 +676,8 @@ class Context():
                     "@id": "hydra:returns",
                     "@type": "@id"
                 },
-                "readonly": "hydra:readonly",
-                "writeonly": "hydra:writeonly",
+                "readable": "hydra:readable",
+                "writeable": "hydra:writeable",
                 "possibleStatus": "hydra:possibleStatus",
                 "required": "hydra:required",
                 "method": "hydra:method",
