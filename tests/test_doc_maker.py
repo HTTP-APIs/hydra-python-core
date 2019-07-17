@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from hydra_python_core import doc_maker, doc_writer
 from samples import hydra_doc_sample
 
@@ -84,10 +84,10 @@ class TestCreateClass(unittest.TestCase):
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "supportedOperation": [
@@ -97,11 +97,14 @@ class TestCreateClass(unittest.TestCase):
                     "method": "POST",
                     "possibleStatus": [
                         {
+                            "title": "Invalid input",
                             "description": "Invalid input",
                             "statusCode": 405
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Add a new pet to the store"
                 }
             ],
@@ -305,9 +308,12 @@ class TestCreateDoc(unittest.TestCase):
             mock_doc.return_value.add_supported_class.call_count, class_count - 2)
 
         # check if all base resource and classes has been added
-        mock_doc.return_value.add_baseResource.assert_called_once()
-        mock_doc.return_value.add_baseCollection.assert_called_once()
-        mock_doc.return_value.gen_EntryPoint.assert_called_once()
+        self.assertEqual(
+            mock_doc.return_value.add_baseResource.call_count, 1)
+        self.assertEqual(
+            mock_doc.return_value.add_baseCollection.call_count, 1)
+        self.assertEqual(
+            mock_doc.return_value.gen_EntryPoint.call_count, 1)
 
         self.assertIsInstance(apidoc, doc_writer.HydraDoc)
 
@@ -327,10 +333,10 @@ class TestCreateProperty(unittest.TestCase):
         property_ = {
             "@type": "SupportedProperty",
             "property": "",
-            "readonly": "true",
+            "readable": "true",
             "required": "false",
             "title": "code",
-            "writeonly": "true"
+            "writeable": "true"
         }
 
         doc_maker.create_property(property_)
@@ -338,7 +344,7 @@ class TestCreateProperty(unittest.TestCase):
                                           required=False, read=True, write=True)
 
         mock_prop.reset_mock()
-        property_["readonly"] = "false"
+        property_["readable"] = "false"
         doc_maker.create_property(property_)
         mock_prop.assert_called_once_with(property_["property"], property_["title"],
                                           required=False, read=False, write=True)
@@ -363,13 +369,15 @@ class TestCreateOperation(unittest.TestCase):
             Test method to check if HydraClassOp is instantiated with proper agruments with
             different input
         """
-
         op = {
             "@type": "http://schema.org/UpdateAction",
             "expects": "null",
             "method": "POST",
+            "expectsHeader": [],
+            "returnsHeader": [],
             "possibleStatus": [
                 {
+                    "title": "Operation successful.",
                     "description": "successful operation",
                     "statusCode": 200
                 }
@@ -379,19 +387,19 @@ class TestCreateOperation(unittest.TestCase):
         }
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            op["title"], op["method"], None, None, op["possibleStatus"])
+            op["title"], op["method"], None, None, [], [], ANY)
 
         mock_op.reset_mock()
         op["expects"] = "test"
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            op["title"], op["method"], "test", None, op["possibleStatus"])
+            op["title"], op["method"], "test", None, [], [], ANY)
 
         mock_op.reset_mock()
         op["returns"] = "test"
         obj = doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            op["title"], op["method"], "test", "test", op["possibleStatus"])
+            op["title"], op["method"], "test", "test", [], [], ANY)
 
         self.assertIsInstance(obj, doc_writer.HydraClassOp)
 

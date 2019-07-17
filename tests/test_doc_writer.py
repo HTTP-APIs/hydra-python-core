@@ -21,7 +21,6 @@ class TestDocWriter(unittest.TestCase):
             "supportedClass": "hydra:supportedClass",
             "supportedProperty": "hydra:supportedProperty",
             "supportedOperation": "hydra:supportedOperation",
-            "statusCodes": "hydra:statusCodes",
             "label": "rdfs:label",
             "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
             "vocab": "https://hydrus.com/api/vocab#",
@@ -45,13 +44,16 @@ class TestDocWriter(unittest.TestCase):
                 "@id": "hydra:returns",
                 "@type": "@id"
             },
-            "readonly": "hydra:readonly",
-            "writeonly": "hydra:writeonly",
+            "readable": "hydra:readable",
+            "writeable": "hydra:writeable",
             "possibleStatus": "hydra:possibleStatus",
             "required": "hydra:required",
             "method": "hydra:method",
             "statusCode": "hydra:statusCode",
             "description": "hydra:description",
+            "expectsHeader": "hydra:expectsHeader",
+            "returnsHeader": "hydra:returnsHeader",
+            "manages": "hydra:manages",
             "subClassOf": {
                 "@id": "rdfs:subClassOf",
                 "@type": "@id"
@@ -97,10 +99,10 @@ class TestDocWriter(unittest.TestCase):
             with patch('hydra_python_core.doc_writer.HydraClassProp', mocked_hydra_property,
                        spec_set=doc_writer.HydraClassProp):
                 mocked_hydra_property.prop = ""
-                mocked_hydra_property.readonly = "true"
+                mocked_hydra_property.readable = "true"
                 mocked_hydra_property.required = "false"
                 mocked_hydra_property.title = "id"
-                mocked_hydra_property.writeonly = "true"
+                mocked_hydra_property.writeable = "true"
 
                 mocked_hydra_class.supportedProperty = [mocked_hydra_property]
 

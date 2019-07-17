@@ -22,8 +22,8 @@ class HydraDoc():
 
     def add_supported_class(
             self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
-            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True
-            ) -> None:
+            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True,
+            collection_manages: Union[Dict[str, Any], List]=None) -> None:
         """Add a new supportedClass.
 
         Raises:
@@ -40,7 +40,7 @@ class HydraDoc():
         }
         if collection:
             collection = HydraCollection(
-                class_, collection_path, collectionGet, collectionPost)
+                class_, collection_path, collection_manages, collectionGet, collectionPost)
             self.collections[collection.path] = {
                 "context": Context(address="{}{}".format(self.base_url, self.API),
                                    collection=collection), "collection": collection}
@@ -191,8 +191,8 @@ class HydraClassProp():
             "title": self.title,
             "property": self.prop,
             "required": self.required,
-            "readonly": self.read,
-            "writeonly": self.write
+            "readable": self.read,
+            "writeable": self.write
         }
         if len(self.desc) > 0:
             prop["description"] = self.desc
@@ -207,6 +207,8 @@ class HydraClassOp():
                  method: str,
                  expects: Optional[str],
                  returns: Optional[str],
+                 expects_header: List[str] = [],
+                 returns_header: List[str] = [],
                  possible_status: List[Union['HydraStatus', 'HydraError']]=[],
                  ) -> None:
         """Initialize the Hydra_Prop."""
@@ -214,6 +216,8 @@ class HydraClassOp():
         self.method = method
         self.expects = expects
         self.returns = returns
+        self.expects_header = expects_header
+        self.returns_header = returns_header
         self.possible_status = possible_status
 
     def get_type(self, method: str) -> str:
@@ -235,6 +239,8 @@ class HydraClassOp():
             "method": self.method,
             "expects": self.expects,
             "returns": self.returns,
+            "expectsHeader": self.expects_header,
+            "returnsHeader": self.returns_header,
             "possibleStatus": [status.generate() for status in self.possible_status]
         }
         return op
@@ -245,11 +251,13 @@ class HydraCollection():
 
     def __init__(
             self, class_: HydraClass,
-            collection_path: str=None, get: bool=True, post: bool=True) -> None:
+            collection_path: str=None, manages: Union[Dict[str, Any], List]=None,
+            get: bool=True, post: bool=True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = "{}Collection".format(class_.title)
         self.path = collection_path if collection_path else self.name
+        self.manages = manages
         self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
@@ -261,7 +269,7 @@ class HydraCollection():
                                        "http://schema.org/FindAction",
                                        "GET", "Retrieves all {} entities".format(
                                            self.class_.title),
-                                       None, "vocab:{}".format(self.name), [])
+                                       None, "vocab:{}".format(self.name), [], [], [])
             self.supportedOperation.append(get_op)
 
         if post:
@@ -269,7 +277,7 @@ class HydraCollection():
                                         "http://schema.org/AddAction",
                                         "PUT", "Create new {} entity".format(
                                             self.class_.title),
-                                        self.class_.id_, self.class_.id_,
+                                        self.class_.id_, self.class_.id_, [], [],
                                         [HydraStatus(code=201, desc="If the {} entity was created"
                                                      "successfully.".format(self.class_.title))]
                                         )
@@ -286,6 +294,8 @@ class HydraCollection():
             "supportedOperation": [x.generate() for x in self.supportedOperation],
             "supportedProperty": [x.generate() for x in self.supportedProperty]
         }
+        if self.manages is not None:
+            collection["manages"] = self.manages
         return collection
 
 
@@ -298,7 +308,9 @@ class HydraCollectionOp():
                  method: str,
                  desc: str,
                  expects: Optional[str],
-                 returns: str,
+                 returns: Optional[str],
+                 expects_header: List[str] = [],
+                 returns_header: List[str] = [],
                  possible_status: List[Union['HydraStatus', 'HydraError']]=[],
                  ) -> None:
         """Create method."""
@@ -306,8 +318,10 @@ class HydraCollectionOp():
         self.type_ = type_
         self.method = method
         self.desc = desc
-        self.returns = returns
         self.expects = expects
+        self.returns = returns
+        self.expects_header = expects_header
+        self.returns_header = returns_header
         self.possible_status = possible_status
 
     def generate(self) -> Dict[str, Any]:
@@ -319,6 +333,8 @@ class HydraCollectionOp():
             "description": self.desc,
             "expects": self.expects,
             "returns": self.returns,
+            "expectsHeader": self.expects_header,
+            "returnsHeader": self.returns_header,
             "possibleStatus": [status.generate() for status in self.possible_status]
         }
         return object_
@@ -416,12 +432,14 @@ class EntryPointCollection():
             "hydra:title": self.name.lower(),
             "hydra:description": "The {} collection".format(self.name,),
             "required": None,
-            "readonly": True,
-            "writeonly": False
+            "readable": True,
+            "writeable": False
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.id_.lower(), op.method,
-                                     op.desc, op.expects, op.returns, op.possible_status,
+                                     op.desc, op.expects, op.returns,
+                                     op.expects_header, op.returns_header,
+                                     op.possible_status,
                                      type_=op.type_)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
@@ -456,12 +474,13 @@ class EntryPointClass():
             "hydra:title": self.name.lower(),
             "hydra:description": "The {} Class".format(self.name),
             "required": None,
-            "readonly": True,
-            "writeonly": False
+            "readable": True,
+            "writeable": False
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
             operation = EntryPointOp(op.title.lower(), op.method,
-                                     None, op.expects, op.returns, op.possible_status,
+                                     None, op.expects, op.returns, op.expects_header,
+                                     op.returns_header, op.possible_status,
                                      label=op.title)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
@@ -477,6 +496,8 @@ class EntryPointOp():
                  desc: str,
                  expects: Optional[str],
                  returns: Optional[str],
+                 expects_header: List[str] = [],
+                 returns_header: List[str] = [],
                  possible_status: List[Union['HydraStatus', 'HydraError']]=[],
                  type_: Optional[str] = None,
                  label: str = "",
@@ -487,6 +508,8 @@ class EntryPointOp():
         self.desc = desc
         self.expects = expects
         self.returns = returns
+        self.expects_header = expects_header
+        self.returns_header = returns_header
         self.possible_status = possible_status
         self.label = label
         self.type_ = type_
@@ -511,6 +534,8 @@ class EntryPointOp():
             "description": self.desc,
             "expects": self.expects,
             "returns": self.returns,
+            "expectsHeader": self.expects_header,
+            "returnsHeader": self.returns_header,
             "possibleStatus": [status.generate() for status in self.possible_status]
         }
         if self.type_ is not None:
@@ -676,13 +701,16 @@ class Context():
                     "@id": "hydra:returns",
                     "@type": "@id"
                 },
-                "readonly": "hydra:readonly",
-                "writeonly": "hydra:writeonly",
+                "readable": "hydra:readable",
+                "writeable": "hydra:writeable",
                 "possibleStatus": "hydra:possibleStatus",
                 "required": "hydra:required",
                 "method": "hydra:method",
                 "statusCode": "hydra:statusCode",
                 "description": "hydra:description",
+                "expectsHeader": "hydra:expectsHeader",
+                "returnsHeader": "hydra:returnsHeader",
+                "manages": "hydra:manages",
                 "subClassOf": {
                     "@id": "rdfs:subClassOf",
                     "@type": "@id"
