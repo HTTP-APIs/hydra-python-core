@@ -51,6 +51,9 @@ class TestDocWriter(unittest.TestCase):
             "method": "hydra:method",
             "statusCode": "hydra:statusCode",
             "description": "hydra:description",
+            "expectsHeader": "hydra:expectsHeader",
+            "returnsHeader": "hydra:returnsHeader",
+            "manages": "hydra:manages",
             "subClassOf": {
                 "@id": "rdfs:subClassOf",
                 "@type": "@id"

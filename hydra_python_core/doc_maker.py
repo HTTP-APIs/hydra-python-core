@@ -104,8 +104,13 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
         class_obj, collection, collection_path = create_class(
             entrypoint_obj, class_)
         if class_obj:
-            apidoc.add_supported_class(
-                class_obj, collection=collection, collection_path=collection_path)
+            if "manages" in class_:
+                apidoc.add_supported_class(
+                    class_obj, collection=collection, collection_path=collection_path,
+                    collection_manages=class_["manages"])
+            else:
+                apidoc.add_supported_class(
+                    class_obj, collection=collection, collection_path=collection_path)
 
     # add possibleStatus
     for status in result["possibleStatus"]:
@@ -329,6 +334,8 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
         "method": False,
         "expects": True,
         "returns": True,
+        "expectsHeader": False,
+        "returnsHeader": False,
         "possibleStatus": False
     }
     result = {}
@@ -338,9 +345,12 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
     for status in result["possibleStatus"]:
         status_obj = create_status(status)
         possible_statuses.append(status_obj)
+
     # Create the HydraClassOp object
     op_ = HydraClassOp(result["title"], result["method"],
-                       result["expects"], result["returns"], possible_statuses)
+                       result["expects"], result["returns"],
+                       result["expectsHeader"], result["returnsHeader"],
+                       possible_statuses)
     return op_
 
 

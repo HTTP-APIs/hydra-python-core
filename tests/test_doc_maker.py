@@ -103,6 +103,8 @@ class TestCreateClass(unittest.TestCase):
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Add a new pet to the store"
                 }
             ],
@@ -371,6 +373,8 @@ class TestCreateOperation(unittest.TestCase):
             "@type": "http://schema.org/UpdateAction",
             "expects": "null",
             "method": "POST",
+            "expectsHeader": [],
+            "returnsHeader": [],
             "possibleStatus": [
                 {
                     "title": "Operation successful.",
@@ -383,19 +387,19 @@ class TestCreateOperation(unittest.TestCase):
         }
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            op["title"], op["method"], None, None, ANY)
+            op["title"], op["method"], None, None, [], [], ANY)
 
         mock_op.reset_mock()
         op["expects"] = "test"
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            op["title"], op["method"], "test", None, ANY)
+            op["title"], op["method"], "test", None, [], [], ANY)
 
         mock_op.reset_mock()
         op["returns"] = "test"
         obj = doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            op["title"], op["method"], "test", "test", ANY)
+            op["title"], op["method"], "test", "test", [], [], ANY)
 
         self.assertIsInstance(obj, doc_writer.HydraClassOp)
 

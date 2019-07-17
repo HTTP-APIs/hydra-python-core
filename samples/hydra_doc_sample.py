@@ -43,7 +43,10 @@ doc = {
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
         "vocab": "http://petstore.swagger.io/v2/vocab#",
-        "writeable": "hydra:writeable"
+        "writeable": "hydra:writeable",
+        "expectsHeader": "hydra:expectsHeader",
+        "returnsHeader": "hydra:returnsHeader",
+        "manages": "hydra:manages"
     },
     "@id": "http://petstore.swagger.io/v2/vocab",
     "@type": "ApiDocumentation",
@@ -72,6 +75,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:ApiResponse",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "uploads an image"
                 }
             ],
@@ -120,6 +125,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Create user"
                 },
                 {
@@ -144,6 +151,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:User",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Get user by user name"
                 },
                 {
@@ -158,6 +167,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Updated user"
                 }
             ],
@@ -251,6 +262,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Order",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Place an order for a pet"
                 },
                 {
@@ -275,6 +288,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Order",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Find purchase order by ID"
                 }
             ],
@@ -347,6 +362,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Add a new pet to the store"
                 },
                 {
@@ -361,6 +378,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Update an existing pet"
                 },
                 {
@@ -375,6 +394,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Pet",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "get all pets"
                 }
             ],
@@ -468,6 +489,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:UserCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -477,6 +500,8 @@ doc = {
                     "expects": "vocab:User",
                     "method": "PUT",
                     "returns": "vocab:User",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the User entity was created successfully.",
@@ -512,6 +537,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:PetCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -521,6 +548,8 @@ doc = {
                     "expects": "vocab:Pet",
                     "method": "PUT",
                     "returns": "vocab:Pet",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the Pet entity was created successfully.",
@@ -555,6 +584,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": "vocab:EntryPoint"
                 }
             ],
@@ -578,6 +609,8 @@ doc = {
                                 "label": "uploads an image",
                                 "method": "POST",
                                 "returns": "vocab:ApiResponse",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "successful operation",
@@ -611,6 +644,8 @@ doc = {
                                 "label": "Place an order for a pet",
                                 "method": "POST",
                                 "returns": "vocab:Order",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "Successful operation",
@@ -632,6 +667,8 @@ doc = {
                                 "label": "Find purchase order by ID",
                                 "method": "GET",
                                 "returns": "vocab:Order",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "successful operation",
@@ -674,6 +711,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:UserCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -683,6 +722,8 @@ doc = {
                                 "expects": "vocab:User",
                                 "method": "PUT",
                                 "returns": "vocab:User",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the User entity was created successfully.",
@@ -715,6 +756,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:PetCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -724,6 +767,8 @@ doc = {
                                 "expects": "vocab:Pet",
                                 "method": "PUT",
                                 "returns": "vocab:Pet",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the Pet entity was created successfully.",
