@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from hydra_python_core import doc_maker, doc_writer
 from samples import hydra_doc_sample
 
@@ -17,7 +17,8 @@ class TestGetEntrypoint(unittest.TestCase):
     @patch('hydra_python_core.doc_maker.re')
     def test_validations(self, mock_re):
         """
-            Test method to check if exceptions are raised if the doc has missing keys or syntax errors
+            Test method to check if exceptions are raised if the doc has missing keys
+            or syntax errors
         """
 
         # check if proper exception is raised when no "@id" key is present in any supported class
@@ -42,7 +43,8 @@ class TestCreateClass(unittest.TestCase):
     @patch('hydra_python_core.doc_maker.re')
     def test_validations(self, mock_re):
         """
-            Test method to check if the functions returns None if class_dict is a base class or has syntax errors
+            Test method to check if the functions returns None if class_dict is a base class
+            or has syntax errors
         """
 
         class_dict = self.doc["supportedClass"][0]
@@ -56,7 +58,8 @@ class TestCreateClass(unittest.TestCase):
         # Check if returning None when class id is a BaseClass or an EntryPoint
         for id_ in exclude_list:
             class_dict["@id"] = id_
-            self.assertEqual((None, None, None), doc_maker.create_class(entrypoint, class_dict))
+            self.assertEqual((None, None, None),
+                             doc_maker.create_class(entrypoint, class_dict))
 
         class_dict["@id"] = class_id
 
@@ -81,10 +84,10 @@ class TestCreateClass(unittest.TestCase):
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "supportedOperation": [
@@ -94,11 +97,14 @@ class TestCreateClass(unittest.TestCase):
                     "method": "POST",
                     "possibleStatus": [
                         {
+                            "title": "Invalid input",
                             "description": "Invalid input",
                             "statusCode": 405
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Add a new pet to the store"
                 }
             ],
@@ -107,7 +113,8 @@ class TestCreateClass(unittest.TestCase):
         expected_path = '/pet'
 
         # run the function and check if HydraClass has been instantiated
-        class_, collection, collection_path = doc_maker.create_class(entrypoint, class_dict)
+        class_, collection, collection_path = doc_maker.create_class(
+            entrypoint, class_dict)
         mock_class.assert_called_once_with('Pet', 'Pet', 'Pet', None, False)
 
         # check if properties and operations has been added to the hydra class
@@ -139,19 +146,22 @@ class TestClassInEndPoint(unittest.TestCase):
         class_dict = self.doc["supportedClass"][0]
         entrypoint = doc_maker.get_entrypoint(self.doc)
 
-        # check if proper exception is raised when supportedProperty key is not present in entrypoint
+        # check if exception raised is proper when supportedProperty key is not in entrypoint
         properties = entrypoint.pop("supportedProperty")
-        self.assertRaises(SyntaxError, doc_maker.class_in_endpoint, class_dict, entrypoint)
+        self.assertRaises(
+            SyntaxError, doc_maker.class_in_endpoint, class_dict, entrypoint)
 
         # check if proper exception is raised when property key is not present
         property_ = properties[0].pop("property")
         entrypoint["supportedProperty"] = properties
-        self.assertRaises(SyntaxError, doc_maker.class_in_endpoint, class_dict, entrypoint)
+        self.assertRaises(
+            SyntaxError, doc_maker.class_in_endpoint, class_dict, entrypoint)
 
         # check if exception is raised when no label key is found in property
         properties[0]["property"] = property_
         label = property_.pop("label")
-        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+        self.assertRaises(
+            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
         property_["label"] = label
 
     def test_output(self):
@@ -170,12 +180,14 @@ class TestClassInEndPoint(unittest.TestCase):
         }
 
         expected_output = (False, None)
-        self.assertEqual(doc_maker.class_in_endpoint(class_dict, entrypoint), expected_output)
+        self.assertEqual(doc_maker.class_in_endpoint(
+            class_dict, entrypoint), expected_output)
 
         # Only the title of the class is needed in the method
         class_dict["title"] = "Order"
         expected_output = (True, '/store/order')
-        self.assertEqual(doc_maker.class_in_endpoint(class_dict, entrypoint), expected_output)
+        self.assertEqual(doc_maker.class_in_endpoint(
+            class_dict, entrypoint), expected_output)
 
 
 class TestCollectionInEndpoint(unittest.TestCase):
@@ -195,19 +207,22 @@ class TestCollectionInEndpoint(unittest.TestCase):
         class_dict = self.doc["supportedClass"][0]
         entrypoint = doc_maker.get_entrypoint(self.doc)
 
-        # check if proper exception is raised when supportedProperty key is not present in entrypoint
+        # check if exception raised is proper when supportedProperty key is not in entrypoint
         properties = entrypoint.pop("supportedProperty")
-        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+        self.assertRaises(
+            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
 
         # check if proper exception is raised when property key is not present
         property_ = properties[0].pop("property")
         entrypoint["supportedProperty"] = properties
-        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+        self.assertRaises(
+            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
 
         # check if exception is raised when no label key is found in property
         properties[0]["property"] = property_
         label = property_.pop("label")
-        self.assertRaises(SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+        self.assertRaises(
+            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
         property_["label"] = label
 
     def test_output(self):
@@ -226,12 +241,14 @@ class TestCollectionInEndpoint(unittest.TestCase):
         }
 
         expected_output = (True, '/pet')
-        self.assertEqual(doc_maker.collection_in_endpoint(class_dict, entrypoint), expected_output)
+        self.assertEqual(doc_maker.collection_in_endpoint(
+            class_dict, entrypoint), expected_output)
 
         # Only the title of the class is needed in the method
         class_dict["title"] = "Order"
         expected_output = (False, None)
-        self.assertEqual(doc_maker.collection_in_endpoint(class_dict, entrypoint), expected_output)
+        self.assertEqual(doc_maker.collection_in_endpoint(
+            class_dict, entrypoint), expected_output)
 
 
 class TestCreateDoc(unittest.TestCase):
@@ -245,7 +262,8 @@ class TestCreateDoc(unittest.TestCase):
     @patch('hydra_python_core.doc_maker.re')
     def test_validations(self, mock_re):
         """
-            Test method to check if exceptions are raised if doc has missing keys or contain syntax errors
+            Test method to check if exceptions are raised if doc has missing keys
+            or contain syntax errors
         """
 
         # Check if proper error raised when no "@id" key is present
@@ -260,8 +278,8 @@ class TestCreateDoc(unittest.TestCase):
     @patch('hydra_python_core.doc_maker.HydraDoc', spec_set=doc_maker.HydraDoc)
     def test_output(self, mock_doc):
         """
-            Test method to check if HydraDoc are instantiated with proper arguments and all necessary
-            functions are called.
+            Test method to check if HydraDoc are instantiated with proper arguments
+            and all necessary functions are called.
         """
 
         server_url = "test_url"
@@ -271,7 +289,8 @@ class TestCreateDoc(unittest.TestCase):
 
         # find out the number of classes
         for class_ in self.doc["supportedClass"]:
-            collection = re.match(r'(.*)Collection(.*)', class_["title"], re.M | re.I)
+            collection = re.match(r'(.*)Collection(.*)',
+                                  class_["title"], re.M | re.I)
             if not collection:
                 class_count += 1
 
@@ -281,15 +300,20 @@ class TestCreateDoc(unittest.TestCase):
                                          api_name, server_url)
 
         # check if all context keys has been added to apidoc
-        self.assertEqual(mock_doc.return_value.add_to_context.call_count, len(self.doc["@context"].keys()))
+        self.assertEqual(mock_doc.return_value.add_to_context.call_count, len(
+            self.doc["@context"].keys()))
 
         # check if all classes has been added to apidoc
-        self.assertEqual(mock_doc.return_value.add_supported_class.call_count, class_count - 2)
+        self.assertEqual(
+            mock_doc.return_value.add_supported_class.call_count, class_count - 2)
 
         # check if all base resource and classes has been added
-        mock_doc.return_value.add_baseResource.assert_called_once()
-        mock_doc.return_value.add_baseCollection.assert_called_once()
-        mock_doc.return_value.gen_EntryPoint.assert_called_once()
+        self.assertEqual(
+            mock_doc.return_value.add_baseResource.call_count, 1)
+        self.assertEqual(
+            mock_doc.return_value.add_baseCollection.call_count, 1)
+        self.assertEqual(
+            mock_doc.return_value.gen_EntryPoint.call_count, 1)
 
         self.assertIsInstance(apidoc, doc_writer.HydraDoc)
 
@@ -309,10 +333,10 @@ class TestCreateProperty(unittest.TestCase):
         property_ = {
             "@type": "SupportedProperty",
             "property": "",
-            "readonly": "true",
+            "readable": "true",
             "required": "false",
             "title": "code",
-            "writeonly": "true"
+            "writeable": "true"
         }
 
         doc_maker.create_property(property_)
@@ -320,7 +344,7 @@ class TestCreateProperty(unittest.TestCase):
                                           required=False, read=True, write=True)
 
         mock_prop.reset_mock()
-        property_["readonly"] = "false"
+        property_["readable"] = "false"
         doc_maker.create_property(property_)
         mock_prop.assert_called_once_with(property_["property"], property_["title"],
                                           required=False, read=False, write=True)
@@ -345,13 +369,15 @@ class TestCreateOperation(unittest.TestCase):
             Test method to check if HydraClassOp is instantiated with proper agruments with
             different input
         """
-
         op = {
             "@type": "http://schema.org/UpdateAction",
             "expects": "null",
             "method": "POST",
+            "expectsHeader": [],
+            "returnsHeader": [],
             "possibleStatus": [
                 {
+                    "title": "Operation successful.",
                     "description": "successful operation",
                     "statusCode": 200
                 }
@@ -360,17 +386,20 @@ class TestCreateOperation(unittest.TestCase):
             "title": "uploads an image"
         }
         doc_maker.create_operation(op)
-        mock_op.assert_called_once_with(op["title"], op["method"], None, None, op["possibleStatus"])
+        mock_op.assert_called_once_with(
+            op["title"], op["method"], None, None, [], [], ANY)
 
         mock_op.reset_mock()
         op["expects"] = "test"
         doc_maker.create_operation(op)
-        mock_op.assert_called_once_with(op["title"], op["method"], "test", None, op["possibleStatus"])
+        mock_op.assert_called_once_with(
+            op["title"], op["method"], "test", None, [], [], ANY)
 
         mock_op.reset_mock()
         op["returns"] = "test"
         obj = doc_maker.create_operation(op)
-        mock_op.assert_called_once_with(op["title"], op["method"], "test", "test", op["possibleStatus"])
+        mock_op.assert_called_once_with(
+            op["title"], op["method"], "test", "test", [], [], ANY)
 
         self.assertIsInstance(obj, doc_writer.HydraClassOp)
 
@@ -394,7 +423,8 @@ class TestCreateStatus(unittest.TestCase):
         }
 
         obj = doc_maker.create_status(status)
-        mock_status.assert_called_once_with(status["statusCode"], status["title"], None)
+        mock_status.assert_called_once_with(
+            status["statusCode"], status["title"], None)
 
         self.assertIsInstance(obj, doc_writer.HydraStatus)
 

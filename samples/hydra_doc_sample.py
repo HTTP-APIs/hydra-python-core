@@ -27,14 +27,13 @@ doc = {
         },
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-        "readonly": "hydra:readonly",
+        "readable": "hydra:readable",
         "required": "hydra:required",
         "returns": {
             "@id": "hydra:returns",
             "@type": "@id"
         },
         "statusCode": "hydra:statusCode",
-        "statusCodes": "hydra:statusCodes",
         "subClassOf": {
             "@id": "rdfs:subClassOf",
             "@type": "@id"
@@ -44,7 +43,10 @@ doc = {
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
         "vocab": "http://petstore.swagger.io/v2/vocab#",
-        "writeonly": "hydra:writeonly"
+        "writeable": "hydra:writeable",
+        "expectsHeader": "hydra:expectsHeader",
+        "returnsHeader": "hydra:returnsHeader",
+        "manages": "hydra:manages"
     },
     "@id": "http://petstore.swagger.io/v2/vocab",
     "@type": "ApiDocumentation",
@@ -67,11 +69,14 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Operation successful.",
+                            "description": "",
                             "statusCode": 200
                         }
                     ],
                     "returns": "vocab:ApiResponse",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "uploads an image"
                 }
             ],
@@ -79,26 +84,26 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "code",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "type",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "message",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "ApiResponse"
@@ -114,11 +119,14 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Successful Operation",
+                            "title": "Successful Operation.",
+                            "description": "",
                             "statusCode": 200
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Create user"
                 },
                 {
@@ -127,19 +135,24 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation.",
+                            "description": "",
                             "statusCode": 200
                         },
                         {
-                            "description": "Invalid username supplied",
+                            "title": "Invalid username supplied",
+                            "description": "",
                             "statusCode": 400
                         },
                         {
-                            "description": "User not found",
+                            "title": "User not found",
+                            "description": "",
                             "statusCode": 404
                         }
                     ],
                     "returns": "vocab:User",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Get user by user name"
                 },
                 {
@@ -148,11 +161,14 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Invalid user supplied",
+                            "title": "Invalid user supplied",
+                            "description": "",
                             "statusCode": 400
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Updated user"
                 }
             ],
@@ -160,66 +176,66 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "username",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "firstName",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "lastName",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "email",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "password",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "phone",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "userStatus",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "User"
@@ -235,15 +251,19 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation",
+                            "description": "",
                             "statusCode": 200
                         },
                         {
-                            "description": "Invalid Order",
+                            "title": "Invalid Order",
+                            "description": "",
                             "statusCode": 400
                         }
                     ],
                     "returns": "vocab:Order",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Place an order for a pet"
                 },
                 {
@@ -252,19 +272,24 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation",
+                            "description": "",
                             "statusCode": 200
                         },
                         {
-                            "description": "Invalid ID supplied",
+                            "title": "Invalid ID supplied",
+                            "description": "",
                             "statusCode": 400
                         },
                         {
-                            "description": "Order not found",
+                            "title": "Order not found",
+                            "description": "",
                             "statusCode": 404
                         }
                     ],
                     "returns": "vocab:Order",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Find purchase order by ID"
                 }
             ],
@@ -272,50 +297,50 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "petId",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "quantity",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "shipDate",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "status",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "complete",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "Order"
@@ -331,11 +356,14 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Invalid input",
+                            "title": "Invalid input",
+                            "description": "",
                             "statusCode": 405
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Add a new pet to the store"
                 },
                 {
@@ -344,11 +372,14 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Invalid ID supplied",
+                            "title": "Invalid ID supplied",
+                            "description": "",
                             "statusCode": 400
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "Update an existing pet"
                 },
                 {
@@ -357,11 +388,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
+                            "title": "Successful operation",
+                            "description": "",
                             "statusCode": 200
                         }
                     ],
                     "returns": "vocab:Pet",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "get all pets"
                 }
             ],
@@ -369,50 +403,50 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "id",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "category",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "true",
                     "title": "name",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "true",
                     "title": "photoUrls",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "tags",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "status",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "Pet"
@@ -426,10 +460,10 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "null",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "Collection"
@@ -455,7 +489,9 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:UserCollection",
-                    "statusCodes": []
+                    "expectsHeader": [],
+                    "returnsHeader": [],
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:user_create",
@@ -464,9 +500,12 @@ doc = {
                     "expects": "vocab:User",
                     "method": "PUT",
                     "returns": "vocab:User",
-                    "statusCodes": [
+                    "expectsHeader": [],
+                    "returnsHeader": [],
+                    "possibleStatus": [
                         {
-                            "description": "If the User entity was created successfully.",
+                            "title": "If the User entity was created successfully.",
+                            "description": "",
                             "statusCode": 201
                         }
                     ]
@@ -477,10 +516,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The user",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "UserCollection"
@@ -498,7 +537,9 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:PetCollection",
-                    "statusCodes": []
+                    "expectsHeader": [],
+                    "returnsHeader": [],
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:pet_create",
@@ -507,9 +548,12 @@ doc = {
                     "expects": "vocab:Pet",
                     "method": "PUT",
                     "returns": "vocab:Pet",
-                    "statusCodes": [
+                    "expectsHeader": [],
+                    "returnsHeader": [],
+                    "possibleStatus": [
                         {
-                            "description": "If the Pet entity was created successfully.",
+                            "title": "If the Pet entity was created successfully.",
+                            "description": "",
                             "statusCode": 201
                         }
                     ]
@@ -520,10 +564,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The pet",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "PetCollection"
@@ -540,7 +584,9 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "null",
-                    "statusCodes": "vocab:EntryPoint"
+                    "expectsHeader": [],
+                    "returnsHeader": [],
+                    "possibleStatus": "vocab:EntryPoint"
                 }
             ],
             "supportedProperty": [
@@ -563,18 +609,21 @@ doc = {
                                 "label": "uploads an image",
                                 "method": "POST",
                                 "returns": "vocab:ApiResponse",
-                                "statusCodes": [
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": [
                                     {
-                                        "description": "successful operation",
+                                        "title": "successful operation",
+                                        "description": "",
                                         "statusCode": 200
                                     }
                                 ]
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The Order Class",
@@ -595,13 +644,17 @@ doc = {
                                 "label": "Place an order for a pet",
                                 "method": "POST",
                                 "returns": "vocab:Order",
-                                "statusCodes": [
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": [
                                     {
-                                        "description": "successful operation",
+                                        "title": "Successful operation",
+                                        "description": "",
                                         "statusCode": 200
                                     },
                                     {
-                                        "description": "Invalid Order",
+                                        "title": "Invalid Order",
+                                        "description": "",
                                         "statusCode": 400
                                     }
                                 ]
@@ -614,26 +667,31 @@ doc = {
                                 "label": "Find purchase order by ID",
                                 "method": "GET",
                                 "returns": "vocab:Order",
-                                "statusCodes": [
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": [
                                     {
-                                        "description": "successful operation",
+                                        "title": "successful operation",
+                                        "description": "",
                                         "statusCode": 200
                                     },
                                     {
-                                        "description": "Invalid ID supplied",
+                                        "title": "Invalid ID supplied",
+                                        "description": "",
                                         "statusCode": 400
                                     },
                                     {
-                                        "description": "Order not found",
+                                        "title": "Order not found",
+                                        "description": "",
                                         "statusCode": 404
                                     }
                                 ]
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The UserCollection collection",
@@ -653,7 +711,9 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:UserCollection",
-                                "statusCodes": []
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:user_create",
@@ -662,18 +722,21 @@ doc = {
                                 "expects": "vocab:User",
                                 "method": "PUT",
                                 "returns": "vocab:User",
-                                "statusCodes": [
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": [
                                     {
-                                        "description": "If the User entity was created successfully.",
+                                        "title": "If the User entity was created successfully.",
+                                        "description": "",
                                         "statusCode": 201
                                     }
                                 ]
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The PetCollection collection",
@@ -693,7 +756,9 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:PetCollection",
-                                "statusCodes": []
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:pet_create",
@@ -702,18 +767,21 @@ doc = {
                                 "expects": "vocab:Pet",
                                 "method": "PUT",
                                 "returns": "vocab:Pet",
-                                "statusCodes": [
+                                "expectsHeader": [],
+                                "returnsHeader": [],
+                                "possibleStatus": [
                                     {
-                                        "description": "If the Pet entity was created successfully.",
+                                        "title": "If the Pet entity was created successfully.",
+                                        "description": "",
                                         "statusCode": 201
                                     }
                                 ]
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "EntryPoint"
