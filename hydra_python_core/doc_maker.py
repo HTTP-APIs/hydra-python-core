@@ -3,8 +3,8 @@ create a HydraDoc object for it
 """
 import re
 import json
-from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
-from hydra_python_core.doc_writer import HydraStatus
+from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp,
+                                          HydraClassOp, HydraStatus, HydraLink)
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
@@ -17,6 +17,7 @@ def error_mapping(body: str=None) -> str:
         "doc": "The API Documentation must have",
         "class_dict": "Class must have",
         "supported_prop": "Property must have",
+        "link_prop": "Link property must have",
         "supported_op": "Operation must have",
         "possible_status": "Status must have"
     }
@@ -247,11 +248,42 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     for k, literal in doc_keys.items():
         result[k] = input_key_check(
             supported_prop, k, "supported_prop", literal)
+    # Check if it's a link property
+    if isinstance(result["property"], Dict):
+        result["property"] = create_link_property(result["property"])
     # Create the HydraClassProp object
     prop = HydraClassProp(result["property"], result["title"], required=result["required"],
                           read=result["readable"], write=result["writeable"])
     return prop
 
+
+def create_link_property(
+        link_prop_dict: Dict[str, Any]) -> HydraLink:
+    """Create HydraLink objects for link properties in the API Documentation."""
+    id_ = link_prop_dict["@id"]
+
+    doc_keys = {
+        "title": False,
+        "description": False,
+        "supportedOperation": False,
+        "range": False,
+        "domain": False
+    }
+
+    result = {}
+    for k, literal in doc_keys.items():
+        result[k] = input_key_check(link_prop_dict, k, "link_prop", literal)
+
+    # Create the HydraLink object
+    link = HydraLink(
+        id_, result["title"], result["description"], result["domain"], result["range"])
+
+    # Add supportedOperation for the Link
+    for op in result["supportedOperation"]:
+        op_obj = create_operation(op)
+        link.add_supported_op(op_obj)
+
+    return link
 
 def class_in_endpoint(
         class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
