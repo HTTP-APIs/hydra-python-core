@@ -285,6 +285,7 @@ def create_link_property(
 
     return link
 
+
 def class_in_endpoint(
         class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a class.
