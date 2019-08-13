@@ -594,7 +594,7 @@ doc = {
                     "hydra:description": "The ApiResponse Class",
                     "hydra:title": "apiresponse",
                     "property": {
-                        "@id": "vocab:EntryPoint//pet/uploadImage",
+                        "@id": "vocab:EntryPoint/pet/uploadImage",
                         "@type": "hydra:Link",
                         "description": "ApiResponse",
                         "domain": "vocab:EntryPoint",
@@ -629,7 +629,7 @@ doc = {
                     "hydra:description": "The Order Class",
                     "hydra:title": "order",
                     "property": {
-                        "@id": "vocab:EntryPoint//store/order",
+                        "@id": "vocab:EntryPoint/store/order",
                         "@type": "hydra:Link",
                         "description": "this is def",
                         "domain": "vocab:EntryPoint",
@@ -697,7 +697,7 @@ doc = {
                     "hydra:description": "The UserCollection collection",
                     "hydra:title": "usercollection",
                     "property": {
-                        "@id": "vocab:EntryPoint//user",
+                        "@id": "vocab:EntryPoint/user",
                         "@type": "hydra:Link",
                         "description": "The UserCollection collection",
                         "domain": "vocab:EntryPoint",
@@ -742,7 +742,7 @@ doc = {
                     "hydra:description": "The PetCollection collection",
                     "hydra:title": "petcollection",
                     "property": {
-                        "@id": "vocab:EntryPoint//pet",
+                        "@id": "vocab:EntryPoint/pet",
                         "@type": "hydra:Link",
                         "description": "The PetCollection collection",
                         "domain": "vocab:EntryPoint",
