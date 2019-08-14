@@ -169,7 +169,7 @@ class HydraClassProp():
     """Template for a new property."""
 
     def __init__(self,
-                 prop: str,
+                 prop: Union[str, 'HydraLink'],
                  title: str,
                  read: bool,
                  write: bool,
@@ -189,11 +189,14 @@ class HydraClassProp():
         prop = {
             "@type": "SupportedProperty",
             "title": self.title,
-            "property": self.prop,
             "required": self.required,
             "readable": self.read,
             "writeable": self.write
         }
+        if isinstance(self.prop, HydraLink):
+            prop["property"] = self.prop.generate()
+        else:
+            prop["property"] = self.prop
         if len(self.desc) > 0:
             prop["description"] = self.desc
         return prop
@@ -627,6 +630,46 @@ class HydraError(HydraStatus):
         """Get error response body"""
         error = HydraStatus.generate(self, status_type="Error")
         return error
+
+
+class HydraLink():
+    """Template for a link property."""
+
+    def __init__(
+            self, id_: str, title: str = "",
+            desc: str = "", domain: str = "", range_: str = "") -> None:
+        """Initialize the Hydra_Link."""
+        self.id_ = id_ if "http" in id_ else "vocab:{}".format(id_)
+        self.range = range_
+        self.title = title
+        self.desc = desc
+        self.domain = domain
+        self.supportedOperation = list()  # type: List
+
+    def add_supported_op(
+            self, op: Union['EntryPointOp', 'HydraClassOp']) -> None:
+        """Add a new supportedOperation.
+
+        Raises:
+            TypeError: If `op` is not an instance of `HydraClassOp` or `EntryPointOp`
+
+        """
+        if not isinstance(op, (HydraClassOp, EntryPointOp)):
+            raise TypeError("Type is not <HydraClassOp>")
+        self.supportedOperation.append(op)
+
+    def generate(self) -> Dict[str, Any]:
+        """Get the Hydra link as a python dict."""
+        link = {
+            "@id": self.id_,
+            "@type": "hydra:Link",
+            "title": self.title,
+            "description": self.desc,
+            "range": self.range,
+            "domain": self.domain,
+            "supportedOperation": [x.generate() for x in self.supportedOperation],
+        }
+        return link
 
 
 class Context():
