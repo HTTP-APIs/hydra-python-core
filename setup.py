@@ -9,5 +9,7 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     url='https://github.com/HTTP-APIs/hydra-python-core',
-    zip_safe=False
+    zip_safe=False,
+    author='Hydra Ecosystem',
+    author_email='collective@hydraecosystem.org',
 )
