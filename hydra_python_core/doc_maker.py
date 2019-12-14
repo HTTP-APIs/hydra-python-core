@@ -240,11 +240,9 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     doc_keys = {
         "property": False,
         "title": False,
-        "readable": True,
-        "writeable": True,
         "required": True
     }
-    result = {}
+    result = {"readable": True,"writeable": True,}
     for k, literal in doc_keys.items():
         result[k] = input_key_check(
             supported_prop, k, "supported_prop", literal)
@@ -367,11 +365,14 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
         "method": False,
         "expects": True,
         "returns": True,
-        "expectsHeader": False,
-        "returnsHeader": False,
         "possibleStatus": False
     }
-    result = {}
+    result = {"expectsHeader": [], "returnsHeader": []}
+    if "expectsHeader" in supported_op:
+        doc_keys["expectsHeader"] = False
+    if "returnsHeader" in supported_op:
+        doc_keys["returnsHeader"] = False
+
     for k, literal in doc_keys.items():
         result[k] = input_key_check(supported_op, k, "supported_op", literal)
     possible_statuses = list()
@@ -391,11 +392,12 @@ def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     doc_keys = {
-        "title": False,
         "statusCode": False,
         "description": True
     }
-    result = {}
+    result = {"title": ""}
+    if "title" in possible_status:
+        doc_keys["title"] = False;
     for k, literal in doc_keys.items():
         result[k] = input_key_check(
             possible_status, k, "possible_status", literal)
