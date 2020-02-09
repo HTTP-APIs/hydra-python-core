@@ -562,10 +562,10 @@ class IriTemplateMapping():
     def generate(self) -> Dict[str, Any]:
         """Get IriTemplateMapping as a python dict"""
         iri_template_mapping = {
-            "@type": "IriTemplateMapping",
-            "variable": self.variable,
-            "property": self.prop,
-            "required": self.required
+            "@type": "hydra:IriTemplateMapping",
+            "hydra:variable": self.variable,
+            "hydra:property": self.prop,
+            "hydra:required": self.required
         }
         return iri_template_mapping
 
@@ -587,10 +587,10 @@ class HydraIriTemplate():
     def generate(self) -> Dict[str, Any]:
         """Get IriTemplate as a python dict"""
         iri_template = {
-            "@type": "IriTemplate",
-            "template": self.template,
-            "variableRepresentation": self.variable_rep,
-            "mapping": [x.generate() for x in self.mapping]
+            "@type": "hydra:IriTemplate",
+            "hydra:template": self.template,
+            "hydra:variableRepresentation": self.variable_rep,
+            "hydra:mapping": [x.generate() for x in self.mapping]
         }
         return iri_template
 
@@ -757,7 +757,8 @@ class Context():
                 "subClassOf": {
                     "@id": "rdfs:subClassOf",
                     "@type": "@id"
-                }
+                },
+                "search": "hydra:search"
             }
 
     def createContext(self, object_: Dict[str, Any]) -> None:
