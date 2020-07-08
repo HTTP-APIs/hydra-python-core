@@ -21,9 +21,9 @@ class HydraDoc():
         self.desc = desc
 
     def add_supported_class(
-            self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
-            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True,
-            collection_manages: Union[Dict[str, Any], List]=None) -> None:
+            self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection'] = False,
+            collection_path: str = None, collectionGet: bool = True, collectionPost: bool = True,
+            collection_manages: Union[Dict[str, Any], List] = None) -> None:
         """Add a new supportedClass.
 
         Raises:
@@ -110,8 +110,8 @@ class HydraClass():
     """Template for a new class."""
 
     def __init__(
-            self, id_: str, title: str, desc: str, path: str=None,
-            endpoint: bool=False, sub_classof: None=None) -> None:
+            self, id_: str, title: str, desc: str, path: str = None,
+            endpoint: bool = False, sub_classof: None = None) -> None:
         """Initialize the Hydra_Class."""
         self.id_ = id_ if "http" in id_ else "vocab:{}".format(id_)
         self.title = title
@@ -212,7 +212,7 @@ class HydraClassOp():
                  returns: Optional[str],
                  expects_header: List[str] = [],
                  returns_header: List[str] = [],
-                 possible_status: List[Union['HydraStatus', 'HydraError']]=[],
+                 possible_status: List[Union['HydraStatus', 'HydraError']] = [],
                  ) -> None:
         """Initialize the Hydra_Prop."""
         self.title = title
@@ -254,8 +254,8 @@ class HydraCollection():
 
     def __init__(
             self, class_: HydraClass,
-            collection_path: str=None, manages: Union[Dict[str, Any], List]=None,
-            get: bool=True, post: bool=True) -> None:
+            collection_path: str = None, manages: Union[Dict[str, Any], List] = None,
+            get: bool = True, post: bool = True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = "{}Collection".format(class_.title)
@@ -314,7 +314,7 @@ class HydraCollectionOp():
                  returns: Optional[str],
                  expects_header: List[str] = [],
                  returns_header: List[str] = [],
-                 possible_status: List[Union['HydraStatus', 'HydraError']]=[],
+                 possible_status: List[Union['HydraStatus', 'HydraError']] = [],
                  ) -> None:
         """Create method."""
         self.id_ = id_
@@ -361,6 +361,8 @@ class HydraEntryPoint():
                 entrypoint),
             entrypoint=self)
 
+        self.collections: List[EntryPointCollection] = []
+
     def add_Class(self, class_: HydraClass) -> None:
         """Add supportedProperty to the EntryPoint.
 
@@ -385,6 +387,7 @@ class HydraEntryPoint():
         if not isinstance(collection, HydraCollection):
             raise TypeError("Type is not <HydraCollection>")
         entrypoint_collection = EntryPointCollection(collection)
+        self.collections.append(entrypoint_collection.generate())
         self.entrypoint.add_supported_prop(entrypoint_collection)
         self.context.add(entrypoint_collection.name, {
                          "@id": entrypoint_collection.id_, "@type": "@id"})
@@ -402,9 +405,23 @@ class HydraEntryPoint():
         }
         for item in self.entrypoint.supportedProperty:
             uri = item.id_
-            object_[item.name] = uri.replace(
-                "vocab:EntryPoint", "/{}".format(self.api))
-
+            if item.generate() in self.collections:
+                object_['collections'] = []
+                collection_returned = item.generate()
+                collection_id = uri.replace(
+                    "vocab:EntryPoint", "/{}".format(self.api))
+                # TODO Add manages block too.
+                collection_to_append = {
+                    "@id": collection_id,
+                    'title': collection_returned['hydra:title'],
+                    '@type': "Collection",
+                    "supportedOperation": collection_returned['property']['supportedOperation'],
+                }
+                object_['collections'].append(collection_to_append)
+            else:
+                object_[item.name] = uri.replace(
+                    "vocab:EntryPoint", "/{}".format(self.api))
+                    
         return object_
 
 
@@ -501,7 +518,7 @@ class EntryPointOp():
                  returns: Optional[str],
                  expects_header: List[str] = [],
                  returns_header: List[str] = [],
-                 possible_status: List[Union['HydraStatus', 'HydraError']]=[],
+                 possible_status: List[Union['HydraStatus', 'HydraError']] = [],
                  type_: Optional[str] = None,
                  label: str = "",
                  ) -> None:
@@ -724,7 +741,6 @@ class Context():
                 "label": "rdfs:label",
                 "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
                 "vocab": "{}/vocab#".format(address),
-                # "vocab": "localhost/api/vocab#",
                 "domain": {
                     "@type": "@id",
                     "@id": "rdfs:domain"
