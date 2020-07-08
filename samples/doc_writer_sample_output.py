@@ -349,6 +349,10 @@ doc = {
             "@id": "vocab:dummyClassCollection",
             "@type": "hydra:Class",
             "description": "A collection of dummyclass",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -399,6 +403,10 @@ doc = {
             "@id": "vocab:extraClassCollection",
             "@type": "hydra:Class",
             "description": "A collection of extraclass",
+            "manages": {
+                "object": "vocab:extraClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -606,6 +614,10 @@ doc = {
                         "description": "The dummyClassCollection collection",
                         "domain": "vocab:EntryPoint",
                         "label": "dummyClassCollection",
+                        "manages": {
+                            "object": "vocab:dummyClass",
+                            "property": "rdf:type"
+                        },
                         "range": "vocab:dummyClassCollection",
                         "supportedOperation": [
                             {
@@ -653,6 +665,10 @@ doc = {
                         "description": "The extraClassCollection collection",
                         "domain": "vocab:EntryPoint",
                         "label": "extraClassCollection",
+                        "manages": {
+                            "object": "vocab:extraClass",
+                            "property": "rdf:type"
+                        },
                         "range": "vocab:extraClassCollection",
                         "supportedOperation": [
                             {

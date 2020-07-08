@@ -260,12 +260,19 @@ class HydraCollection():
         self.class_ = class_
         self.name = "{}Collection".format(class_.title)
         self.path = collection_path if collection_path else self.name
-        self.manages = manages
+
         self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
                                                  False, False, False,
                                                  "The {}".format(self.class_.title.lower()))]
+
+        if manages is None:
+            # provide default manages block
+            self.manages = {
+                "property": "rdf:type",
+                "object": class_.id_,
+            }
 
         if get:
             get_op = HydraCollectionOp("_:{}_collection_retrieve".format(self.class_.title.lower()),
@@ -295,10 +302,9 @@ class HydraCollection():
             "title": "{}".format(self.name),
             "description": "A collection of {}".format(self.class_.title.lower()),
             "supportedOperation": [x.generate() for x in self.supportedOperation],
-            "supportedProperty": [x.generate() for x in self.supportedProperty]
+            "supportedProperty": [x.generate() for x in self.supportedProperty],
+            "manages": self.manages
         }
-        if self.manages is not None:
-            collection["manages"] = self.manages
         return collection
 
 
@@ -416,12 +422,13 @@ class HydraEntryPoint():
                     'title': collection_returned['hydra:title'],
                     '@type': "Collection",
                     "supportedOperation": collection_returned['property']['supportedOperation'],
+                    "manages": collection_returned['property']['manages']
                 }
                 object_['collections'].append(collection_to_append)
             else:
                 object_[item.name] = uri.replace(
                     "vocab:EntryPoint", "/{}".format(self.api))
-                    
+
         return object_
 
 
@@ -432,6 +439,7 @@ class EntryPointCollection():
         """Create method."""
         self.name = collection.name
         self.supportedOperation = collection.supportedOperation
+        self.manages = collection.manages
         if collection.path:
             self.id_ = "vocab:EntryPoint/{}".format(collection.path)
         else:
@@ -447,7 +455,8 @@ class EntryPointCollection():
                 "description": "The {} collection".format(self.name,),
                 "domain": "vocab:EntryPoint",
                 "range": "vocab:{}".format(self.name,),
-                "supportedOperation": []
+                "supportedOperation": [],
+                "manages": self.manages
             },
             "hydra:title": self.name.lower(),
             "hydra:description": "The {} collection".format(self.name,),
