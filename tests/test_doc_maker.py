@@ -131,7 +131,7 @@ class TestCreateClass(unittest.TestCase):
 
 class TestClassInEndPoint(unittest.TestCase):
     """
-        Test Class for class_in_endpoint method
+        Test Class for get_endpoint_and_path method
     """
 
     def setUp(self):
@@ -149,19 +149,19 @@ class TestClassInEndPoint(unittest.TestCase):
         # check if exception raised is proper when supportedProperty key is not in entrypoint
         properties = entrypoint.pop("supportedProperty")
         self.assertRaises(
-            SyntaxError, doc_maker.class_in_endpoint, class_dict, entrypoint)
+            SyntaxError, doc_maker.get_endpoint_and_path, class_dict, entrypoint)
 
         # check if proper exception is raised when property key is not present
         property_ = properties[0].pop("property")
         entrypoint["supportedProperty"] = properties
         self.assertRaises(
-            SyntaxError, doc_maker.class_in_endpoint, class_dict, entrypoint)
+            SyntaxError, doc_maker.get_endpoint_and_path, class_dict, entrypoint)
 
         # check if exception is raised when no label key is found in property
         properties[0]["property"] = property_
         label = property_.pop("label")
         self.assertRaises(
-            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
+            SyntaxError, doc_maker.get_endpoint_and_path, class_dict, entrypoint)
         property_["label"] = label
 
     def test_output(self):
@@ -180,74 +180,13 @@ class TestClassInEndPoint(unittest.TestCase):
         }
 
         expected_output = (False, None)
-        self.assertEqual(doc_maker.class_in_endpoint(
+        self.assertEqual(doc_maker.get_endpoint_and_path(
             class_dict, entrypoint), expected_output)
 
         # Only the title of the class is needed in the method
         class_dict["title"] = "Order"
         expected_output = (True, '/store/order')
-        self.assertEqual(doc_maker.class_in_endpoint(
-            class_dict, entrypoint), expected_output)
-
-
-class TestCollectionInEndpoint(unittest.TestCase):
-    """
-        Test Class for collection_in_endpoint method
-    """
-
-    def setUp(self):
-        self.doc = hydra_doc_sample.doc
-
-    def test_validations(self):
-        """
-            Test method to check if proper exceptions are raised when entrypoint has missing keys or
-            contains syntax errors
-        """
-
-        class_dict = self.doc["supportedClass"][0]
-        entrypoint = doc_maker.get_entrypoint(self.doc)
-
-        # check if exception raised is proper when supportedProperty key is not in entrypoint
-        properties = entrypoint.pop("supportedProperty")
-        self.assertRaises(
-            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
-
-        # check if proper exception is raised when property key is not present
-        property_ = properties[0].pop("property")
-        entrypoint["supportedProperty"] = properties
-        self.assertRaises(
-            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
-
-        # check if exception is raised when no label key is found in property
-        properties[0]["property"] = property_
-        label = property_.pop("label")
-        self.assertRaises(
-            SyntaxError, doc_maker.collection_in_endpoint, class_dict, entrypoint)
-        property_["label"] = label
-
-    def test_output(self):
-        """
-            Test method to check if proper output is obtained when class title is manipulated
-        """
-
-        entrypoint = doc_maker.get_entrypoint(self.doc)
-        class_dict = {
-            "@id": "vocab:Pet",
-            "@type": "hydra:Class",
-            "title": "Pet",
-            "description": "Pet",
-            "supportedProperty": [],
-            "supportedOperation": [],
-        }
-
-        expected_output = (True, '/pet')
-        self.assertEqual(doc_maker.collection_in_endpoint(
-            class_dict, entrypoint), expected_output)
-
-        # Only the title of the class is needed in the method
-        class_dict["title"] = "Order"
-        expected_output = (False, None)
-        self.assertEqual(doc_maker.collection_in_endpoint(
+        self.assertEqual(doc_maker.get_endpoint_and_path(
             class_dict, entrypoint), expected_output)
 
 
