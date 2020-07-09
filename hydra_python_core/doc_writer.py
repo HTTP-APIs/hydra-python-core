@@ -1,5 +1,6 @@
 """API Doc templates generator."""
 from typing import Any, Dict, List, Optional, Union
+from urllib.parse import quote
 
 
 class HydraDoc():
@@ -22,6 +23,7 @@ class HydraDoc():
 
     def add_supported_class(
             self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection'] = False,
+            collection_name: str = None,
             collection_path: str = None, collectionGet: bool = True, collectionPost: bool = True,
             collection_manages: Union[Dict[str, Any], List] = None) -> None:
         """Add a new supportedClass.
@@ -40,7 +42,7 @@ class HydraDoc():
         }
         if collection:
             collection = HydraCollection(
-                class_, collection_path, collection_manages, collectionGet, collectionPost)
+                class_, collection_name, collection_path, collection_manages, collectionGet, collectionPost)
             self.collections[collection.path] = {
                 "context": Context(address="{}{}".format(self.base_url, self.API),
                                    collection=collection), "collection": collection}
@@ -254,19 +256,20 @@ class HydraCollection():
 
     def __init__(
             self, class_: HydraClass,
-            collection_path: str = None, manages: Union[Dict[str, Any], List] = None,
+            collection_name: str = None,
+            collection_path: str = None,
+            manages: Union[Dict[str, Any], List] = None,
             get: bool = True, post: bool = True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
-        self.name = "{}Collection".format(class_.title)
+        self.name = "{}Collection".format(class_.title) \
+            if (collection_name is None) else collection_name
         self.path = collection_path if collection_path else self.name
-
         self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
                                                  False, False, False,
                                                  "The {}".format(self.class_.title.lower()))]
-
         if manages is None:
             # provide default manages block
             self.manages = {
@@ -295,9 +298,12 @@ class HydraCollection():
 
     def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
+
+        # encode name because name might contain spaces or special Characters.
+        name = quote(self.name, safe='')
         collection = {
-            "@id": "vocab:{}".format(self.name,),
-            "@type": "hydra:Class",
+            "@id": "vocab:{}".format(name),
+            "@type": "Collection",
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "title": "{}".format(self.name),
             "description": "A collection of {}".format(self.class_.title.lower()),
@@ -416,7 +422,6 @@ class HydraEntryPoint():
                 collection_returned = item.generate()
                 collection_id = uri.replace(
                     "vocab:EntryPoint", "/{}".format(self.api))
-                # TODO Add manages block too.
                 collection_to_append = {
                     "@id": collection_id,
                     'title': collection_returned['hydra:title'],
@@ -441,9 +446,10 @@ class EntryPointCollection():
         self.supportedOperation = collection.supportedOperation
         self.manages = collection.manages
         if collection.path:
-            self.id_ = "vocab:EntryPoint/{}".format(collection.path)
+            self.id_ = "vocab:EntryPoint/{}".format(
+                quote(collection.path, safe=''))
         else:
-            self.id_ = "vocab:EntryPoint/{}".format(self.name)
+            self.id_ = "vocab:EntryPoint/{}".format(quote(self.name, safe=''))
 
     def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
