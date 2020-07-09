@@ -22,10 +22,10 @@ class HydraDoc():
         self.desc = desc
 
     def add_supported_class(
-            self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection'] = False,
-            collection_name: str = None,
-            collection_path: str = None, collectionGet: bool = True, collectionPost: bool = True,
-            collection_manages: Union[Dict[str, Any], List] = None) -> None:
+            self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
+            collection_name: str=None,
+            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True,
+            collection_manages: Union[Dict[str, Any], List]=None) -> None:
         """Add a new supportedClass.
 
         Raises:
@@ -42,7 +42,8 @@ class HydraDoc():
         }
         if collection:
             collection = HydraCollection(
-                class_, collection_name, collection_path, collection_manages, collectionGet, collectionPost)
+                class_, collection_name, collection_path, collection_manages, collectionGet,
+                collectionPost)
             self.collections[collection.path] = {
                 "context": Context(address="{}{}".format(self.base_url, self.API),
                                    collection=collection), "collection": collection}
@@ -112,8 +113,8 @@ class HydraClass():
     """Template for a new class."""
 
     def __init__(
-            self, id_: str, title: str, desc: str, path: str = None,
-            endpoint: bool = False, sub_classof: None = None) -> None:
+            self, id_: str, title: str, desc: str, path: str=None,
+            endpoint: bool=False, sub_classof: None=None) -> None:
         """Initialize the Hydra_Class."""
         self.id_ = id_ if "http" in id_ else "vocab:{}".format(id_)
         self.title = title
@@ -176,7 +177,7 @@ class HydraClassProp():
                  read: bool,
                  write: bool,
                  required: bool,
-                 desc: str = "",
+                 desc: str="",
                  ) -> None:
         """Initialize the Hydra_Prop."""
         self.prop = prop
@@ -212,9 +213,9 @@ class HydraClassOp():
                  method: str,
                  expects: Optional[str],
                  returns: Optional[str],
-                 expects_header: List[str] = [],
-                 returns_header: List[str] = [],
-                 possible_status: List[Union['HydraStatus', 'HydraError']] = [],
+                 expects_header: List[str]=[],
+                 returns_header: List[str]=[],
+                 possible_status: List[Union['HydraStatus', 'HydraError']]=[],
                  ) -> None:
         """Initialize the Hydra_Prop."""
         self.title = title
@@ -256,10 +257,10 @@ class HydraCollection():
 
     def __init__(
             self, class_: HydraClass,
-            collection_name: str = None,
-            collection_path: str = None,
-            manages: Union[Dict[str, Any], List] = None,
-            get: bool = True, post: bool = True) -> None:
+            collection_name: str=None,
+            collection_path: str=None,
+            manages: Union[Dict[str, Any], List]=None,
+            get: bool=True, post: bool=True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = "{}Collection".format(class_.title) \
@@ -281,19 +282,19 @@ class HydraCollection():
             get_op = HydraCollectionOp("_:{}_collection_retrieve".format(self.class_.title.lower()),
                                        "http://schema.org/FindAction",
                                        "GET", "Retrieves all {} entities".format(
-                                           self.class_.title),
-                                       None, "vocab:{}".format(self.name), [], [], [])
+                self.class_.title),
+                None, "vocab:{}".format(self.name), [], [], [])
             self.supportedOperation.append(get_op)
 
         if post:
             post_op = HydraCollectionOp("_:{}_create".format(self.class_.title.lower()),
                                         "http://schema.org/AddAction",
                                         "PUT", "Create new {} entity".format(
-                                            self.class_.title),
-                                        self.class_.id_, self.class_.id_, [], [],
-                                        [HydraStatus(code=201, desc="If the {} entity was created"
-                                                     "successfully.".format(self.class_.title))]
-                                        )
+                self.class_.title),
+                self.class_.id_, self.class_.id_, [], [],
+                [HydraStatus(code=201, desc="If the {} entity was created"
+                             "successfully.".format(self.class_.title))]
+            )
             self.supportedOperation.append(post_op)
 
     def generate(self) -> Dict[str, Any]:
@@ -324,9 +325,9 @@ class HydraCollectionOp():
                  desc: str,
                  expects: Optional[str],
                  returns: Optional[str],
-                 expects_header: List[str] = [],
-                 returns_header: List[str] = [],
-                 possible_status: List[Union['HydraStatus', 'HydraError']] = [],
+                 expects_header: List[str]=[],
+                 returns_header: List[str]=[],
+                 possible_status: List[Union['HydraStatus', 'HydraError']]=[],
                  ) -> None:
         """Create method."""
         self.id_ = id_
@@ -531,11 +532,11 @@ class EntryPointOp():
                  desc: str,
                  expects: Optional[str],
                  returns: Optional[str],
-                 expects_header: List[str] = [],
-                 returns_header: List[str] = [],
-                 possible_status: List[Union['HydraStatus', 'HydraError']] = [],
-                 type_: Optional[str] = None,
-                 label: str = "",
+                 expects_header: List[str]=[],
+                 returns_header: List[str]=[],
+                 possible_status: List[Union['HydraStatus', 'HydraError']]=[],
+                 type_: Optional[str]=None,
+                 label: str="",
                  ) -> None:
         """Create method."""
         self.id_ = id_
@@ -586,7 +587,7 @@ class IriTemplateMapping():
     def __init__(self,
                  variable: str,
                  prop: str,
-                 required: bool = False):
+                 required: bool=False):
         self.variable = variable
         self.prop = prop
         self.required = required
@@ -608,7 +609,7 @@ class HydraIriTemplate():
     def __init__(self,
                  template: str,
                  iri_mapping: List[IriTemplateMapping] = [],
-                 basic_representation: bool = True):
+                 basic_representation: bool=True):
         self.template = template
         if basic_representation:
             self.variable_rep = "hydra:BasicRepresentation"
@@ -630,14 +631,14 @@ class HydraIriTemplate():
 class HydraStatus():
     """Class for possibleStatus in Hydra Doc."""
 
-    def __init__(self, code: int, id_: str = None, title: str = "", desc: str = "") -> None:
+    def __init__(self, code: int, id_: str=None, title: str="", desc: str="") -> None:
         """Create method."""
         self.code = code
         self.id_ = id_
         self.title = title
         self.desc = desc
 
-    def generate(self, status_type: str = "Status") -> Dict[str, Any]:
+    def generate(self, status_type: str="Status") -> Dict[str, Any]:
         """Get as Python dict."""
         status = {
             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
@@ -654,7 +655,7 @@ class HydraStatus():
 class HydraError(HydraStatus):
     """Class for Hydra Error to represent error details."""
 
-    def __init__(self, code: int, id_: str = None, title: str = "", desc: str = "") -> None:
+    def __init__(self, code: int, id_: str=None, title: str="", desc: str="") -> None:
         """Create method"""
         super().__init__(code, id_, title, desc)
 
@@ -668,8 +669,8 @@ class HydraLink():
     """Template for a link property."""
 
     def __init__(
-            self, id_: str, title: str = "",
-            desc: str = "", domain: str = "", range_: str = "") -> None:
+            self, id_: str, title: str="",
+            desc: str = "", domain: str="", range_: str="") -> None:
         """Initialize the Hydra_Link."""
         self.id_ = id_ if "http" in id_ else "vocab:{}".format(id_)
         self.range = range_
@@ -709,10 +710,10 @@ class Context():
 
     def __init__(self,
                  address: str,
-                 adders: Dict = {},
-                 class_: Optional[HydraClass] = None,
-                 collection: Optional[HydraCollection] = None,
-                 entrypoint: Optional[HydraEntryPoint] = None,
+                 adders: Dict={},
+                 class_: Optional[HydraClass]=None,
+                 collection: Optional[HydraCollection]=None,
+                 entrypoint: Optional[HydraEntryPoint]=None,
                  ) -> None:
         """Initialize context."""
         # NOTE: adders is a dictionary containing additional
