@@ -72,17 +72,19 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     if not all(key in doc for key in ('@context', '@id', '@type')):
         raise SyntaxError("Please make sure doc contains @context, @id and @type")
 
-    #preserve the context
     _context = doc['@context']
-    # expand the apidoc:
     _id = ''
     _entrypoint = ''
     _title = '',
     _description = ''
     _classes = []
     _collections = []
+    _possible_status = []
+    _endpoint_class = []
+    _endpoint_collection = []
     expanded_doc = jsonld.expand(doc)
 
+    # TODO refactor them into different helper functions
     for item in expanded_doc:
         _id = item['@id']
         for entrypoint in item[hydra['entrypoint']]:
@@ -102,14 +104,67 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
                 for prop in supported_prop[hydra['property']]:
                     if prop['@id'] == hydra['manages']:
                         _collections.append(classes)
-                        return
+                        continue
                 _classes.append(classes)
-                return
-            return
+                continue
+            continue
+        for status in item[hydra['supportedClass']]:
+            _possible_status.append(status)
 
     # Extract base_url, entrypoint and API name
     base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
     entrypoint = _entrypoint
+
+    # get endpoint classes and collection:
+    # if the resources are descriptive than check from there
+    # if not present than hit that endpoint to make sure it's a class or collection:
+
+    entrypoint_res = requests.get(entrypoint).json()
+
+    #to determine whether a url is relative or absolute check the host name. if host name is empty, it's absolute.
+
+    # check if entrypoint has @type and @context and @id
+    if not all(key in doc for key in ('@context', '@id', '@type')):
+        raise SyntaxError("Please make sure entrypoint contains @context, @id and @type")
+
+    # get the id and the context
+    _entrypoint_id = entrypoint_res['@id']
+    _entrypoint_context_res = entrypoint_res['@context']
+    _entrypoint_context = ''
+
+    if type(_entrypoint_context_res) is dict:
+        _entrypoint_context = _entrypoint_context_res
+
+    if type(_entrypoint_context_res) is str:
+        # check if it's a relative IRI or absolute IRI.
+        host = urlparse(_entrypoint_context_res).hostname
+        if host == '':
+            _entrypoint_context_id = HYDRUS_SERVER_URL + _entrypoint_context_res
+        else:
+            _entrypoint_context_id = _entrypoint_context_res
+        _entrypoint_context = requests.get(_entrypoint_context_id)
+
+    expanded_entrypoint = jsonld.expand(entrypoint_res,
+                                        {'base': HYDRUS_SERVER_URL, 'expandContext': _entrypoint_context})
+
+    # extract collections from the collections array. If not there check if they have manages block
+
+    # TODO Refactor logic of identifying classes and collection in different method
+
+    for entrypoint_items in expanded_entrypoint:
+        if hydra['collection'] in entrypoint_items:
+            for collection_item in entrypoint_items[hydra['collection']]:
+                _endpoint_collection.append(collection_item)
+        else:
+            # Loop through each class to check if they manages block:
+            for item in entrypoint_items:
+                collection_bool = False
+                for item_prop in item:
+                    if hydra['manages'] in item_prop:
+                        collection_bool = True
+                        _endpoint_collection.append(item)
+                if not collection_bool:
+                    _endpoint_class.append(item)
 
     # Syntax checks
     #     raise SyntaxError(
@@ -128,9 +183,9 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     # EntryPoint object
     # getEntrypoint checks if all classes have @id and returns the entrypoint class.(EntryPoint class may not be there)
+
     entrypoint_obj = get_entrypoint(doc)
-    # get the list of all collections if they are defined in entrypoint under 'hydra:collection'
-    collections = entrypoint_obj.get('collections')
+
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
@@ -144,24 +199,22 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
         apidoc.add_to_context(entry, _context[entry])
 
     # add all parsed_classes
-    for class_ in result["supportedClass"]:
-        class_obj, collection, collection_path = create_class(
-            entrypoint_obj, class_)
-        if class_obj:
-            if (collections is not None and
-                class_ in collections or
-                    "manages" in class_):
-                apidoc.add_supported_class(
-                    class_obj, collection=collection, collection_path=collection_path,
-                    collection_manages=class_["manages"])
-            else:
-                apidoc.add_supported_class(
-                    class_obj, collection=collection, collection_path=collection_path)
+    # for class_ in result["supportedClass"]:
+    #     class_obj, collection, collection_path = create_class(
+    #         entrypoint_obj, class_)
+    #     if class_obj:
+    #         if "manages" in class_:
+    #             apidoc.add_supported_class(
+    #                 class_obj, collection=collection, collection_path=collection_path,
+    #                 collection_manages=class_["manages"])
+    #         else:
+    #             apidoc.add_supported_class(
+    #                 class_obj, collection=collection, collection_path=collection_path)
 
     # add possibleStatus
-    for status in result["possibleStatus"]:
-        status_obj = create_status(status)
-        apidoc.add_possible_status(status_obj)
+    # for status in result["possibleStatus"]:
+    #     status_obj = create_status(status)
+    #     apidoc.add_possible_status(status_obj)
 
     apidoc.add_baseResource()
     apidoc.add_baseCollection()
@@ -177,6 +230,7 @@ def create_class(
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
                     'http://www.w3.org/ns/hydra/core#Collection',
                     entrypoint["@id"]]
+
     id_ = class_dict["@id"]
     if id_ in exclude_list:
         return None, None, None
@@ -195,18 +249,18 @@ def create_class(
     for k, literal in doc_keys.items():
         result[k] = input_key_check(class_dict, k, "class_dict", literal)
 
-    collection = False
     # See if class_dict is a Collection Class
     # type: Union[Match[Any], bool]
-    # get the list of all collections if they are defined in entrypoint under 'hydra:collection'
-    collections = entrypoint.get('collections')
-    if (collections is not None and
-        class_dict in collections or
-            "manages" in class_dict):
-        collection = True
+    collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I)
+    if collection:
+        return None, None, None
 
     # Check if class has it's own endpoint
-    endpoint, path = get_endpoint_and_path(class_dict, entrypoint)
+    endpoint, path = class_in_endpoint(class_dict, entrypoint)
+
+    # Check if class has a Collection
+    collection, collection_path = collection_in_endpoint(
+        class_dict, entrypoint)
 
     # Create the HydraClass object
     class_ = HydraClass(
@@ -222,7 +276,7 @@ def create_class(
         op_obj = create_operation(op)
         class_.add_supported_op(op_obj)
 
-    return class_, collection, path
+    return class_, collection, collection_path
 
 
 def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
@@ -331,7 +385,8 @@ def create_link_property(
     return link
 
 
-def get_endpoint_and_path(
+# fetch from entrypoint itself, identify classes and collection:
+def class_in_endpoint(
         class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a class.
 
@@ -363,6 +418,42 @@ def get_endpoint_and_path(
         # Match the title with regular expression
 
         if label == class_['title']:
+            path = "/".join(property_['@id'].split("/")[1:])
+            return True, path
+    return False, None
+
+
+def collection_in_endpoint(
+        class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
+    """Check if a given class is in the EntryPoint object as a collection.
+
+    Raises:
+        SyntaxError: If the `entrypoint` dictionary does not include the key
+            `supportedProperty`.
+        SyntaxError: If any dictionary in `supportedProperty` list does not include
+            the key `property`.
+        SyntaxError: If any property dictionary does not include the key `label`.
+
+    """
+    # Check supportedProperty for the EntryPoint
+    try:
+        supported_property = entrypoint["supportedProperty"]
+    except KeyError:
+        raise SyntaxError("EntryPoint must have [supportedProperty]")
+
+    # Check all endpoints in supportedProperty
+    for prop in supported_property:
+        # Syntax checks
+        try:
+            property_ = prop["property"]
+        except KeyError:
+            raise SyntaxError("supportedProperty must have [property]")
+        try:
+            label = property_["label"]
+        except KeyError:
+            raise SyntaxError("property must have [label]")
+        # Match the title with regular expression
+        if label == "{}Collection".format(class_["title"]):
             path = "/".join(property_['@id'].split("/")[1:])
             return True, path
     return False, None
