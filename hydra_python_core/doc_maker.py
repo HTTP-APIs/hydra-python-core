@@ -3,12 +3,18 @@ create a HydraDoc object for it
 """
 import re
 import json
+from pyld import jsonld
+import requests
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp,
                                           HydraClassOp, HydraStatus, HydraLink)
 from typing import Any, Dict, Match, Optional, Tuple, Union
+from hydra_python_core.namespace import hydra
+from urllib.parse import urlparse
+
+jsonld.set_document_loader(jsonld.requests_document_loader())
 
 
-def error_mapping(body: str=None) -> str:
+def error_mapping(body: str = None) -> str:
     """Function returns starting error message based on its body type.
     :param body: Params type for error message
     :return string: Error message for input key
@@ -56,50 +62,86 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
             the form : '[protocol] :// [base url] / [entrypoint] / vocab'
 
     """
-    # Check @id
-    try:
-        id_ = doc["@id"]
-    except KeyError:
-        raise SyntaxError("The API Documentation must have [@id]")
+    # 1. check if it's type is APIDOC or return if the Exapanded list is empty.
+    # 2. Loop through the Supported class to find the clases.
+    # 3. To check collection Check the manages block in supported Properties and determine the type of class from which collection is made up of:
+    # 4. To find the entrypoint, check the hydra:entryPoint, if not present check if EntryPoint Class is present and generate from there.
+
+    # These keys must be there in the APIDOC:
+    # @context, @id, @type
+    if not all(key in doc for key in ('@context', '@id', '@type')):
+        raise SyntaxError("Please make sure doc contains @context, @id and @type")
+
+    #preserve the context
+    _context = doc['@context']
+    # expand the apidoc:
+    _id = ''
+    _entrypoint = ''
+    _title = '',
+    _description = ''
+    _classes = []
+    _collections = []
+    expanded_doc = jsonld.expand(doc)
+
+    for item in expanded_doc:
+        _id = item['@id']
+        for entrypoint in item[hydra['entrypoint']]:
+            _entrypoint = entrypoint['@id']
+        if hydra['title'] in item:
+            for title in item[hydra['title']]:
+                _title = title['@value']
+        else:
+            _title = "The default title"
+        if hydra['description'] in item:
+            for description in item[hydra['description']]:
+                _description = description
+        else:
+            _description = "This is the default description"
+        for classes in item[hydra['supportedClass']]:
+            for supported_prop in classes[hydra['supportedProperty']]:
+                for prop in supported_prop[hydra['property']]:
+                    if prop['@id'] == hydra['manages']:
+                        _collections.append(classes)
+                        return
+                _classes.append(classes)
+                return
+            return
 
     # Extract base_url, entrypoint and API name
-    match_obj = re.match(r'(.*)://(.*)/(.*)/vocab#?', id_, re.M | re.I)
-    if match_obj:
-        base_url = "{0}://{1}/".format(match_obj.group(1), match_obj.group(2))
-        entrypoint = match_obj.group(3)
+    base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
+    entrypoint = _entrypoint
 
     # Syntax checks
-    else:
-        raise SyntaxError(
-            "The '@id' of the Documentation must be of the form:\n"
-            "'[protocol] :// [base url] / [entrypoint] / vocab'")
-    doc_keys = {
-        "description": False,
-        "title": False,
-        "supportedClass": False,
-        "@context": False,
-        "possibleStatus": False
-    }
-    result = {}
-    for k, literal in doc_keys.items():
-        result[k] = input_key_check(doc, k, "doc", literal)
+    #     raise SyntaxError(
+    #         "The '@id' of the Documentation must be of the form:\n"
+    #         "'[protocol] :// [base url] / [entrypoint] / vocab'")
+    # doc_keys = {
+    #     "description": False,
+    #     "title": False,
+    #     "supportedClass": False,
+    #     "@context": False,
+    #     "possibleStatus": False
+    # }
+    # result = {}
+    # for k, literal in doc_keys.items():
+    #     result[k] = input_key_check(doc, k, "doc", literal)
 
     # EntryPoint object
-    # getEntrypoint checks if all classes have @id
+    # getEntrypoint checks if all classes have @id and returns the entrypoint class.(EntryPoint class may not be there)
     entrypoint_obj = get_entrypoint(doc)
     # get the list of all collections if they are defined in entrypoint under 'hydra:collection'
     collections = entrypoint_obj.get('collections')
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
-            API_NAME, result["title"], result["description"], API_NAME, HYDRUS_SERVER_URL)
+            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL)
     else:
         apidoc = HydraDoc(
-            entrypoint, result["title"], result["description"], entrypoint, base_url)
+            entrypoint, _title, _description, entrypoint, base_url)
 
     # additional context entries
-    for entry in result["@context"]:
-        apidoc.add_to_context(entry, result["@context"][entry])
+    for entry in _context:
+        apidoc.add_to_context(entry, _context[entry])
 
     # add all parsed_classes
     for class_ in result["supportedClass"]:
