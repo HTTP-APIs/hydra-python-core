@@ -1,5 +1,5 @@
 """Generated API Documentation sample using doc_writer_sample.py."""
-
+    
 doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
@@ -615,10 +615,6 @@ doc = {
                         "description": "The dummyClassCollection collection",
                         "domain": "vocab:EntryPoint",
                         "label": "dummyClassCollection",
-                        "manages": {
-                            "object": "vocab:dummyClass",
-                            "property": "rdf:type"
-                        },
                         "range": "vocab:dummyClassCollection",
                         "supportedOperation": [
                             {
@@ -666,10 +662,6 @@ doc = {
                         "description": "The extraClassCollection collection",
                         "domain": "vocab:EntryPoint",
                         "label": "extraClassCollection",
-                        "manages": {
-                            "object": "vocab:extraClass",
-                            "property": "rdf:type"
-                        },
                         "range": "vocab:extraClassCollection",
                         "supportedOperation": [
                             {

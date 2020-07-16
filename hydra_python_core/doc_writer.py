@@ -1,6 +1,6 @@
 """API Doc templates generator."""
 from typing import Any, Dict, List, Optional, Union
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
 
 
 class HydraDoc():
@@ -10,9 +10,10 @@ class HydraDoc():
                  entrypoint: str, base_url: str) -> None:
         """Initialize the APIDoc."""
         self.API = API
+        self.entrypoint_endpoint = entrypoint
         self.title = title
         self.base_url = base_url
-        self.context = Context("{}{}".format(base_url, API))
+        self.context = Context("{}".format(urljoin(base_url, API)))
         self.parsed_classes = dict()  # type: Dict[str, Any]
         self.other_classes = list()  # type: List[HydraClass]
         self.collections = dict()  # type: Dict[str, Any]
@@ -101,6 +102,7 @@ class HydraDoc():
             "@type": "ApiDocumentation",
             "title": self.title,
             "description": self.desc,
+            "entrypoint": urljoin(self.base_url, self.entrypoint_endpoint),
             "supportedClass": [
                 x.generate() for x in parsed_classes +
                 self.other_classes + collections + [self.entrypoint]],
@@ -277,6 +279,8 @@ class HydraCollection():
                 "property": "rdf:type",
                 "object": class_.id_,
             }
+        else:
+            self.manages = manages
 
         if get:
             get_op = HydraCollectionOp("_:{}_collection_retrieve".format(self.class_.title.lower()),
@@ -445,7 +449,6 @@ class EntryPointCollection():
         """Create method."""
         self.name = collection.name
         self.supportedOperation = collection.supportedOperation
-        self.manages = collection.manages
         if collection.path:
             self.id_ = "vocab:EntryPoint/{}".format(
                 quote(collection.path, safe=''))
@@ -463,7 +466,6 @@ class EntryPointCollection():
                 "domain": "vocab:EntryPoint",
                 "range": "vocab:{}".format(self.name,),
                 "supportedOperation": [],
-                "manages": self.manages
             },
             "hydra:title": self.name.lower(),
             "hydra:description": "The {} collection".format(self.name,),
@@ -710,7 +712,6 @@ class Context():
 
     def __init__(self,
                  address: str,
-                 adders: Dict={},
                  class_: Optional[HydraClass]=None,
                  collection: Optional[HydraCollection]=None,
                  entrypoint: Optional[HydraEntryPoint]=None,
@@ -719,24 +720,17 @@ class Context():
         # NOTE: adders is a dictionary containing additional
         # context elements to the base Hydra context
         if class_ is not None:
-            self.context = {
-                "vocab": "{}/vocab#".format(address),
-                "hydra": "http://www.w3.org/ns/hydra/core#",
-                "members": "http://www.w3.org/ns/hydra/core#member",
-                "object": "http://schema.org/object",
-            }  # type: Dict[str, Any]
-            self.context[class_.title] = class_.id_
+            self.context = {"vocab": "{}/vocab#".format(address), "hydra": "http://www.w3.org/ns/hydra/core#",
+                            "members": "http://www.w3.org/ns/hydra/core#member", "object": "http://schema.org/object",
+                            class_.title: class_.id_}  # type: Dict[str, Any]
             for prop in class_.supportedProperty:
                 self.context[prop.title] = prop.prop
 
         elif collection is not None:
-            self.context = {
-                "vocab": "{}/vocab#".format(address),
-                "hydra": "http://www.w3.org/ns/hydra/core#",
-                "members": "http://www.w3.org/ns/hydra/core#member",
-            }
-            self.context[collection.name] = "vocab:{}".format(collection.name)
-            self.context[collection.class_.title] = collection.class_.id_
+            self.context = {"vocab": "{}/vocab#".format(address), "hydra": "http://www.w3.org/ns/hydra/core#",
+                            "members": "http://www.w3.org/ns/hydra/core#member",
+                            collection.name: "vocab:{}".format(collection.name),
+                            collection.class_.title: collection.class_.id_}
 
         elif entrypoint is not None:
             self.context = {
