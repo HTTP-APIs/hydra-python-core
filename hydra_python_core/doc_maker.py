@@ -119,7 +119,16 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # if the resources are descriptive than check from there
     # if not present than hit that endpoint to make sure it's a class or collection:
 
-    entrypoint_res = requests.get(entrypoint).json()
+    # TODO cant do get use Entrypoint class instead
+
+    # The only way to find out endpoints from the entrypoint is to check for hydra:Link type of a property.
+    # But the question still remains how to identify classes and collections from the EntryPoint Class.
+    # One possible way is to check the type of the range until it's in hydranamespace.But one may keep using Resource
+    # for either class or collection.
+
+
+
+
 
     #to determine whether a url is relative or absolute check the host name. if host name is empty, it's absolute.
 
