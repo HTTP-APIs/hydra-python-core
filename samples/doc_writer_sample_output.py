@@ -1,5 +1,5 @@
 """Generated API Documentation sample using doc_writer_sample.py."""
-    
+
 doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
@@ -48,9 +48,10 @@ doc = {
         "vocab": "https://hydrus.com/api/vocab#",
         "writeable": "hydra:writeable"
     },
-    "@id": "https://hydrus.com/api/vocab",
+    "@id": "https://hydrus.comapi/vocab",
     "@type": "ApiDocumentation",
     "description": "Description for the API Documentation",
+    "entrypoint": "https://hydrus.com/api",
     "possibleStatus": [],
     "supportedClass": [
         {
@@ -347,7 +348,7 @@ doc = {
         },
         {
             "@id": "vocab:dummyClassCollection",
-            "@type": "hydra:Class",
+            "@type": "Collection",
             "description": "A collection of dummyclass",
             "manages": {
                 "object": "vocab:dummyClass",
@@ -401,7 +402,7 @@ doc = {
         },
         {
             "@id": "vocab:extraClassCollection",
-            "@type": "hydra:Class",
+            "@type": "Collection",
             "description": "A collection of extraclass",
             "manages": {
                 "object": "vocab:extraClass",

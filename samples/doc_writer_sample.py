@@ -6,7 +6,7 @@ from typing import Any, Dict, Union
 
 # Creating the HydraDoc object, this is the primary class for the Doc
 API_NAME = "api"                # Name of the API, will serve as EntryPoint
-BASE_URL = "https://hydrus.com/"    # The base url at which the API is hosted
+BASE_URL = "https://hydrus.com"    # The base url at which the API is hosted
 # NOTE: The API will be accessible at BASE_URL + ENTRY_POINT
 # (http://hydrus.com/api/)
 
