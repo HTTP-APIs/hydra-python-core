@@ -48,7 +48,7 @@ doc = {
         "vocab": "https://hydrus.com/api/vocab#",
         "writeable": "hydra:writeable"
     },
-    "@id": "https://hydrus.comapi/vocab",
+    "@id": "https://hydrus.com/api/vocab",
     "@type": "ApiDocumentation",
     "description": "Description for the API Documentation",
     "entrypoint": "https://hydrus.com/api",
