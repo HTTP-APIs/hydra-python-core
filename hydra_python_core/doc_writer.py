@@ -98,7 +98,7 @@ class HydraDoc():
                        for key in self.collections]
         doc = {
             "@context": self.context.generate(),
-            "@id": "{}{}/vocab".format(self.base_url, self.API),
+            "@id": "{}/vocab".format(urljoin(self.base_url, self.API)),
             "@type": "ApiDocumentation",
             "title": self.title,
             "description": self.desc,
