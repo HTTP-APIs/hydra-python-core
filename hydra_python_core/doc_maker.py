@@ -8,7 +8,7 @@ import requests
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp,
                                           HydraClassOp, HydraStatus, HydraLink)
 from typing import Any, Dict, Match, Optional, Tuple, Union
-from hydra_python_core.namespace import hydra
+from hydra_python_core.namespace import hydra, rdfs
 from urllib.parse import urlparse
 
 jsonld.set_document_loader(jsonld.requests_document_loader())
@@ -79,6 +79,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     _description = ''
     _classes = []
     _collections = []
+    _endpoints = []
     _possible_status = []
     _endpoint_class = []
     _endpoint_collection = []
@@ -105,6 +106,11 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
                     if prop['@id'] == hydra['manages']:
                         _collections.append(classes)
                         continue
+                    for prop_type in prop['@type']:
+                        if prop_type == hydra['Link']:
+                            # find the range of the link
+                            for resource_range in prop[rdfs['range']]:
+                                _endpoints.append(resource_range['@id'])
                 _classes.append(classes)
                 continue
             continue
@@ -115,17 +121,13 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
     entrypoint = _entrypoint
 
-    # get endpoint classes and collection:
-    # if the resources are descriptive than check from there
-    # if not present than hit that endpoint to make sure it's a class or collection:
-
-    # TODO cant do get use Entrypoint class instead
-
     # The only way to find out endpoints from the entrypoint is to check for hydra:Link type of a property.
     # But the question still remains how to identify classes and collections from the EntryPoint Class.
-    # One possible way is to check the type of the range until it's in hydranamespace.But one may keep using Resource
-    # for either class or collection.
+    # One possible way is to check the type of the range for either class or collection.
 
+    # from the endpoints array extract endpoint classes and collection
+
+    # Then we are good to go I guess.
 
 
 
