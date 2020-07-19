@@ -63,7 +63,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     """
     # 1. check if it's type is APIDOC or return if the Exapanded list is empty.
-    # 2. Loop through the Supported class to find the clases.
+    # 2. Loop through the Supported class to find the classes.
     # 3. To check collection Check the manages block in supported Properties and determine the type of class from which collection is made up of:
     # 4. To find the entrypoint, check the hydra:entryPoint, if not present check if EntryPoint Class is present and generate from there.
 
@@ -83,8 +83,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     _possible_status = []
     _endpoint_class = []
     _endpoint_collection = []
-    expanded_doc = jsonld.expand(doc)
 
+    expanded_doc = jsonld.expand(doc)
     # TODO refactor them into different helper functions
     for item in expanded_doc:
         _id = item['@id']
@@ -101,19 +101,21 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
         else:
             _description = "This is the default description"
         for classes in item[hydra['supportedClass']]:
+            isCollection = False
             for supported_prop in classes[hydra['supportedProperty']]:
                 for prop in supported_prop[hydra['property']]:
                     if prop['@id'] == hydra['manages']:
+                        isCollection = True
                         _collections.append(classes)
                         continue
-                    for prop_type in prop['@type']:
-                        if prop_type == hydra['Link']:
-                            # find the range of the link
-                            for resource_range in prop[rdfs['range']]:
-                                _endpoints.append(resource_range['@id'])
+                    if '@type' in prop:
+                        for prop_type in prop['@type']:
+                            if prop_type == hydra['Link']:
+                                # find the range of the link
+                                for resource_range in prop[rdfs['range']]:
+                                    _endpoints.append(resource_range['@id'])
+            if not isCollection:
                 _classes.append(classes)
-                continue
-            continue
         for status in item[hydra['supportedClass']]:
             _possible_status.append(status)
 
@@ -126,57 +128,19 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # One possible way is to check the type of the range for either class or collection.
 
     # from the endpoints array extract endpoint classes and collection
+    # if endpoint is found in class or collection, send in class or collection endpoint
 
-    # Then we are good to go I guess.
+    for classes in _classes:
+        for endpoints in _endpoints:
+            if classes['@id'] == endpoints:
+                _endpoint_class.append(classes)
 
+    for collections in _collections:
+        for endpoints in _endpoints:
+            if collections['@id'] == endpoints:
+                _endpoint_collection.append(collections)
 
-
-
-    #to determine whether a url is relative or absolute check the host name. if host name is empty, it's absolute.
-
-    # check if entrypoint has @type and @context and @id
-    if not all(key in doc for key in ('@context', '@id', '@type')):
-        raise SyntaxError("Please make sure entrypoint contains @context, @id and @type")
-
-    # get the id and the context
-    _entrypoint_id = entrypoint_res['@id']
-    _entrypoint_context_res = entrypoint_res['@context']
-    _entrypoint_context = ''
-
-    if type(_entrypoint_context_res) is dict:
-        _entrypoint_context = _entrypoint_context_res
-
-    if type(_entrypoint_context_res) is str:
-        # check if it's a relative IRI or absolute IRI.
-        host = urlparse(_entrypoint_context_res).hostname
-        if host == '':
-            _entrypoint_context_id = HYDRUS_SERVER_URL + _entrypoint_context_res
-        else:
-            _entrypoint_context_id = _entrypoint_context_res
-        _entrypoint_context = requests.get(_entrypoint_context_id)
-
-    expanded_entrypoint = jsonld.expand(entrypoint_res,
-                                        {'base': HYDRUS_SERVER_URL, 'expandContext': _entrypoint_context})
-
-    # extract collections from the collections array. If not there check if they have manages block
-
-    # TODO Refactor logic of identifying classes and collection in different method
-
-    for entrypoint_items in expanded_entrypoint:
-        if hydra['collection'] in entrypoint_items:
-            for collection_item in entrypoint_items[hydra['collection']]:
-                _endpoint_collection.append(collection_item)
-        else:
-            # Loop through each class to check if they manages block:
-            for item in entrypoint_items:
-                collection_bool = False
-                for item_prop in item:
-                    if hydra['manages'] in item_prop:
-                        collection_bool = True
-                        _endpoint_collection.append(item)
-                if not collection_bool:
-                    _endpoint_class.append(item)
-
+    breakpoint()
     # Syntax checks
     #     raise SyntaxError(
     #         "The '@id' of the Documentation must be of the form:\n"
@@ -209,6 +173,41 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     for entry in _context:
         apidoc.add_to_context(entry, _context[entry])
 
+    # make endpoint classes
+    for endpoint_classes in _endpoint_class:
+        class_ = HydraClass(endpoint_classes['@id'], endpoint_classes[hydra['title'][0]]['@value'],
+                            endpoint_classes[hydra['description'][0]]['@value'], endpoint=True)
+        # add supported Property
+        for supported_property in endpoint_classes[hydra["supportedProperty"]]:
+            prop_ = HydraClassProp(supported_property[hydra['property'][0]['@id']],
+                                   supported_property[hydra['title']][0]['@value'],
+                                   required=supported_property[hydra['required']][0]['@value'],
+                                   read= supported_property[hydra['readonly']][0]['@value'],
+                                   write= supported_property[hydra['readonly']][0]['@value'])
+            class_.add_supported_prop(prop_)
+
+        # add supported operations
+        for supported_operations in endpoint_classes[hydra['supportedOperation']]:
+            #TODO add supported statuses
+            op_ = HydraClassOp(title=supported_operations[hydra['title']][0]['@value'],
+                               method=supported_operations[hydra['method']][0]['@value'],
+                               expects=supported_operations[hydra['expects']][0]['@value'],
+                               returns=supported_operations[hydra['returns'][0]['@value']])
+            class_.add_supported_op(op_)
+    apidoc.add_supported_class(class_)
+
+    # make endpoint collections
+
+
+
+
+
+
+
+    # make endpoint collections
+    for endpoint_collections in _endpoint_collection:
+        pass
+
     # add all parsed_classes
     # for class_ in result["supportedClass"]:
     #     class_obj, collection, collection_path = create_class(
@@ -229,6 +228,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     apidoc.add_baseResource()
     apidoc.add_baseCollection()
+    # TODO add base PartialCollection Class ?
     apidoc.gen_EntryPoint()
     return apidoc
 
