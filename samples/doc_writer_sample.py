@@ -6,7 +6,7 @@ from typing import Any, Dict, Union
 
 # Creating the HydraDoc object, this is the primary class for the Doc
 API_NAME = "api"                # Name of the API, will serve as EntryPoint
-BASE_URL = "https://hydrus.com/"    # The base url at which the API is hosted
+BASE_URL = "https://hydrus.com"    # The base url at which the API is hosted
 # NOTE: The API will be accessible at BASE_URL + ENTRY_POINT
 # (http://hydrus.com/api/)
 
@@ -138,9 +138,23 @@ class_2.add_supported_op(class_2_op3)
 class_2.add_supported_op(class_2_op4)
 class_1.add_supported_op(class_1_op1)
 
+# add explicit statements about members of the collection
+# Following manages block means every member of this collection is of type class_
+collection_1_managed_by = {
+    "property": "rdf:type",
+    "object": 'vocab:' + class_uri,
+}
+# Following manages block means every member of this collection is of type class_3
+collection_3_managed_by = {
+    "property": "rdf:type",
+    "object": 'vocab:' + class_3_uri,
+}
 # Add the classes to the HydraDoc
-api_doc.add_supported_class(class_, collection=True, collection_path="DcTest")
-api_doc.add_supported_class(class_3, collection=True, collection_path="EcTest")
+
+api_doc.add_supported_class(class_, collection=True, collection_path="DcTest",
+                            collection_manages=collection_1_managed_by)
+api_doc.add_supported_class(class_3, collection=True, collection_path="EcTest",
+                            collection_manages=collection_3_managed_by)
 api_doc.add_supported_class(class_2, collection=False)
 api_doc.add_supported_class(class_1, collection=False)
 # NOTE: Using collection=True creates a HydraCollection for the class.
@@ -172,5 +186,5 @@ if __name__ == "__main__":
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')
     doc = doc.replace('null', '"null"')
-    with open("doc_writer_sample_output.py", "w") as f:
+    with open("samples/doc_writer_sample_output.py", "w") as f:
         f.write(doc)

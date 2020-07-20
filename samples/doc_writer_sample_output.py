@@ -51,6 +51,7 @@ doc = {
     "@id": "https://hydrus.com/api/vocab",
     "@type": "ApiDocumentation",
     "description": "Description for the API Documentation",
+    "entrypoint": "https://hydrus.com/api",
     "possibleStatus": [],
     "supportedClass": [
         {
@@ -347,8 +348,12 @@ doc = {
         },
         {
             "@id": "vocab:dummyClassCollection",
-            "@type": "hydra:Class",
+            "@type": "Collection",
             "description": "A collection of dummyclass",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -397,8 +402,12 @@ doc = {
         },
         {
             "@id": "vocab:extraClassCollection",
-            "@type": "hydra:Class",
+            "@type": "Collection",
             "description": "A collection of extraclass",
+            "manages": {
+                "object": "vocab:extraClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {

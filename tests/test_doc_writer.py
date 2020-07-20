@@ -24,7 +24,6 @@ class TestDocWriter(unittest.TestCase):
             "label": "rdfs:label",
             "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
             "vocab": "https://hydrus.com/api/vocab#",
-            # "vocab": "localhost/api/vocab#",
             "domain": {
                 "@type": "@id",
                 "@id": "rdfs:domain"
@@ -57,7 +56,8 @@ class TestDocWriter(unittest.TestCase):
             "subClassOf": {
                 "@id": "rdfs:subClassOf",
                 "@type": "@id"
-            }
+            },
+            "search": "hydra:search"
         }
         self.assertEqual(expected_context, context.generate())
 
