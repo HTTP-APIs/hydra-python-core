@@ -50,6 +50,21 @@ class HydraDoc():
                 "context": Context(address="{}{}".format(self.base_url, self.API),
                                    collection=collection), "collection": collection}
 
+    def add_supported_collection(self, collection_: 'HydraCollection') -> None:
+        """Add a supported Collection
+
+        Raises:
+            TypeError: If `collection_` is not an instance of `HydraCollection`
+
+        """
+
+        if not isinstance(collection_, HydraCollection):
+            raise TypeError("Type is not <HydraCollection>")
+
+        self.collections[collection_.path] = {
+            "context": Context(address="{}{}".format(self.base_url, self.API),
+                               collection=collection_), "collection": collection_}
+
     def add_possible_status(self, status: Union['HydraStatus', 'HydraError']) -> None:
         """Add a new possibleStatus.
 
@@ -383,7 +398,7 @@ class HydraCollectionOp():
         return object_
 
 
-class HydraEntryPoint():
+class HydraEntryPoint(HydraClass):
     """Template for a new entrypoint."""
 
     def __init__(self, base_url: str, entrypoint: str) -> None:
