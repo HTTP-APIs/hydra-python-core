@@ -30,25 +30,12 @@ class HydraDoc():
             TypeError: If `class_` is not an instance of `HydraClass`
 
         """
-        # collection: Union[bool, 'HydraCollection']=False,
-        #    collection_name: str=None,
-        #   collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True,
-        #  collection_manages: Union[Dict[str, Any], List]=None
-        # self.doc["supportedClass"].append(class_.get())
         if not isinstance(class_, HydraClass):
             raise TypeError("Type is not <HydraClass>")
         self.parsed_classes[class_.path] = {
             "context": Context(address="{}{}".format(self.base_url, self.API), class_=class_),
             "class": class_,
-            # "collection": collection
         }
-        # if collection:
-        #     collection = HydraCollection(
-        #         class_, collection_name, collection_path, collection_manages, collectionGet,
-        #         collectionPost)
-        #     self.collections[collection.path] = {
-        #         "context": Context(address="{}{}".format(self.base_url, self.API),
-        #                            collection=collection), "collection": collection}
 
     def add_supported_collection(self, collection_: 'HydraCollection') -> None:
         """Add a supported Collection

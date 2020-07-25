@@ -171,12 +171,13 @@ class_1.add_supported_op(class_1_op1)
 
 api_doc.add_supported_class(class_)
 api_doc.add_supported_class(class_3)
-# add the collection to the HydraDoc.
-api_doc.add_supported_collection(collection_1)
-api_doc.add_supported_collection(collection_2)
 api_doc.add_supported_class(class_2)
 api_doc.add_supported_class(class_1)
 api_doc.add_supported_class(class_1)
+
+# add the collection to the HydraDoc.
+api_doc.add_supported_collection(collection_1)
+api_doc.add_supported_collection(collection_2)
 
 # Other operations needed for the Doc
 # Creates the base Resource Class and adds it to the API Documentation
