@@ -55,13 +55,13 @@ doc = {
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:dummyClass",
+            "@id": "https://hydrus.com/api/dummyClass",
             "@type": "hydra:Class",
             "description": "A dummyClass for demo",
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:dummyClass",
+                    "expects": "https://hydrus.com/api/dummyClass",
                     "expectsHeader": [],
                     "method": "POST",
                     "possibleStatus": [
@@ -100,7 +100,7 @@ doc = {
                 },
                 {
                     "@type": "http://schema.org/AddAction",
-                    "expects": "vocab:dummyClass",
+                    "expects": "https://hydrus.com/api/dummyClass",
                     "expectsHeader": [],
                     "method": "PUT",
                     "possibleStatus": [
@@ -130,7 +130,7 @@ doc = {
                             "title": ""
                         }
                     ],
-                    "returns": "vocab:dummyClass",
+                    "returns": "https://hydrus.com/api/dummyClass",
                     "returnsHeader": [],
                     "title": "GetClass"
                 }
@@ -156,7 +156,7 @@ doc = {
             "title": "dummyClass"
         },
         {
-            "@id": "vocab:extraClass",
+            "@id": "https://hydrus.com/api/extraClass",
             "@type": "hydra:Class",
             "description": "Class without any explicit methods",
             "supportedOperation": [],
@@ -164,13 +164,13 @@ doc = {
             "title": "extraClass"
         },
         {
-            "@id": "vocab:singleClass",
+            "@id": "https://hydrus.com/api/singleClass",
             "@type": "hydra:Class",
             "description": "A non collection class",
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:singleClass",
+                    "expects": "https://hydrus.com/api/singleClass",
                     "expectsHeader": [],
                     "method": "POST",
                     "possibleStatus": [
@@ -206,7 +206,7 @@ doc = {
                 },
                 {
                     "@type": "http://schema.org/AddAction",
-                    "expects": "vocab:singleClass",
+                    "expects": "https://hydrus.com/api/singleClass",
                     "expectsHeader": [],
                     "method": "PUT",
                     "possibleStatus": [
@@ -236,7 +236,7 @@ doc = {
                             "title": ""
                         }
                     ],
-                    "returns": "vocab:singleClass",
+                    "returns": "https://hydrus.com/api/singleClass",
                     "returnsHeader": [],
                     "title": "GetClass"
                 }
@@ -264,8 +264,8 @@ doc = {
                         "@id": "vocab:singleClass/dummyProp",
                         "@type": "hydra:Link",
                         "description": "",
-                        "domain": "vocab:singleClass",
-                        "range": "vocab:dummyClass",
+                        "domain": "https://hydrus.com/api/singleClass",
+                        "range": "https://hydrus.com/api/dummyClass",
                         "supportedOperation": [],
                         "title": "dummyProp"
                     },
@@ -276,7 +276,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:anotherSingleClass",
+                    "property": "https://hydrus.com/api/anotherSingleClass",
                     "readable": "false",
                     "required": "false",
                     "title": "singleClassProp",
@@ -286,7 +286,7 @@ doc = {
             "title": "singleClass"
         },
         {
-            "@id": "vocab:anotherSingleClass",
+            "@id": "https://hydrus.com/api/anotherSingleClass",
             "@type": "hydra:Class",
             "description": "An another non collection class",
             "supportedOperation": [
@@ -304,7 +304,7 @@ doc = {
                             "title": ""
                         }
                     ],
-                    "returns": "vocab:anotherSingleClass",
+                    "returns": "https://hydrus.com/api/anotherSingleClass",
                     "returnsHeader": [],
                     "title": "GetClass"
                 }
@@ -347,50 +347,50 @@ doc = {
             "title": "Collection"
         },
         {
-            "@id": "vocab:dummyClassCollection",
+            "@id": "https://hydrus.com/api/collection_1",
             "@type": "Collection",
-            "description": "A collection of dummyclass",
+            "description": "This collection comprises of instances of ExtraClass",
             "manages": {
-                "object": "vocab:dummyClass",
+                "object": "https://hydrus.com/api/extraClass",
                 "property": "rdf:type"
             },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "_:dummyclass_collection_retrieve",
+                    "@id": "https://hydrus.com/api/collection_1/Extraclasses_retrieve",
                     "@type": "http://schema.org/FindAction",
-                    "description": "Retrieves all dummyClass entities",
+                    "description": "Retrieves all the members of Extraclasses",
                     "expects": "null",
                     "expectsHeader": [],
                     "method": "GET",
                     "possibleStatus": [],
-                    "returns": "vocab:dummyClassCollection",
+                    "returns": "https://hydrus.com/api/extraClass",
                     "returnsHeader": []
                 },
                 {
-                    "@id": "_:dummyclass_create",
+                    "@id": "https://hydrus.com/api/collection_1/Extraclasses_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new dummyClass entity",
-                    "expects": "vocab:dummyClass",
+                    "description": "Create new member in Extraclasses",
+                    "expects": "https://hydrus.com/api/extraClass",
                     "expectsHeader": [],
                     "method": "PUT",
                     "possibleStatus": [
                         {
                             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                             "@type": "Status",
-                            "description": "If the dummyClass entity was createdsuccessfully.",
+                            "description": "A new member in Extraclasses created",
                             "statusCode": 201,
                             "title": ""
                         }
                     ],
-                    "returns": "vocab:dummyClass",
+                    "returns": "https://hydrus.com/api/extraClass",
                     "returnsHeader": []
                 }
             ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "description": "The dummyclass",
+                    "description": "The members of Extraclasses",
                     "property": "http://www.w3.org/ns/hydra/core#member",
                     "readable": "false",
                     "required": "false",
@@ -398,53 +398,53 @@ doc = {
                     "writeable": "false"
                 }
             ],
-            "title": "dummyClassCollection"
+            "title": "Extraclasses"
         },
         {
-            "@id": "vocab:extraClassCollection",
+            "@id": "https://hydrus.com/api/collection_2",
             "@type": "Collection",
-            "description": "A collection of extraclass",
+            "description": "This collection comprises of instances of dummyClass",
             "manages": {
-                "object": "vocab:extraClass",
+                "object": "https://hydrus.com/api/dummyClass",
                 "property": "rdf:type"
             },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "_:extraclass_collection_retrieve",
+                    "@id": "https://hydrus.com/api/collection_2/dummyclasses_retrieve",
                     "@type": "http://schema.org/FindAction",
-                    "description": "Retrieves all extraClass entities",
+                    "description": "Retrieves all the members of dummyclasses",
                     "expects": "null",
                     "expectsHeader": [],
                     "method": "GET",
                     "possibleStatus": [],
-                    "returns": "vocab:extraClassCollection",
+                    "returns": "https://hydrus.com/api/dummyClass",
                     "returnsHeader": []
                 },
                 {
-                    "@id": "_:extraclass_create",
+                    "@id": "https://hydrus.com/api/collection_2/dummyclasses_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new extraClass entity",
-                    "expects": "vocab:extraClass",
+                    "description": "Create new member in dummyclasses",
+                    "expects": "https://hydrus.com/api/dummyClass",
                     "expectsHeader": [],
                     "method": "PUT",
                     "possibleStatus": [
                         {
                             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                             "@type": "Status",
-                            "description": "If the extraClass entity was createdsuccessfully.",
+                            "description": "A new member in dummyclasses created",
                             "statusCode": 201,
                             "title": ""
                         }
                     ],
-                    "returns": "vocab:extraClass",
+                    "returns": "https://hydrus.com/api/dummyClass",
                     "returnsHeader": []
                 }
             ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "description": "The extraclass",
+                    "description": "The members of dummyclasses",
                     "property": "http://www.w3.org/ns/hydra/core#member",
                     "readable": "false",
                     "required": "false",
@@ -452,7 +452,7 @@ doc = {
                     "writeable": "false"
                 }
             ],
-            "title": "extraClassCollection"
+            "title": "dummyclasses"
         },
         {
             "@id": "vocab:EntryPoint",
@@ -487,7 +487,7 @@ doc = {
                                 "@id": "updateclass",
                                 "@type": "http://schema.org/UpdateAction",
                                 "description": "null",
-                                "expects": "vocab:singleClass",
+                                "expects": "https://hydrus.com/api/singleClass",
                                 "expectsHeader": [],
                                 "label": "UpdateClass",
                                 "method": "POST",
@@ -527,7 +527,7 @@ doc = {
                                 "@id": "addclass",
                                 "@type": "http://schema.org/AddAction",
                                 "description": "null",
-                                "expects": "vocab:singleClass",
+                                "expects": "https://hydrus.com/api/singleClass",
                                 "expectsHeader": [],
                                 "label": "AddClass",
                                 "method": "PUT",
@@ -560,7 +560,7 @@ doc = {
                                         "title": ""
                                     }
                                 ],
-                                "returns": "vocab:singleClass",
+                                "returns": "https://hydrus.com/api/singleClass",
                                 "returnsHeader": []
                             }
                         ]
@@ -597,7 +597,7 @@ doc = {
                                         "title": ""
                                     }
                                 ],
-                                "returns": "vocab:anotherSingleClass",
+                                "returns": "https://hydrus.com/api/anotherSingleClass",
                                 "returnsHeader": []
                             }
                         ]
@@ -607,91 +607,91 @@ doc = {
                     "writeable": "false"
                 },
                 {
-                    "hydra:description": "The dummyClassCollection collection",
-                    "hydra:title": "dummyclasscollection",
-                    "property": {
-                        "@id": "vocab:EntryPoint/DcTest",
-                        "@type": "hydra:Link",
-                        "description": "The dummyClassCollection collection",
-                        "domain": "vocab:EntryPoint",
-                        "label": "dummyClassCollection",
-                        "range": "vocab:dummyClassCollection",
-                        "supportedOperation": [
-                            {
-                                "@id": "_:dummyclass_collection_retrieve",
-                                "@type": "http://schema.org/FindAction",
-                                "description": "Retrieves all dummyClass entities",
-                                "expects": "null",
-                                "expectsHeader": [],
-                                "method": "GET",
-                                "possibleStatus": [],
-                                "returns": "vocab:dummyClassCollection",
-                                "returnsHeader": []
-                            },
-                            {
-                                "@id": "_:dummyclass_create",
-                                "@type": "http://schema.org/AddAction",
-                                "description": "Create new dummyClass entity",
-                                "expects": "vocab:dummyClass",
-                                "expectsHeader": [],
-                                "method": "PUT",
-                                "possibleStatus": [
-                                    {
-                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                                        "@type": "Status",
-                                        "description": "If the dummyClass entity was createdsuccessfully.",
-                                        "statusCode": 201,
-                                        "title": ""
-                                    }
-                                ],
-                                "returns": "vocab:dummyClass",
-                                "returnsHeader": []
-                            }
-                        ]
-                    },
-                    "readable": "true",
-                    "required": "null",
-                    "writeable": "false"
-                },
-                {
-                    "hydra:description": "The extraClassCollection collection",
-                    "hydra:title": "extraclasscollection",
+                    "hydra:description": "The Extraclasses collection",
+                    "hydra:title": "extraclasses",
                     "property": {
                         "@id": "vocab:EntryPoint/EcTest",
                         "@type": "hydra:Link",
-                        "description": "The extraClassCollection collection",
+                        "description": "The Extraclasses collection",
                         "domain": "vocab:EntryPoint",
-                        "label": "extraClassCollection",
-                        "range": "vocab:extraClassCollection",
+                        "label": "Extraclasses",
+                        "range": "vocab:Extraclasses",
                         "supportedOperation": [
                             {
-                                "@id": "_:extraclass_collection_retrieve",
+                                "@id": "https://hydrus.com/api/collection_1/extraclasses_retrieve",
                                 "@type": "http://schema.org/FindAction",
-                                "description": "Retrieves all extraClass entities",
+                                "description": "Retrieves all the members of Extraclasses",
                                 "expects": "null",
                                 "expectsHeader": [],
                                 "method": "GET",
                                 "possibleStatus": [],
-                                "returns": "vocab:extraClassCollection",
+                                "returns": "https://hydrus.com/api/extraClass",
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "_:extraclass_create",
+                                "@id": "https://hydrus.com/api/collection_1/extraclasses_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new extraClass entity",
-                                "expects": "vocab:extraClass",
+                                "description": "Create new member in Extraclasses",
+                                "expects": "https://hydrus.com/api/extraClass",
                                 "expectsHeader": [],
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
                                         "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                                         "@type": "Status",
-                                        "description": "If the extraClass entity was createdsuccessfully.",
+                                        "description": "A new member in Extraclasses created",
                                         "statusCode": 201,
                                         "title": ""
                                     }
                                 ],
-                                "returns": "vocab:extraClass",
+                                "returns": "https://hydrus.com/api/extraClass",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
+                    "hydra:description": "The dummyclasses collection",
+                    "hydra:title": "dummyclasses",
+                    "property": {
+                        "@id": "vocab:EntryPoint/DcTest",
+                        "@type": "hydra:Link",
+                        "description": "The dummyclasses collection",
+                        "domain": "vocab:EntryPoint",
+                        "label": "dummyclasses",
+                        "range": "vocab:dummyclasses",
+                        "supportedOperation": [
+                            {
+                                "@id": "https://hydrus.com/api/collection_2/dummyclasses_retrieve",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "Retrieves all the members of dummyclasses",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "method": "GET",
+                                "possibleStatus": [],
+                                "returns": "https://hydrus.com/api/dummyClass",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "https://hydrus.com/api/collection_2/dummyclasses_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new member in dummyclasses",
+                                "expects": "https://hydrus.com/api/dummyClass",
+                                "expectsHeader": [],
+                                "method": "PUT",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "A new member in dummyclasses created",
+                                        "statusCode": 201,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "https://hydrus.com/api/dummyClass",
                                 "returnsHeader": []
                             }
                         ]
