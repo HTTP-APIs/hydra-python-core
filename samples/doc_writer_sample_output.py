@@ -8,6 +8,10 @@ doc = {
             "@id": "rdfs:domain",
             "@type": "@id"
         },
+        "entrypoint": {
+            "@id": "hydra:entrypoint",
+            "@type": "@id"
+        },
         "expects": {
             "@id": "hydra:expects",
             "@type": "@id"
@@ -17,6 +21,10 @@ doc = {
         "label": "rdfs:label",
         "manages": "hydra:manages",
         "method": "hydra:method",
+        "object": {
+            "@id": "hydra:object",
+            "@type": "@id"
+        },
         "possibleStatus": "hydra:possibleStatus",
         "property": {
             "@id": "hydra:property",
@@ -39,6 +47,10 @@ doc = {
         "statusCode": "hydra:statusCode",
         "subClassOf": {
             "@id": "rdfs:subClassOf",
+            "@type": "@id"
+        },
+        "subject": {
+            "@id": "hydra:subject",
             "@type": "@id"
         },
         "supportedClass": "hydra:supportedClass",

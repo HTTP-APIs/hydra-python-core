@@ -763,6 +763,18 @@ class Context():
                     "@id": "hydra:returns",
                     "@type": "@id"
                 },
+                "entrypoint": {
+                    "@id": "hydra:entrypoint",
+                    "@type": "@id"
+                },
+                "object": {
+                    "@id": "hydra:object",
+                    "@type": "@id"
+                },
+                "subject": {
+                    "@id": "hydra:subject",
+                    "@type": "@id"
+                },
                 "readable": "hydra:readable",
                 "writeable": "hydra:writeable",
                 "possibleStatus": "hydra:possibleStatus",
