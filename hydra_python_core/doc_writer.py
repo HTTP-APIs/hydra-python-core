@@ -272,7 +272,7 @@ class HydraCollection():
         self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
-                                                 False, False, False,
+                                                 True, True, False,
                                                  "The {}".format(self.class_.title.lower()))]
         if manages is None:
             # provide default manages block
