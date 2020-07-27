@@ -293,8 +293,8 @@ class HydraCollection():
 
         if put:
             put_op = HydraCollectionOp("_:{}_create".format(self.class_.title.lower()),
-                                        "http://schema.org/AddAction",
-                                        "PUT", "Create new {} entity".format(
+                                       "http://schema.org/AddAction",
+                                       "PUT", "Create new {} entity".format(
                 self.class_.title),
                 self.class_.id_, self.class_.id_, [], [],
                 [HydraStatus(code=201, desc="If the {} entity was created"
@@ -315,8 +315,8 @@ class HydraCollection():
 
         if delete:
             delete_op = HydraCollectionOp("_:{}_delete".format(self.class_.title.lower()),
-                                        "http://schema.org/DeleteAction",
-                                        "DELETE", "Delete existing {} entity".format(
+                                          "http://schema.org/DeleteAction",
+                                          "DELETE", "Delete existing {} entity".format(
                 self.class_.title),
                 self.class_.id_, self.class_.id_, [], [],
                 [HydraStatus(code=200, desc="If the {} entity was deleted"
