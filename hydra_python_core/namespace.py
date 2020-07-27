@@ -54,6 +54,7 @@ hydra = {
     "possibleStatus": hydraNamespace + "possibleStatus",
     "returns": hydraNamespace + "returns",
     "returnsHeader": hydraNamespace + "returnsHeader",
+    "statusCode": hydraNamespace + "statusCode",
 
     "Operation": hydraNamespace + "Operation",
     "Status": hydraNamespace + "Status",
