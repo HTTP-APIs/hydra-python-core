@@ -57,7 +57,6 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     _non_endpoint_classes = []
 
     expanded_doc = jsonld.expand(doc)
-
     for item in expanded_doc:
         _id = item['@id']
         for entrypoint in item[hydra['entrypoint']]:
@@ -103,7 +102,6 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
         for endpoints in _endpoints:
             if collections['@id'] == endpoints:
                 _endpoint_collection.append(collections)
-    print(_collections)
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
@@ -273,7 +271,7 @@ def create_operation(supported_operation: Dict[str, Any]) -> HydraClassOp:
     return op_
 
 
-def create_status(possible_status: List[Any]) -> HydraStatus:
+def create_status(possible_status: List[Any]) -> List[HydraStatus]:
     """
     Creates instance of HydraStatus from expanded API doc
     :param possible_status: possible status from the expanded API doc
@@ -320,7 +318,6 @@ def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, Hydr
 
     if hydra['title'] in supported_property:
         prop_title = supported_property[hydra['title']][0]['@value']
-
     prop_read = supported_property[hydra['readable']][0]['@value']
     prop_require = supported_property[hydra['required']][0]['@value']
     prop_write = supported_property[hydra['writeable']][0]['@value']
