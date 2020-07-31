@@ -87,7 +87,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # EntryPoint object
     # getEntrypoint checks if all classes have @id
     entrypoint_obj = get_entrypoint(doc)
-
+    # get the list of all collections if they are defined in entrypoint under 'hydra:collection'
+    collections = entrypoint_obj.get('collections')
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
@@ -105,7 +106,9 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
         class_obj, collection, collection_path = create_class(
             entrypoint_obj, class_)
         if class_obj:
-            if "manages" in class_:
+            if (collections is not None and
+                class_ in collections or
+                    "manages" in class_):
                 apidoc.add_supported_class(
                     class_obj, collection=collection, collection_path=collection_path,
                     collection_manages=class_["manages"])
@@ -150,18 +153,18 @@ def create_class(
     for k, literal in doc_keys.items():
         result[k] = input_key_check(class_dict, k, "class_dict", literal)
 
+    collection = False
     # See if class_dict is a Collection Class
     # type: Union[Match[Any], bool]
-    collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I)
-    if collection:
-        return None, None, None
+    # get the list of all collections if they are defined in entrypoint under 'hydra:collection'
+    collections = entrypoint.get('collections')
+    if (collections is not None and
+        class_dict in collections or
+            "manages" in class_dict):
+        collection = True
 
     # Check if class has it's own endpoint
-    endpoint, path = class_in_endpoint(class_dict, entrypoint)
-
-    # Check if class has a Collection
-    collection, collection_path = collection_in_endpoint(
-        class_dict, entrypoint)
+    endpoint, path = get_endpoint_and_path(class_dict, entrypoint)
 
     # Create the HydraClass object
     class_ = HydraClass(
@@ -177,7 +180,7 @@ def create_class(
         op_obj = create_operation(op)
         class_.add_supported_op(op_obj)
 
-    return class_, collection, collection_path
+    return class_, collection, path
 
 
 def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
@@ -286,7 +289,7 @@ def create_link_property(
     return link
 
 
-def class_in_endpoint(
+def get_endpoint_and_path(
         class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a class.
 
@@ -318,42 +321,6 @@ def class_in_endpoint(
         # Match the title with regular expression
 
         if label == class_['title']:
-            path = "/".join(property_['@id'].split("/")[1:])
-            return True, path
-    return False, None
-
-
-def collection_in_endpoint(
-        class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
-    """Check if a given class is in the EntryPoint object as a collection.
-
-    Raises:
-        SyntaxError: If the `entrypoint` dictionary does not include the key
-            `supportedProperty`.
-        SyntaxError: If any dictionary in `supportedProperty` list does not include
-            the key `property`.
-        SyntaxError: If any property dictionary does not include the key `label`.
-
-    """
-    # Check supportedProperty for the EntryPoint
-    try:
-        supported_property = entrypoint["supportedProperty"]
-    except KeyError:
-        raise SyntaxError("EntryPoint must have [supportedProperty]")
-
-    # Check all endpoints in supportedProperty
-    for prop in supported_property:
-        # Syntax checks
-        try:
-            property_ = prop["property"]
-        except KeyError:
-            raise SyntaxError("supportedProperty must have [property]")
-        try:
-            label = property_["label"]
-        except KeyError:
-            raise SyntaxError("property must have [label]")
-        # Match the title with regular expression
-        if label == "{}Collection".format(class_["title"]):
             path = "/".join(property_['@id'].split("/")[1:])
             return True, path
     return False, None
