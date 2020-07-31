@@ -368,7 +368,7 @@ doc = {
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "https://hydrus.com/api/vocab#Extraclasses_retrieve",
+                    "@id": "_:Extraclasses_retrieve",
                     "@type": "http://schema.org/FindAction",
                     "description": "Retrieves all the members of Extraclasses",
                     "expects": "null",
@@ -379,7 +379,7 @@ doc = {
                     "returnsHeader": []
                 },
                 {
-                    "@id": "https://hydrus.com/api/vocab#Extraclasses_create",
+                    "@id": "_:Extraclasses_create",
                     "@type": "http://schema.org/AddAction",
                     "description": "Create new member in Extraclasses",
                     "expects": "https://hydrus.com/api/vocab#extraClass",
@@ -398,7 +398,7 @@ doc = {
                     "returnsHeader": []
                 },
                 {
-                    "@id": "https://hydrus.com/api/vocab#Extraclasses_update",
+                    "@id": "_:Extraclasses_update",
                     "@type": "http://schema.org/UpdateAction",
                     "description": "Update member of  Extraclasses ",
                     "expects": "https://hydrus.com/api/vocab#extraClass",
@@ -417,7 +417,7 @@ doc = {
                     "returnsHeader": []
                 },
                 {
-                    "@id": "https://hydrus.com/api/vocab#Extraclasses_delete",
+                    "@id": "_:Extraclasses_delete",
                     "@type": "http://schema.org/DeleteAction",
                     "description": "Delete member of Extraclasses ",
                     "expects": "https://hydrus.com/api/vocab#extraClass",
@@ -460,7 +460,7 @@ doc = {
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "https://hydrus.com/api/vocab#dummyclasses_retrieve",
+                    "@id": "_:dummyclasses_retrieve",
                     "@type": "http://schema.org/FindAction",
                     "description": "Retrieves all the members of dummyclasses",
                     "expects": "null",
@@ -471,7 +471,7 @@ doc = {
                     "returnsHeader": []
                 },
                 {
-                    "@id": "https://hydrus.com/api/vocab#dummyclasses_create",
+                    "@id": "_:dummyclasses_create",
                     "@type": "http://schema.org/AddAction",
                     "description": "Create new member in dummyclasses",
                     "expects": "https://hydrus.com/api/vocab#dummyClass",
@@ -490,7 +490,7 @@ doc = {
                     "returnsHeader": []
                 },
                 {
-                    "@id": "https://hydrus.com/api/vocab#dummyclasses_update",
+                    "@id": "_:dummyclasses_update",
                     "@type": "http://schema.org/UpdateAction",
                     "description": "Update member of  dummyclasses ",
                     "expects": "https://hydrus.com/api/vocab#dummyClass",
@@ -509,7 +509,7 @@ doc = {
                     "returnsHeader": []
                 },
                 {
-                    "@id": "https://hydrus.com/api/vocab#dummyclasses_delete",
+                    "@id": "_:dummyclasses_delete",
                     "@type": "http://schema.org/DeleteAction",
                     "description": "Delete member of dummyclasses ",
                     "expects": "https://hydrus.com/api/vocab#dummyClass",
@@ -547,7 +547,7 @@ doc = {
             "description": "EntryPoint",
             "supportedOperation": [
                 {
-                    "@id": "https://hydrus.comentry_point",
+                    "@id": "_:entry_point",
                     "@type": "EntryPoint",
                     "description": "The APIs main entry point.",
                     "expects": "null",
@@ -705,7 +705,7 @@ doc = {
                         "range": "https://hydrus.com/api/vocab#:Extraclasses",
                         "supportedOperation": [
                             {
-                                "@id": "https://hydrus.com/api/vocab#extraclasses_retrieve",
+                                "@id": "_:extraclasses_retrieve",
                                 "@type": "http://schema.org/FindAction",
                                 "description": "Retrieves all the members of Extraclasses",
                                 "expects": "null",
@@ -716,7 +716,7 @@ doc = {
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "https://hydrus.com/api/vocab#extraclasses_create",
+                                "@id": "_:extraclasses_create",
                                 "@type": "http://schema.org/AddAction",
                                 "description": "Create new member in Extraclasses",
                                 "expects": "https://hydrus.com/api/vocab#extraClass",
@@ -735,7 +735,7 @@ doc = {
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "https://hydrus.com/api/vocab#extraclasses_update",
+                                "@id": "_:extraclasses_update",
                                 "@type": "http://schema.org/UpdateAction",
                                 "description": "Update member of  Extraclasses ",
                                 "expects": "https://hydrus.com/api/vocab#extraClass",
@@ -754,7 +754,7 @@ doc = {
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "https://hydrus.com/api/vocab#extraclasses_delete",
+                                "@id": "_:extraclasses_delete",
                                 "@type": "http://schema.org/DeleteAction",
                                 "description": "Delete member of Extraclasses ",
                                 "expects": "https://hydrus.com/api/vocab#extraClass",
@@ -790,7 +790,7 @@ doc = {
                         "range": "https://hydrus.com/api/vocab#:dummyclasses",
                         "supportedOperation": [
                             {
-                                "@id": "https://hydrus.com/api/vocab#dummyclasses_retrieve",
+                                "@id": "_:dummyclasses_retrieve",
                                 "@type": "http://schema.org/FindAction",
                                 "description": "Retrieves all the members of dummyclasses",
                                 "expects": "null",
@@ -801,7 +801,7 @@ doc = {
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "https://hydrus.com/api/vocab#dummyclasses_create",
+                                "@id": "_:dummyclasses_create",
                                 "@type": "http://schema.org/AddAction",
                                 "description": "Create new member in dummyclasses",
                                 "expects": "https://hydrus.com/api/vocab#dummyClass",
@@ -820,7 +820,7 @@ doc = {
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "https://hydrus.com/api/vocab#dummyclasses_update",
+                                "@id": "_:dummyclasses_update",
                                 "@type": "http://schema.org/UpdateAction",
                                 "description": "Update member of  dummyclasses ",
                                 "expects": "https://hydrus.com/api/vocab#dummyClass",
@@ -839,7 +839,7 @@ doc = {
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "https://hydrus.com/api/vocab#dummyclasses_delete",
+                                "@id": "_:dummyclasses_delete",
                                 "@type": "http://schema.org/DeleteAction",
                                 "description": "Delete member of dummyclasses ",
                                 "expects": "https://hydrus.com/api/vocab#dummyClass",

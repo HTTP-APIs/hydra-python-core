@@ -282,21 +282,21 @@ class HydraCollection():
         self.manages = manages
 
         if get:
-            get_op = HydraCollectionOp("{}{}_retrieve".format(DocUrl.doc_url, self.name),
+            get_op = HydraCollectionOp("_:{}_retrieve".format(self.name),
                                        "http://schema.org/FindAction",
                                        "GET", "Retrieves all the members of {}".format(self.name),
                                        None, self.manages['object'], [], [], [])
             self.supportedOperation.append(get_op)
 
         if put:
-            put_op = HydraCollectionOp("{}{}_create".format(DocUrl.doc_url, self.name), "http://schema.org/AddAction",
+            put_op = HydraCollectionOp("_:{}_create".format(self.name), "http://schema.org/AddAction",
                                        "PUT", "Create new member in {}".format(self.name),
                                        self.manages['object'], self.manages['object'], [], [],
                                        [HydraStatus(code=201, desc="A new member in {} created".format(self.name))]
                                        )
             self.supportedOperation.append(put_op)
         if post:
-            post_op = HydraCollectionOp("{}{}_update".format(DocUrl.doc_url, self.name),
+            post_op = HydraCollectionOp("_:{}_update".format(self.name),
                                         "http://schema.org/UpdateAction",
                                         "POST", "Update member of  {} ".format(self.name),
                                         self.manages['object'], self.manages['object'], [], [],
@@ -306,7 +306,7 @@ class HydraCollection():
             self.supportedOperation.append(post_op)
 
         if delete:
-            delete_op = HydraCollectionOp("{}{}_delete".format(DocUrl.doc_url, self.name),
+            delete_op = HydraCollectionOp("_:{}_delete".format(self.name),
                                           "http://schema.org/DeleteAction",
                                           "DELETE", "Delete member of {} ".format(self.name),
                                           self.manages['object'], self.manages['object'], [], [],
@@ -382,7 +382,7 @@ class HydraEntryPoint():
         self.entrypoint = HydraClass(
             "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
         self.entrypoint.add_supported_op(EntryPointOp(
-            "{}entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
+            "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
             type_="{}EntryPoint".format(DocUrl.doc_url)))
         self.context = Context(
             "{}{}".format(
