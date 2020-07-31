@@ -25,7 +25,8 @@ class HydraDoc():
     def add_supported_class(
             self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
             collection_name: str=None,
-            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True,
+            collection_path: str=None, collectionGet: bool=True, collectionPut: bool=True,
+            collectionPost: bool=True, collectionDelete: bool=True,
             collection_manages: Union[Dict[str, Any], List]=None) -> None:
         """Add a new supportedClass.
 
@@ -44,7 +45,7 @@ class HydraDoc():
         if collection:
             collection = HydraCollection(
                 class_, collection_name, collection_path, collection_manages, collectionGet,
-                collectionPost)
+                collectionPut, collectionPost, collectionDelete)
             self.collections[collection.path] = {
                 "context": Context(address="{}{}".format(self.base_url, self.API),
                                    collection=collection), "collection": collection}
@@ -262,7 +263,7 @@ class HydraCollection():
             collection_name: str=None,
             collection_path: str=None,
             manages: Union[Dict[str, Any], List]=None,
-            get: bool=True, post: bool=True) -> None:
+            get: bool=True, put: bool=True, post: bool=True, delete: bool=True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = "{}Collection".format(class_.title) \
@@ -271,7 +272,7 @@ class HydraCollection():
         self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
-                                                 False, False, False,
+                                                 True, True, False,
                                                  "The {}".format(self.class_.title.lower()))]
         if manages is None:
             # provide default manages block
@@ -290,13 +291,35 @@ class HydraCollection():
                 None, "vocab:{}".format(self.name), [], [], [])
             self.supportedOperation.append(get_op)
 
-        if post:
-            post_op = HydraCollectionOp("_:{}_create".format(self.class_.title.lower()),
-                                        "http://schema.org/AddAction",
-                                        "PUT", "Create new {} entity".format(
+        if put:
+            put_op = HydraCollectionOp("_:{}_create".format(self.class_.title.lower()),
+                                       "http://schema.org/AddAction",
+                                       "PUT", "Create new {} entity".format(
                 self.class_.title),
                 self.class_.id_, self.class_.id_, [], [],
                 [HydraStatus(code=201, desc="If the {} entity was created"
+                             "successfully.".format(self.class_.title))]
+            )
+            self.supportedOperation.append(put_op)
+
+        if post:
+            post_op = HydraCollectionOp("_:{}_update".format(self.class_.title.lower()),
+                                        "http://schema.org/UpdateAction",
+                                        "POST", "Update existing {} entity".format(
+                self.class_.title),
+                self.class_.id_, self.class_.id_, [], [],
+                [HydraStatus(code=200, desc="If the {} entity was updated"
+                             "successfully.".format(self.class_.title))]
+            )
+            self.supportedOperation.append(post_op)
+
+        if delete:
+            delete_op = HydraCollectionOp("_:{}_delete".format(self.class_.title.lower()),
+                                          "http://schema.org/DeleteAction",
+                                          "DELETE", "Delete existing {} entity".format(
+                self.class_.title),
+                self.class_.id_, self.class_.id_, [], [],
+                [HydraStatus(code=200, desc="If the {} entity was deleted"
                              "successfully.".format(self.class_.title))]
             )
             self.supportedOperation.append(post_op)
