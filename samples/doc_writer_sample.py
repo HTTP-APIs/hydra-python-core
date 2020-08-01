@@ -1,8 +1,9 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp, HydraClassOp,
-                                            HydraStatus, HydraError, HydraLink)
+                                            HydraStatus, HydraError, HydraLink,HydraCollection)
 from typing import Any, Dict, Union
+from urllib.parse import urljoin
 
 # Creating the HydraDoc object, this is the primary class for the Doc
 API_NAME = "api"                # Name of the API, will serve as EntryPoint
@@ -15,36 +16,60 @@ api_doc = HydraDoc(API_NAME,
                    "Title for the API Documentation",
                    "Description for the API Documentation",
                    API_NAME,
-                   BASE_URL)
+                   BASE_URL,
+                   "vocab")
 
 
 # Creating classes for the API
-class_uri = "dummyClass"      # URI of class for the HydraClass
 class_title = "dummyClass"                      # Title of the Class
 class_description = "A dummyClass for demo"     # Description of the class
-class_ = HydraClass(class_uri, class_title, class_description, endpoint=False)
+class_ = HydraClass(class_title, class_description, endpoint=False)
+
 
 # Class with single instance
-class_2_uri = "singleClass"
+
 class_2_title = "singleClass"
 class_2_description = "A non collection class"
-class_2 = HydraClass(class_2_uri, class_2_title,
+class_2 = HydraClass(class_2_title,
                      class_2_description, endpoint=True)
 
 # Another class with single instance, will be used as nested class
 
-class_1_uri = "anotherSingleClass"
 class_1_title = "anotherSingleClass"
 class_1_description = "An another non collection class"
-class_1 = HydraClass(class_1_uri, class_1_title,
+class_1 = HydraClass(class_1_title,
                      class_1_description, endpoint=True)
 
 # Class not having any methods except put and get
-class_3_uri = "extraClass"
 class_3_title = "extraClass"
 class_3_description = "Class without any explicit methods"
-class_3 = HydraClass(class_3_uri, class_3_title,
+class_3 = HydraClass(class_3_title,
                      class_3_description, endpoint=False)
+
+collection_name = "Extraclasses"
+collection_title = "ExtraClass collection"
+collection_description = "This collection comprises of instances of ExtraClass"
+# add explicit statements about members of the collection
+# Following manages block means every member of this collection is of type class_3
+collection_managed_by = {
+    "property": "rdf:type",
+    "object": class_3.id_,
+}
+collection_1 = HydraCollection(collection_name=collection_name,
+                               collection_description=collection_description, manages=collection_managed_by, get=True,
+                               post=True, collection_path="EcTest")
+
+collection2_title = "dummyClass collection"
+collection2_name = "dummyclasses"
+collection2_description = "This collection comprises of instances of dummyClass"
+collection2_managed_by = {
+    "property": "rdf:type",
+    "object": class_.id_,
+}
+
+collection_2 = HydraCollection(collection_name=collection2_name,
+                               collection_description=collection2_description, manages=collection2_managed_by, get=True,
+                               post=True, collection_path="DcTest")
 
 # NOTE: Setting endpoint=True creates an endpoint for the class itself, this is usually for classes
 #       that have single instances.
@@ -75,7 +100,7 @@ dummyProp2 = HydraClassProp(prop1_uri, prop2_title,
 op_name = "UpdateClass"  # The name of the operation
 op_method = "POST"  # The method of the Operation [GET, POST, PUT, DELETE]
 # URI of the object that is expected for the operation
-op_expects = "vocab:dummyClass"
+op_expects = class_.id_
 op_returns = None   # URI of the object that is returned by the operation
 op_returns_header = ["Content-Type", "Content-Length"]
 op_expects_header = []
@@ -94,38 +119,38 @@ op1 = HydraClassOp(op_name,
 op2_status = [HydraStatus(code=200, desc="dummyClass deleted.")]
 op2 = HydraClassOp("DeleteClass", "DELETE", None, None, [], [], op2_status)
 op3_status = [HydraStatus(code=201, desc="dummyClass successfully added.")]
-op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, [], [], op3_status)
+op3 = HydraClassOp("AddClass", "PUT", class_.id_, None, [], [], op3_status)
 op4_status = [HydraStatus(code=200, desc="dummyClass returned.")]
-op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", [], [], op4_status)
+op4 = HydraClassOp("GetClass", "GET", None, class_.id_, [], [], op4_status)
 
 # Operations for non collection class
 class_2_op1_status = [HydraStatus(code=200, desc="singleClass changed.")]
 class_2_op1 = HydraClassOp("UpdateClass", "POST",
-                           "vocab:singleClass", None, [], [], class_2_op1_status)
+                           class_2.id_, None, [], [], class_2_op1_status)
 class_2_op2_status = [HydraStatus(code=200, desc="singleClass deleted.")]
 class_2_op2 = HydraClassOp("DeleteClass", "DELETE",
                            None, None, [], [], class_2_op2_status)
 class_2_op3_status = [HydraStatus(code=201, desc="singleClass successfully added.")]
 class_2_op3 = HydraClassOp(
-    "AddClass", "PUT", "vocab:singleClass", None, [], [], class_2_op3_status)
+    "AddClass", "PUT", class_2.id_, None, [], [], class_2_op3_status)
 class_2_op4_status = [HydraStatus(code=200, desc="singleClass returned.")]
 class_2_op4 = HydraClassOp("GetClass", "GET", None,
-                           "vocab:singleClass", [], [], class_2_op4_status)
+                           class_2.id_, [], [], class_2_op4_status)
 
 class_1_op1_status = [HydraStatus(code=200, desc="anotherSingleClass returned.")]
 class_1_op1 = HydraClassOp("GetClass", "GET", None,
-                           "vocab:anotherSingleClass", [], [], class_1_op1_status)
+                           class_1.id_, [], [], class_1_op1_status)
 # Add the properties to the classes
 class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
-dummy_prop_link = HydraLink("singleClass/dummyProp", "dummyProp", domain="vocab:singleClass",
-                            range_="vocab:dummyClass")
+dummy_prop_link = HydraLink("singleClass/dummyProp", "dummyProp", domain=class_2.id_,
+                            range_=class_.id_)
 class_2.add_supported_prop(HydraClassProp(
     dummy_prop_link, "dummyProp", required=False, read=False, write=True))
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=True))
+    class_1.id_, "singleClassProp", required=False, read=False, write=True))
 class_1.add_supported_prop(dummyProp1)
 # Add the operations to the classes
 class_.add_supported_op(op1)
@@ -138,32 +163,21 @@ class_2.add_supported_op(class_2_op3)
 class_2.add_supported_op(class_2_op4)
 class_1.add_supported_op(class_1_op1)
 
-# add explicit statements about members of the collection
-# Following manages block means every member of this collection is of type class_
-collection_1_managed_by = {
-    "property": "rdf:type",
-    "object": 'vocab:' + class_uri,
-}
-# Following manages block means every member of this collection is of type class_3
-collection_3_managed_by = {
-    "property": "rdf:type",
-    "object": 'vocab:' + class_3_uri,
-}
 # Add the classes to the HydraDoc
 
-api_doc.add_supported_class(class_, collection=True, collection_path="DcTest",
-                            collection_manages=collection_1_managed_by)
-api_doc.add_supported_class(class_3, collection=True, collection_path="EcTest",
-                            collection_manages=collection_3_managed_by)
-api_doc.add_supported_class(class_2, collection=False)
-api_doc.add_supported_class(class_1, collection=False)
-# NOTE: Using collection=True creates a HydraCollection for the class.
-#       The name of the Collection is class_.title+"Collection"
-#       The collection inherently supports GET and PUT operations
+api_doc.add_supported_class(class_)
+api_doc.add_supported_class(class_3)
+api_doc.add_supported_class(class_2)
+api_doc.add_supported_class(class_1)
+api_doc.add_supported_class(class_1)
+
+# add the collection to the HydraDoc.
+api_doc.add_supported_collection(collection_1)
+api_doc.add_supported_collection(collection_2)
 
 # Other operations needed for the Doc
-api_doc.add_baseResource(
-)      # Creates the base Resource Class and adds it to the API Documentation
+# Creates the base Resource Class and adds it to the API Documentation
+api_doc.add_baseResource()
 # Creates the base Collection Class and adds it to the API Documentation
 api_doc.add_baseCollection()
 # Generates the EntryPoint object for the Doc using the Classes and Collections
