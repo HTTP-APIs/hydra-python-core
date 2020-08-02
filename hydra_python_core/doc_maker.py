@@ -95,10 +95,10 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
-            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL,doc_name)
+            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL, doc_name)
     else:
         apidoc = HydraDoc(
-            entrypoint, _title, _description, entrypoint, base_url,doc_name)
+            entrypoint, _title, _description, entrypoint, base_url, doc_name)
 
     # additional context entries
     for entry in _context:
@@ -166,17 +166,23 @@ def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
         manages['property'] = endpoint_collection[hydra['manages']][0][hydra['property']][0]['@id']
     is_get = False
     is_post = False
+    is_put = False
+    is_del = False
 
     for supported_operations in endpoint_collection[hydra['supportedOperation']]:
         if supported_operations[hydra['method']][0]['@value'] == 'GET':
             is_get = True
         if supported_operations[hydra['method']][0]['@value'] == 'PUT':
             is_post = True
+        if supported_operations[hydra['method']][0]['@value'] == 'POST':
+            is_put = True
+        if supported_operations[hydra['method']][0]['@value'] == 'PUT':
+            is_del = True
 
     collection_ = HydraCollection(collection_name=collection_name,
                                   collection_description=collection_description,
                                   manages=manages, get=is_get,
-                                  post=is_post)
+                                  post=is_post, put=is_put, delete=is_del)
     return collection_
 
 

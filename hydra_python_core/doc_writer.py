@@ -68,7 +68,7 @@ class HydraDoc:
     def add_baseCollection(self) -> None:
         """Add Collection class to the API Doc."""
         collection = HydraClass(
-            "http://www.w3.org/ns/hydra/core#Collection", "Collection", None)
+            _id="http://www.w3.org/ns/hydra/core#Collection", title="Collection", desc=None)
         member = HydraClassProp(
             "http://www.w3.org/ns/hydra/core#member", "members", False, False, None)
         collection.add_supported_prop(member)
@@ -77,7 +77,7 @@ class HydraDoc:
     def add_baseResource(self) -> None:
         """Add Resource class to the API Doc."""
         resource = HydraClass(
-            "http://www.w3.org/ns/hydra/core#Resource", "Resource", None)
+            _id="http://www.w3.org/ns/hydra/core#Resource", title="Resource", desc=None)
         self.other_classes.append(resource)
 
     def add_to_context(
@@ -120,9 +120,9 @@ class HydraClass():
 
     def __init__(
             self, title: str, desc: str, path: str = None,
-            endpoint: bool = False, sub_classof: None = None) -> None:
+            endpoint: bool = False, sub_classof: None = None, _id: str = None) -> None:
         """Initialize the Hydra_Class."""
-        self.id_ = "{}{}".format(DocUrl.doc_url, title)
+        self.id_ = _id if _id is not None else "{}{}".format(DocUrl.doc_url, title)
         self.title = title
         self.desc = desc
         self.path = path if path else title
@@ -475,7 +475,7 @@ class EntryPointCollection():
                 "label": self.name,
                 "description": "The {} collection".format(self.name, ),
                 "domain": "{}EntryPoint".format(DocUrl.doc_url),
-                "range": "{}:{}".format(DocUrl.doc_url, self.name),
+                "range": "{}{}".format(DocUrl.doc_url, self.name),
                 "supportedOperation": [],
             },
             "hydra:title": self.name.lower(),

@@ -127,7 +127,7 @@ class TestCreateClass(unittest.TestCase):
             }
         # run the function and check if HydraClass has been instantiated
         class_ = doc_maker.create_class(class_dict, endpoint=False)
-        mock_class.assert_called_once_with('https://hydrus.com/api/dummyClass', 'dummyClass', 'A dummyClass for demo',
+        mock_class.assert_called_once_with('dummyClass', 'A dummyClass for demo',
                                            endpoint=False)
 
         # check if properties and operations has been added to the hydra class
@@ -167,7 +167,7 @@ class TestCreateDoc(unittest.TestCase):
 
         server_url = "http://hydrus.com/"
         api_name = "test_api"
-
+        doc_name = 'vocab'
         class_count = 0
         collection_count = 0
         # find out the number of classes
@@ -181,16 +181,16 @@ class TestCreateDoc(unittest.TestCase):
         apidoc = doc_maker.create_doc(self.doc, server_url, api_name)
         mock_doc.assert_called_once_with(api_name, "Title for the API Documentation",
                                          "Description for the API Documentation",
-                                         api_name, server_url)
+                                         api_name, server_url, doc_name)
         # check if all context keys has been added to apidoc
         self.assertEqual(mock_doc.return_value.add_to_context.call_count, len(
             self.doc["@context"].keys()))
 
         # check if all classes has been added to apidoc
         self.assertEqual(
-            mock_doc.return_value.add_supported_collection.call_count, collection_count)
-        self.assertEqual(
             mock_doc.return_value.add_supported_class.call_count, class_count-3)
+        self.assertEqual(
+            mock_doc.return_value.add_supported_collection.call_count, collection_count)
 
         # check if all base resource and classes has been added
         self.assertEqual(
