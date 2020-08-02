@@ -18,16 +18,6 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
                API_NAME: str = None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation.
 
-    Algorithm:
-    1. Check if it's type is API DOC or return if the expanded list is empty.
-    2. Loop through the Supported class to find the classes.
-    3. To check collection check the presence of manages block in supported Properties and determine the type of class
-       from which collection is made up of:
-    4. To find the entry point, check the hydra:entryPoint
-    5. The only way to find out endpoints is to check for hydra:Link type of a property.
-    6. To identify classes and collections from the EntryPoint Class one possible way is to check the type of the range
-      for either class or collection.
-
     :param doc dictionary of hydra api doc
     :param HYDRUS_SERVER_URL url of the hydrus server
     :param API_NAME name of the api
@@ -88,7 +78,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # Extract base_url, entrypoint and API name
     base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
     entrypoint = _entrypoint
-
+    doc_name = urlparse(_id).path.split('/')[-1]
     for classes in _classes:
         endpoint = False
         for endpoints in _endpoints:
@@ -105,10 +95,10 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
-            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL)
+            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL,doc_name)
     else:
         apidoc = HydraDoc(
-            entrypoint, _title, _description, entrypoint, base_url)
+            entrypoint, _title, _description, entrypoint, base_url,doc_name)
 
     # additional context entries
     for entry in _context:
@@ -183,8 +173,7 @@ def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
         if supported_operations[hydra['method']][0]['@value'] == 'PUT':
             is_post = True
 
-    collection_ = HydraCollection(collection_id=collection_id,
-                                  collection_name=collection_name,
+    collection_ = HydraCollection(collection_name=collection_name,
                                   collection_description=collection_description,
                                   manages=manages, get=is_get,
                                   post=is_post)
@@ -210,7 +199,7 @@ def create_class(expanded_class: Dict[str, Any], endpoint: bool) -> HydraClass:
     if hydra['description'] in expanded_class:
         class_description = expanded_class[hydra['description']][0]['@value']
 
-    class_ = HydraClass(class_id, class_title,
+    class_ = HydraClass(class_title,
                         class_description, endpoint=endpoint)
 
     # add supported Property
