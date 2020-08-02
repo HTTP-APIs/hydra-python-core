@@ -333,17 +333,17 @@ doc = {
             "title": "anotherSingleClass"
         },
         {
-            "@id": "https://hydrus.com/api/vocab#http://www.w3.org/ns/hydra/core#Resource",
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
             "@type": "hydra:Class",
-            "description": "Resource",
+            "description": "null",
             "supportedOperation": [],
             "supportedProperty": [],
-            "title": "http://www.w3.org/ns/hydra/core#Resource"
+            "title": "Resource"
         },
         {
-            "@id": "https://hydrus.com/api/vocab#http://www.w3.org/ns/hydra/core#Collection",
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
             "@type": "hydra:Class",
-            "description": "Collection",
+            "description": "null",
             "supportedOperation": [],
             "supportedProperty": [
                 {
@@ -355,7 +355,7 @@ doc = {
                     "writeable": "false"
                 }
             ],
-            "title": "http://www.w3.org/ns/hydra/core#Collection"
+            "title": "Collection"
         },
         {
             "@id": "https://hydrus.com/api/vocab#Extraclasses",
@@ -702,7 +702,7 @@ doc = {
                         "description": "The Extraclasses collection",
                         "domain": "https://hydrus.com/api/vocab#EntryPoint",
                         "label": "Extraclasses",
-                        "range": "https://hydrus.com/api/vocab#:Extraclasses",
+                        "range": "https://hydrus.com/api/vocab#Extraclasses",
                         "supportedOperation": [
                             {
                                 "@id": "_:extraclasses_retrieve",
@@ -787,7 +787,7 @@ doc = {
                         "description": "The dummyclasses collection",
                         "domain": "https://hydrus.com/api/vocab#EntryPoint",
                         "label": "dummyclasses",
-                        "range": "https://hydrus.com/api/vocab#:dummyclasses",
+                        "range": "https://hydrus.com/api/vocab#dummyclasses",
                         "supportedOperation": [
                             {
                                 "@id": "_:dummyclasses_retrieve",
