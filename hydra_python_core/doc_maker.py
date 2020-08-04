@@ -16,19 +16,16 @@ jsonld.set_document_loader(jsonld.requests_document_loader())
 
 def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
                API_NAME: str = None) -> HydraDoc:
-    """Create the HydraDoc object from the API Documentation.
-
-    :param doc dictionary of hydra api doc
-    :param HYDRUS_SERVER_URL url of the hydrus server
-    :param API_NAME name of the api
-    :return HYDRADOC instance of HydraDoc which server and agent can understand
-
-    Raises:
-        SyntaxError: If the `doc` doesn't have an entry for `@id` key.
-        SyntaxError: If the `@id` key of the `doc` is not of
-            the form : '[protocol] :// [base url] / [entrypoint] / vocab'
-
     """
+    Create the HydraDoc object from the API Documentation.
+
+    :param doc: dictionary of hydra api doc
+    :param HYDRUS_SERVER_URL: url of the hydrus server
+    :param API_NAME: name of the api
+    :return: instance of HydraDoc which server and agent can understand
+    :raise SyntaxError: If the `doc` doesn't have an entry for `@id` , `@context`, `@type` key.
+    """
+
     # These keys must be there in the APIDOC: @context, @id, @type
     if not all(key in doc for key in ('@context', '@id', '@type')):
         raise SyntaxError("Please make sure doc contains @context, @id and @type")
@@ -135,12 +132,13 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     apidoc.gen_EntryPoint()
     return apidoc
 
-
 def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
     """
-    Creates the instance of HydraCollection from expanded APIDOC
+     Creates the instance of HydraCollection from expanded APIDOC
+
     :param endpoint_collection: creates HydraCollection from expanded API doc
     :return: instance of HydraCollection
+
     """
     collection_id = ""
     collection_name = "The default collection name"
@@ -224,6 +222,7 @@ def create_class(expanded_class: Dict[str, Any], endpoint: bool) -> HydraClass:
 def create_operation(supported_operation: Dict[str, Any]) -> HydraClassOp:
     """
     Creates the instance of HydraClassOp
+
     :param supported_operation: The expanded supported operation from the API DOC
     :return: HydraClassOp
     """
@@ -269,6 +268,7 @@ def create_operation(supported_operation: Dict[str, Any]) -> HydraClassOp:
 def create_status(possible_status: List[Any]) -> List[HydraStatus]:
     """
     Creates instance of HydraStatus from expanded API doc
+
     :param possible_status: possible status from the expanded API doc
     :return: List of instances of HydraStatus
     """
@@ -297,6 +297,7 @@ def create_status(possible_status: List[Any]) -> List[HydraStatus]:
 def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, HydraClassProp]:
     """
     Creates the HydraClassProp from the expanded supported property
+
     :param supported_property: supported property dict from the expanded api doc
     :return: HydraClassProp
     """
@@ -328,6 +329,7 @@ def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, Hydr
 def create_link(supported_property: Dict[str, Any]) -> HydraLink:
     """
     Creates the instances of HydraLink
+
     :param supported_property: expanded Property
     :return: instance of HydraLink
     """
