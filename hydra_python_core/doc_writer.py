@@ -22,7 +22,7 @@ class HydraDoc:
         self.entrypoint = HydraEntryPoint(base_url, entrypoint)
         self.desc = desc
         self.doc_name = doc_name
-        doc_url = DocUrl(self.base_url, self.API, self.doc_name)
+        self.doc_url = DocUrl(self.base_url, self.API, self.doc_name)
 
     def add_supported_class(
             self, class_: 'HydraClass') -> None:
@@ -383,7 +383,7 @@ class HydraEntryPoint():
             "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
         self.entrypoint.add_supported_op(EntryPointOp(
             "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
-            type_="{}EntryPoint".format(DocUrl.doc_url)))
+            type_="{}/{}#EntryPoint".format(base_url, entrypoint)))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -461,6 +461,7 @@ class EntryPointCollection():
         """Create method."""
         self.name = collection.name
         self.supportedOperation = collection.supportedOperation
+        self.manages = collection.manages
         if collection.path:
             self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
         else:
@@ -476,6 +477,7 @@ class EntryPointCollection():
                 "description": "The {} collection".format(self.name, ),
                 "domain": "{}EntryPoint".format(DocUrl.doc_url),
                 "range": "{}{}".format(DocUrl.doc_url, self.name),
+                "manages": self.manages,
                 "supportedOperation": [],
             },
             "hydra:title": self.name.lower(),

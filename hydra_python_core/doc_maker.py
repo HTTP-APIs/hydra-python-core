@@ -6,7 +6,7 @@ import json
 from pyld import jsonld
 import requests
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp,
-                                          HydraClassOp, HydraStatus, HydraLink, HydraCollection)
+                                          HydraClassOp, HydraStatus, HydraLink, HydraCollection, DocUrl)
 from typing import Any, Dict, Match, Optional, Tuple, Union, List
 from hydra_python_core.namespace import hydra, rdfs
 from urllib.parse import urlparse
@@ -69,7 +69,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
                             if prop_type == hydra['Link']:
                                 # find the range of the link
                                 for resource_range in prop[rdfs['range']]:
-                                    _endpoints.append(resource_range['@id'])
+                                    _endpoints.append(check_namespace(resource_range['@id']))
             if not isCollection:
                 _classes.append(classes)
         for status in item[hydra['possibleStatus']]:
@@ -81,6 +81,10 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     doc_name = urlparse(_id).path.split('/')[-1]
     for classes in _classes:
         endpoint = False
+        if classes['@id'].find("EntryPoint") != -1:
+            classes['@id'] = "{}{}".format(DocUrl.doc_url, "Entrypoint")
+        else:
+            classes['@id'] = check_namespace(classes['@id'])
         for endpoints in _endpoints:
             if classes['@id'] == endpoints:
                 endpoint = True
@@ -89,6 +93,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
             _non_endpoint_classes.append(classes)
 
     for collections in _collections:
+        collections['@id'] = check_namespace(collections['@id'])
         for endpoints in _endpoints:
             if collections['@id'] == endpoints:
                 _endpoint_collection.append(collections)
@@ -142,14 +147,8 @@ def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
     :param endpoint_collection: creates HydraCollection from expanded API doc
     :return: instance of HydraCollection
     """
-    collection_id = ""
     collection_name = "The default collection name"
     collection_description = "The default collection description"
-
-    if '@id' in endpoint_collection:
-        collection_id = endpoint_collection['@id']
-    else:
-        raise KeyError('@id key is missing from Collection')
 
     if hydra['title'] in endpoint_collection:
         collection_name = endpoint_collection[hydra['title']][0]['@value']
@@ -159,11 +158,11 @@ def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
 
     manages = {}
     if hydra['object'] in endpoint_collection[hydra['manages']][0]:
-        manages['object'] = endpoint_collection[hydra['manages']][0][hydra['object']][0]['@id']
+        manages['object'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['object']][0]['@id'])
     if hydra['subject'] in endpoint_collection[hydra['manages']][0]:
-        manages['subject'] = endpoint_collection[hydra['manages']][0][hydra['subject']][0]['@id']
+        manages['subject'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['subject']][0]['@id'])
     if hydra['property'] in endpoint_collection[hydra['manages']][0]:
-        manages['property'] = endpoint_collection[hydra['manages']][0][hydra['property']][0]['@id']
+        manages['property'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['property']][0]['@id'])
     is_get = False
     is_post = False
     is_put = False
@@ -195,7 +194,7 @@ def create_class(expanded_class: Dict[str, Any], endpoint: bool) -> HydraClass:
     :param endpoint: boolean True if class is an endpoint, False if class is not endpoint
     :return: HydraClass object that can be added to api doc
     """
-    class_id = expanded_class['@id']
+
     class_title = "A Class"
     class_description = "The description of the class"
 
@@ -240,10 +239,10 @@ def create_operation(supported_operation: Dict[str, Any]) -> HydraClassOp:
     op_method = supported_operation[hydra['method']][0]['@value']
 
     if hydra['expects'] in supported_operation:
-        op_expects = supported_operation[hydra['expects']][0]['@id']
+        op_expects = check_namespace(supported_operation[hydra['expects']][0]['@id'])
 
     if hydra['returns'] in supported_operation:
-        op_returns = supported_operation[hydra['returns']][0]['@id']
+        op_returns = check_namespace(supported_operation[hydra['returns']][0]['@id'])
 
     if hydra['expectsHeader'] in supported_operation:
         for header in supported_operation[hydra['expectsHeader']]:
@@ -304,7 +303,7 @@ def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, Hydr
     prop_title = "The title of Property"
 
     if hydra['property'] in supported_property:
-        prop_id = supported_property[hydra['property']][0]['@id']
+        prop_id = check_namespace(supported_property[hydra['property']][0]['@id'])
         if '@type' in supported_property[hydra['property']][0]:
             if supported_property[hydra['property']][0]['@type'][0] == hydra['Link']:
                 prop_id = create_link(supported_property[hydra['property']][0])
@@ -334,14 +333,14 @@ def create_link(supported_property: Dict[str, Any]) -> HydraLink:
     prop_title = 'The default Link title'
     prop_desc = 'The default Link description'
 
-    prop_id = supported_property['@id']
+    prop_id = check_namespace(supported_property['@id'])
     if hydra['description'] in supported_property:
         prop_desc = supported_property[hydra['description']]
     if hydra['title'] in supported_property:
         prop_title = supported_property[hydra['title']][0]['@value']
 
-    prop_domain = supported_property[rdfs['domain']][0]['@id']
-    prop_range = supported_property[rdfs['range']][0]['@id']
+    prop_domain = check_namespace(supported_property[rdfs['domain']][0]['@id'])
+    prop_range = check_namespace(supported_property[rdfs['range']][0]['@id'])
 
     link_ = HydraLink(prop_id, prop_title, prop_desc, prop_domain, prop_range)
 
@@ -351,3 +350,17 @@ def create_link(supported_property: Dict[str, Any]) -> HydraLink:
             link_.add_supported_op(operation)
 
     return link_
+
+
+def check_namespace(id_: str = None) -> str:
+    """
+    A helper method to check if the classes and properties are in the same namespace and if not bring them
+    into the right namespace
+    :param id_ The id to check
+    :return: correct url
+    """
+    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('#') != -1:
+        id_ = "{}{}".format(DocUrl.doc_url, id_.split('#')[-1])
+    return id_
+
+

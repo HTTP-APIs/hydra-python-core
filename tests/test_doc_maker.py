@@ -188,7 +188,7 @@ class TestCreateDoc(unittest.TestCase):
 
         # check if all classes has been added to apidoc
         self.assertEqual(
-            mock_doc.return_value.add_supported_class.call_count, class_count-3)
+            mock_doc.return_value.add_supported_class.call_count, class_count-2)
         self.assertEqual(
             mock_doc.return_value.add_supported_collection.call_count, collection_count)
 
