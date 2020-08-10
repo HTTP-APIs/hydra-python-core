@@ -35,6 +35,10 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
 
     _context = doc['@context']
+    base_url = ''
+    entrypoint = ''
+    doc_name = 'vocab'
+    doc_url = ''
     _id = ''
     _entrypoint = ''
     _title = "The default title"
@@ -85,7 +89,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
             continue
         endpoint = False
         if classes['@id'].find("EntryPoint") != -1:
-            classes['@id'] = "{}{}".format(doc_url, "Entrypoint")
+            classes['@id'] = "{}{}".format(doc_url, "EntryPoint")
         else:
             classes['@id'] = check_namespace(classes['@id'])
         for endpoints in _endpoints:
@@ -114,7 +118,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     # make endpoint classes
     for endpoint_classes in _endpoint_class:
-        if endpoint_classes['@id'] == hydra['Resource'] or endpoint_classes['@id'] == hydra['Collection']:
+        if endpoint_classes['@id'] == hydra['Resource'] or endpoint_classes['@id'] == hydra['Collection'] or \
+                endpoint_classes['@id'].find("EntryPoint") != -1:
             continue
         class_ = create_class(endpoint_classes, endpoint=True)
         apidoc.add_supported_class(class_)
@@ -122,7 +127,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # make non-endpoint classes
     for classes in _non_endpoint_classes:
         if classes['@id'] == hydra['Resource'] or classes['@id'] == hydra['Collection'] or \
-                'EntryPoint' in classes['@id']:
+                classes['@id'].find("EntryPoint") != -1:
             continue
         class_ = create_class(classes, endpoint=False)
         apidoc.add_supported_class(class_)
