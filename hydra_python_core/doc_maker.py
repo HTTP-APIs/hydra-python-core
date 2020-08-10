@@ -79,10 +79,13 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
     entrypoint = _entrypoint
     doc_name = urlparse(_id).path.split('/')[-1]
+    doc_url = DocUrl(HYDRUS_SERVER_URL, api_name=API_NAME, doc_name=doc_name).doc_url
     for classes in _classes:
+        if classes['@id'] == hydra['Resource'] or classes['@id'] == hydra['Collection']:
+            continue
         endpoint = False
         if classes['@id'].find("EntryPoint") != -1:
-            classes['@id'] = "{}{}".format(DocUrl.doc_url, "Entrypoint")
+            classes['@id'] = "{}{}".format(doc_url, "Entrypoint")
         else:
             classes['@id'] = check_namespace(classes['@id'])
         for endpoints in _endpoints:
