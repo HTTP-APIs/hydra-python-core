@@ -741,7 +741,10 @@ class Context():
                             "members": "http://www.w3.org/ns/hydra/core#member", "object": "http://schema.org/object",
                             class_.title: class_.id_}  # type: Dict[str, Any]
             for prop in class_.supportedProperty:
-                self.context[prop.title] = prop.prop
+                if isinstance(prop.prop, HydraLink):
+                    self.context[prop.title] = prop.prop.id_
+                else:
+                    self.context[prop.title] = prop.prop
 
         elif collection is not None:
             self.context = {"hydra": "http://www.w3.org/ns/hydra/core#",
@@ -750,7 +753,7 @@ class Context():
 
         elif entrypoint is not None:
             self.context = {
-                "EntryPoint": "{}:EntryPoint".format(DocUrl.doc_url),
+                "EntryPoint": "{}EntryPoint".format(DocUrl.doc_url),
             }
 
         else:
