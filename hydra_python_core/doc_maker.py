@@ -33,6 +33,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     if not all(key in doc for key in ('@context', '@id', '@type')):
         raise SyntaxError("Please make sure doc contains @context, @id and @type")
 
+
     _context = doc['@context']
     _id = ''
     _entrypoint = ''
@@ -49,6 +50,11 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     expanded_doc = jsonld.expand(doc)
     for item in expanded_doc:
         _id = item['@id']
+        # Extract base_url, entrypoint and API name
+        base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
+        entrypoint = _entrypoint
+        doc_name = urlparse(_id).path.split('/')[-1]
+        doc_url = DocUrl(HYDRUS_SERVER_URL, api_name=API_NAME, doc_name=doc_name).doc_url
         for entrypoint in item[hydra['entrypoint']]:
             _entrypoint = entrypoint['@id']
         if hydra['title'] in item:
@@ -74,12 +80,6 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
                 _classes.append(classes)
         for status in item[hydra['possibleStatus']]:
             _possible_status.append(status)
-
-    # Extract base_url, entrypoint and API name
-    base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
-    entrypoint = _entrypoint
-    doc_name = urlparse(_id).path.split('/')[-1]
-    doc_url = DocUrl(HYDRUS_SERVER_URL, api_name=API_NAME, doc_name=doc_name).doc_url
     for classes in _classes:
         if classes['@id'] == hydra['Resource'] or classes['@id'] == hydra['Collection']:
             continue
