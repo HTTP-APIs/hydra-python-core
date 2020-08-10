@@ -379,8 +379,8 @@ class HydraEntryPoint():
         """Initialize the Entrypoint."""
         self.url = base_url
         self.api = entrypoint
-        self.entrypoint = HydraClass(
-            "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
+        self.entrypoint = HydraClass("EntryPoint", "The main entry point or homepage of the API.",
+                                     _id="{}#EntryPoint".format(urljoin(self.url, self.api)))
         self.entrypoint.add_supported_op(EntryPointOp(
             "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
             type_="{}/{}#EntryPoint".format(base_url, entrypoint)))

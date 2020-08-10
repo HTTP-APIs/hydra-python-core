@@ -542,9 +542,9 @@ doc = {
             "title": "dummyclasses"
         },
         {
-            "@id": "EntryPoint",
+            "@id": "http://hydrus.com/api#EntryPoint",
             "@type": "hydra:Class",
-            "description": "EntryPoint",
+            "description": "The main entry point or homepage of the API.",
             "supportedOperation": [
                 {
                     "@id": "_:entry_point",
