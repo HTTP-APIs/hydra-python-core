@@ -431,11 +431,11 @@ class HydraEntryPoint():
             "@context": "/{}/contexts/EntryPoint.jsonld".format(self.api),
             "@id": "/{}".format(self.api),
             "@type": "EntryPoint",
+
         }
         for item in self.entrypoint.supportedProperty:
             uri = item.id_
             if item.generate() in self.collections:
-                object_['collections'] = []
                 collection_returned = item.generate()
                 collection_id = uri.replace(
                     "{}EntryPoint".format(DocUrl.doc_url), "/{}".format(self.api))
@@ -446,7 +446,12 @@ class HydraEntryPoint():
                     "supportedOperation": collection_returned['property']['supportedOperation'],
                     "manages": collection_returned['property']['manages']
                 }
-                object_['collections'].append(collection_to_append)
+                if "collections" in object_:
+                    object_['collections'].append(collection_to_append)
+                else:
+                    object_['collections'] = []
+                    object_['collections'].append(collection_to_append)
+
             else:
                 object_[item.name] = uri.replace(
                     "{}EntryPoint".format(DocUrl.doc_url), "/{}".format(self.api))
