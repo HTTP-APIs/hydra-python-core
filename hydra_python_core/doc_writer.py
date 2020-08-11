@@ -22,7 +22,7 @@ class HydraDoc:
         self.entrypoint = HydraEntryPoint(base_url, entrypoint)
         self.desc = desc
         self.doc_name = doc_name
-        doc_url = DocUrl(self.base_url, self.API, self.doc_name)
+        self.doc_url = DocUrl(self.base_url, self.API, self.doc_name)
 
     def add_supported_class(
             self, class_: 'HydraClass') -> None:
@@ -379,11 +379,11 @@ class HydraEntryPoint():
         """Initialize the Entrypoint."""
         self.url = base_url
         self.api = entrypoint
-        self.entrypoint = HydraClass(
-            "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
+        self.entrypoint = HydraClass("EntryPoint", "The main entry point or homepage of the API.",
+                                     _id="{}#EntryPoint".format(urljoin(self.url, self.api)))
         self.entrypoint.add_supported_op(EntryPointOp(
             "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
-            type_="{}EntryPoint".format(DocUrl.doc_url)))
+            type_="{}/{}#EntryPoint".format(base_url, entrypoint)))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -431,11 +431,11 @@ class HydraEntryPoint():
             "@context": "/{}/contexts/EntryPoint.jsonld".format(self.api),
             "@id": "/{}".format(self.api),
             "@type": "EntryPoint",
+
         }
         for item in self.entrypoint.supportedProperty:
             uri = item.id_
             if item.generate() in self.collections:
-                object_['collections'] = []
                 collection_returned = item.generate()
                 collection_id = uri.replace(
                     "{}EntryPoint".format(DocUrl.doc_url), "/{}".format(self.api))
@@ -446,7 +446,12 @@ class HydraEntryPoint():
                     "supportedOperation": collection_returned['property']['supportedOperation'],
                     "manages": collection_returned['property']['manages']
                 }
-                object_['collections'].append(collection_to_append)
+                if "collections" in object_:
+                    object_['collections'].append(collection_to_append)
+                else:
+                    object_['collections'] = []
+                    object_['collections'].append(collection_to_append)
+
             else:
                 object_[item.name] = uri.replace(
                     "{}EntryPoint".format(DocUrl.doc_url), "/{}".format(self.api))
@@ -461,6 +466,7 @@ class EntryPointCollection():
         """Create method."""
         self.name = collection.name
         self.supportedOperation = collection.supportedOperation
+        self.manages = collection.manages
         if collection.path:
             self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
         else:
@@ -476,6 +482,7 @@ class EntryPointCollection():
                 "description": "The {} collection".format(self.name, ),
                 "domain": "{}EntryPoint".format(DocUrl.doc_url),
                 "range": "{}{}".format(DocUrl.doc_url, self.name),
+                "manages": self.manages,
                 "supportedOperation": [],
             },
             "hydra:title": self.name.lower(),
@@ -734,7 +741,10 @@ class Context():
                             "members": "http://www.w3.org/ns/hydra/core#member", "object": "http://schema.org/object",
                             class_.title: class_.id_}  # type: Dict[str, Any]
             for prop in class_.supportedProperty:
-                self.context[prop.title] = prop.prop
+                if isinstance(prop.prop, HydraLink):
+                    self.context[prop.title] = prop.prop.id_
+                else:
+                    self.context[prop.title] = prop.prop
 
         elif collection is not None:
             self.context = {"hydra": "http://www.w3.org/ns/hydra/core#",
@@ -743,7 +753,7 @@ class Context():
 
         elif entrypoint is not None:
             self.context = {
-                "EntryPoint": "{}:EntryPoint".format(DocUrl.doc_url),
+                "EntryPoint": "{}EntryPoint".format(DocUrl.doc_url),
             }
 
         else:
