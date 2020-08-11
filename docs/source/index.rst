@@ -9,6 +9,7 @@ Welcome to hydra-python-core's documentation!
 
    doc_writer
    doc_maker
+   hydrus
 
 
 
