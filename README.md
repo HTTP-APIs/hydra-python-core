@@ -2,7 +2,7 @@
 This library provides the core functions to implement Hydra Official Specification in Python.
 
 Currently the library mainly consists of 2 modules `doc_writer` and `doc_maker` which help hydrus generalise a lot of things. The documentation is available at
-https://hydra-python-core.readthedocs.io/en/latest/
+https://hydra-python-core.readthedocs.io/en/develop/
 
 -> `doc_writer` creates a new API Documentation as well as a `HydraDoc` object while,
 -> `doc_maker` uses an existing API Documentation to create a `HydraDoc` object 
