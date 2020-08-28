@@ -14,7 +14,7 @@ doc\_writer
 The doc\_writer module contains the implementation of Hydra
 specification classes, which are the core building pieces of any Hydra
 powered REST APIs. The classes can be found at
-http://www.hydra-cg.com/spec/latest/core/#classes. These classes is used
+http://www.hydra-cg.com/spec/latest/core/#classes. These classes are used
 to build the APIDOC from scratch. To see how we can generate APIDOC from
 scratch, please refer
 `this <https://www.hydraecosystem.org/01-Usage#newdoc>`__. The mapping
