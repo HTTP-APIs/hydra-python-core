@@ -90,6 +90,185 @@ The doc\_maker has following methods:
    namespace.
 
 
+Usage
+--------
+
+Create a new API Documentation and a new HydraDoc object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The doc_writer can be used to create an API Doc itself as defined below:
+The first step is to create a new HydraDoc object
+
+.. code-block:: python
+    :linenos:
+
+    from hydra_python_core.doc_writer import HydraDoc
+    # Creating the HydraDoc object, this is the primary class for the Doc
+    API_NAME = "api"                # Name of the API, will serve as EntryPoint
+    BASE_URL = "http://hydrus.com/"    # The base url at which the API is hosted
+    # NOTE: The API will be accessible at BASE_URL + ENTRY_POINT
+    # (http://hydrus.com/api)
+    # Create ApiDoc Object
+    api_doc = HydraDoc(API_NAME,
+                       "Title for the API Documentation",
+                       "Description for the API Documentation",
+                       API_NAME,
+                       BASE_URL,
+                       "vocab") # vocab is the name of vocabulary
+
+
+The API Documentation has been created, but it is not yet complete. Classes, properties, and operations must be added to the Doc.
+
+.. code-block:: python
+    :linenos:
+
+    from hydra_python_core.doc_writer import HydraDoc
+    # Creating classes for the API
+    class_title = "dummyClass"                      # Title of the Class
+    class_description = "A dummyClass for demo"     # Description of the class
+    class_ = HydraClass(class_title, class_description, endpoint=False)
+
+Classes need to have properties that allow them to store information related to the class. Similar to attributes in a Python class, these are stored as supportedProperty of the HydraClass. Properties are defined as HydraClassProp objects:
+
+.. code-block:: python
+    :linenos:
+
+    from hydra_python_core.doc_writer import HydraClassProp
+    # Create new properties for the class
+    # The URI of the class of the property
+    prop1_uri = "http://props.hydrus.com/prop1"
+    prop1_title = "Prop1"                   # Title of the property
+    dummyProp1 = HydraClassProp(prop1_uri, prop1_title,
+                                required=False, read=False, write=True)
+
+
+Besides these properties, classes also need to have operations that can modify the data stored within their instances. These operation are defined as HydraClassOp and are stored in supportedOperation of the HydraClass
+
+.. code-block:: python
+    :linenos:
+
+    from hydra_python_core.doc_writer import HydraClassOp, HydraStatus
+
+    # Create operations for the class
+    op_name = "UpdateClass"  # The name of the operation
+    op_method = "POST"  # The method of the Operation [GET, POST, PUT, DELETE]
+    # URI of the object that is expected for the operation
+    op_expects = class_.id_
+    op_returns = None   # URI of the object that is returned by the operation
+    op_returns_header = ["Content-Type", "Content-Length"]
+    op_expects_header = []
+    # List of statusCode for the operation
+    op_status = [HydraStatus(code=200, desc="dummyClass updated.")]
+
+    op1 = HydraClassOp(op_name,
+                       op_method,
+                       op_expects,
+                       op_returns,
+                       op_expects_header,
+                       op_returns_header,
+                       op_status)
+
+
+Once the classes and properties have been defined, add them to the class.
+
+.. code-block:: python
+    :linenos:
+
+    class_.add_supported_prop(dummyProp1)
+    class_.add_supported_op(op1)
+
+After defining a class along with its properties and operations, add this class to the APIDocumentation.
+
+.. code-block:: python
+    :linenos:
+
+    api_doc.add_supported_class(class_)
+
+We can also define a collection in the same we defined class. A collection is the set of somehow related resource
+
+.. code-block:: python
+    :linenos:
+
+    from hydra_python_core.doc_writer import HydraCollection
+    collection2_title = "dummyClass collection"
+    collection2_name = "dummyclasses"
+    collection2_description = "This collection comprises of instances of dummyClass"
+    # A manages block is a way to declare additional, implicit statements about members of a collection.
+    # Here we are defining that all the members of this collection is of type class_.
+    collection2_managed_by = {
+        "property": "rdf:type",
+        "object": class_.id_,
+    }
+    collection_2 = HydraCollection(collection_name=collection2_name,
+                                   collection_description=collection2_description, manages=collection2_managed_by, get=True,
+                                   post=True, collection_path="DcTest")
+
+Now we add this collection to the HydraDoc object.
+
+.. code-block:: python
+    :linenos:
+
+    # add the collection to the HydraDoc.
+    api_doc.add_supported_collection(collection_2)
+
+Other than this, an API Documentation also needs to have the Resource and the Collection classes, so that the server can identify the class members. This can be done automatically using the add_baseResource and add_baseCollection methods.
+
+.. code-block:: python
+    :linenos:
+
+    # Other operations
+    apidoc.add_baseResource()  # Creates the base Resource Class and adds it to the API Documentation
+    apidoc.add_baseCollection()    # Creates the base Collection Class and adds it to the API Documentation
+
+Finally, create the EntryPoint object for the API Documentation. All Collections are automatically assigned endpoints in the EntryPoint object. Classes that had their endpoint variables set to True are also assigned endpoints in the EntryPoint object. This object is created automatically by the HydraDoc object and can be created using the gen_EntryPoint method.
+
+.. code-block:: python
+    :linenos:
+
+    apidoc.gen_EntryPoint()    # Generates the EntryPoint object for the Doc using the Classes and Collections
+
+The final API Documentation can be viewed by calling the generate method which returns a Python dictionary containing the entire API Documentation. The generate method can be called for every class defined in the doc_writer module to generate its own Python dictionary.
+
+.. code-block:: python
+    :linenos:
+
+    doc = apidoc.generate()
+
+The complete script for this API Documentation can be found in ``samples/doc_writer_sample.py``, and the generated ApiDocumentation can be found in ``samples/doc_writer_sample_output.py``.
+
+
+Use an existing API Documentation to create a new HydraDoc object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If there is an existing apidoc in JSON-LD, to work with the tools of Hydra Ecosystem it needs to be converted in HydraDoc object.
+Any existing doc can be converted in HydraDoc by simply calling the ``create_doc`` method of ``doc_maker`` module.
+
+Example:
+
+.. code-block:: python
+    :linenos:
+
+    # Sample to convert the API Doc into doc_writer classes
+
+    from hydra_python_core.doc_maker import create_doc
+
+    # Note: It would be better to use json.loads from the python json library to create 'doc'
+        doc = {
+          "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+          "@id": "http://api.example.com/doc/",
+          "@type": "ApiDocumentation",
+          "title": "The name of the API",
+          "description": "A short description of the API",
+          "entrypoint": "URL of the API's main entry point",
+          "supportedClass": [
+            # ... Classes known to be supported by the Web API ...
+          ],
+          "possibleStatus": [
+            # ... Statuses that should be expected and handled properly ...
+          ]
+        }
+
+        APIDoc = create_doc(doc)
+
+
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
