@@ -3,7 +3,7 @@ import re
 from pyld import jsonld
 import requests
 
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from hydra_python_core import doc_maker, doc_writer
 from samples import doc_writer_sample_output
 
