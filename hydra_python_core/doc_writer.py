@@ -468,9 +468,17 @@ class EntryPointCollection():
         self.supportedOperation = collection.supportedOperation
         self.manages = collection.manages
         if collection.path:
-            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
+            match_string = '(.+)(\?resource=)(.+)'
+            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
+            regex_groups = re.search(match_string,id_)
+            self.id_ = regex_groups[0] + regex_groups[2]
+            self.base_url = regex_groups[0]
         else:
-            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(self.name, safe=''))
+            match_string = '(.+)(\?resource=)(.+)'
+            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(self.name, safe=''))
+            regex_groups = re.search(match_string,id_)
+            self.id_ = regex_groups[0] + regex_groups[2]
+            self.base_url = regex_groups[0]
 
     def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
@@ -480,7 +488,7 @@ class EntryPointCollection():
                 "@type": "hydra:Link",
                 "label": self.name,
                 "description": "The {} collection".format(self.name, ),
-                "domain": "{}EntryPoint".format(DocUrl.doc_url),
+                "domain": "{}EntryPoint".format(self.base_url),
                 "range": "{}{}".format(DocUrl.doc_url, self.name),
                 "manages": self.manages,
                 "supportedOperation": [],
@@ -511,9 +519,17 @@ class EntryPointClass():
         self.desc = class_.desc
         self.supportedOperation = class_.supportedOperation
         if class_.path:
-            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, class_.path)
+            match_string = '(.+)(\?resource=)(.+)'
+            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, class_.path)
+            regex_groups = re.search(match_string,id_)
+            self.id_ = regex_groups[0] + regex_groups[2]
+            self.base_url = regex_groups[0]
         else:
-            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, self.name)
+            match_string = '(.+)(\?resource=)(.+)'
+            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, self.name)
+            regex_groups = re.search(match_string,id_)
+            self.id_ = regex_groups[0] + regex_groups[2]
+            self.base_url = regex_groups[0]
 
     def generate(self) -> Dict[str, Any]:
         """Get as Python Dict."""
@@ -523,7 +539,7 @@ class EntryPointClass():
                 "@type": "hydra:Link",
                 "label": self.name,
                 "description": self.desc,
-                "domain": "{}EntryPoint".format(DocUrl.doc_url),
+                "domain": "{}EntryPoint".format(self.base_url),
                 "range": "{}{}".format(DocUrl.doc_url, self.name),
                 "supportedOperation": []
             },
@@ -752,8 +768,13 @@ class Context():
                             collection.name: collection.collection_id}
 
         elif entrypoint is not None:
+            match_string = '(.+)(\?resource=)(.+)'
+            entrypoint = "{}EntryPoint".format(DocUrl.doc_url)
+            regex_groups = re.search(match_string,entrypoint)
+
+
             self.context = {
-                "EntryPoint": "{}EntryPoint".format(DocUrl.doc_url),
+                "EntryPoint": regex_groups[0] + regex_groups[2],
             }
 
         else:
@@ -839,4 +860,4 @@ class DocUrl:
     doc_url = ''
 
     def __init__(self, base_url: str, api_name: str, doc_name: str) -> None:
-        DocUrl.doc_url = "{}/{}#".format(urljoin(base_url, api_name), doc_name)
+        DocUrl.doc_url = "{}/{}?resource=".format(urljoin(base_url, api_name), doc_name)
