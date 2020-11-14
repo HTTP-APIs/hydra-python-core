@@ -1,6 +1,7 @@
 """API Doc templates generator."""
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import quote, urljoin
+import re
 
 
 class HydraDoc:
@@ -468,15 +469,18 @@ class EntryPointCollection():
         self.supportedOperation = collection.supportedOperation
         self.manages = collection.manages
         if collection.path:
-            match_string = '(.+)(\?resource=)(.+)'
-            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
-            regex_groups = re.search(match_string,id_)
+            match_string = '(.+)(vocab\?resource=)(.+)'
+            id_ = "{}{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
+            regex_groups = re.search(match_string,id_).groups()
+
             self.id_ = regex_groups[0] + regex_groups[2]
             self.base_url = regex_groups[0]
+
         else:
-            match_string = '(.+)(\?resource=)(.+)'
-            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(self.name, safe=''))
-            regex_groups = re.search(match_string,id_)
+            match_string = '(.+)(vocab\?resource=)(.+)'
+            id_ = "{}{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
+            regex_groups = re.search(match_string,id_).groups()
+
             self.id_ = regex_groups[0] + regex_groups[2]
             self.base_url = regex_groups[0]
 
@@ -488,7 +492,7 @@ class EntryPointCollection():
                 "@type": "hydra:Link",
                 "label": self.name,
                 "description": "The {} collection".format(self.name, ),
-                "domain": "{}EntryPoint".format(self.base_url),
+                "domain": "{}EntryPoint".format(DocUrl.doc_url),
                 "range": "{}{}".format(DocUrl.doc_url, self.name),
                 "manages": self.manages,
                 "supportedOperation": [],
@@ -519,15 +523,16 @@ class EntryPointClass():
         self.desc = class_.desc
         self.supportedOperation = class_.supportedOperation
         if class_.path:
-            match_string = '(.+)(\?resource=)(.+)'
-            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, class_.path)
-            regex_groups = re.search(match_string,id_)
+            match_string = '(.+)(vocab\?resource=)(.+)'
+            id_ = "{}{}".format(DocUrl.doc_url, class_.path)
+            regex_groups = re.search(match_string,id_).groups()
+
             self.id_ = regex_groups[0] + regex_groups[2]
             self.base_url = regex_groups[0]
         else:
             match_string = '(.+)(\?resource=)(.+)'
-            id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, self.name)
-            regex_groups = re.search(match_string,id_)
+            id_ = "{}{}".format(DocUrl.doc_url, self.name)
+            regex_groups = re.search(match_string,id_).groups()
             self.id_ = regex_groups[0] + regex_groups[2]
             self.base_url = regex_groups[0]
 
@@ -768,13 +773,9 @@ class Context():
                             collection.name: collection.collection_id}
 
         elif entrypoint is not None:
-            match_string = '(.+)(\?resource=)(.+)'
             entrypoint = "{}EntryPoint".format(DocUrl.doc_url)
-            regex_groups = re.search(match_string,entrypoint)
-
-
             self.context = {
-                "EntryPoint": regex_groups[0] + regex_groups[2],
+                "EntryPoint": entrypoint,
             }
 
         else:
