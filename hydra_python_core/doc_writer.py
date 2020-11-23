@@ -627,9 +627,11 @@ class HydraIriTemplate():
     """Class for hydra IriTemplates"""
 
     def __init__(self,
+                 base_url: str,
                  template: str,
                  iri_mapping: List[IriTemplateMapping] = [],
                  basic_representation: bool = True):
+        self.url = base_url
         self.template = template
         if basic_representation:
             self.variable_rep = "hydra:BasicRepresentation"
@@ -641,7 +643,7 @@ class HydraIriTemplate():
         """Get IriTemplate as a python dict"""
         iri_template = {
             "@type": "hydra:IriTemplate",
-            "hydra:template": self.template,
+            "hydra:template": "{}{}".format(self.url ,self.template),
             "hydra:variableRepresentation": self.variable_rep,
             "hydra:mapping": [x.generate() for x in self.mapping]
         }
