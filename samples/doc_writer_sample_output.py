@@ -157,7 +157,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "http://props.hydrus.com/prop1",
+                    "property": "http://props.hydrus.com/prop2",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop2",
@@ -263,7 +263,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "http://props.hydrus.com/prop1",
+                    "property": "http://props.hydrus.com/prop2",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop2",
