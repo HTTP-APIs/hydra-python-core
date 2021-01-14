@@ -121,7 +121,7 @@ The API Documentation has been created, but it is not yet complete. Classes, pro
 .. code-block:: python
     :linenos:
 
-    from hydra_python_core.doc_writer import HydraDoc
+    from hydra_python_core.doc_writer import HydraClass
     # Creating classes for the API
     class_title = "dummyClass"                      # Title of the Class
     class_description = "A dummyClass for demo"     # Description of the class
