@@ -216,22 +216,22 @@ Other than this, an API Documentation also needs to have the Resource and the Co
     :linenos:
 
     # Other operations
-    apidoc.add_baseResource()  # Creates the base Resource Class and adds it to the API Documentation
-    apidoc.add_baseCollection()    # Creates the base Collection Class and adds it to the API Documentation
+    api_doc.add_baseResource()  # Creates the base Resource Class and adds it to the API Documentation
+    api_doc.add_baseCollection()    # Creates the base Collection Class and adds it to the API Documentation
 
 Finally, create the EntryPoint object for the API Documentation. All Collections are automatically assigned endpoints in the EntryPoint object. Classes that had their endpoint variables set to True are also assigned endpoints in the EntryPoint object. This object is created automatically by the HydraDoc object and can be created using the gen_EntryPoint method.
 
 .. code-block:: python
     :linenos:
 
-    apidoc.gen_EntryPoint()    # Generates the EntryPoint object for the Doc using the Classes and Collections
+    api_doc.gen_EntryPoint()    # Generates the EntryPoint object for the Doc using the Classes and Collections
 
 The final API Documentation can be viewed by calling the generate method which returns a Python dictionary containing the entire API Documentation. The generate method can be called for every class defined in the doc_writer module to generate its own Python dictionary.
 
 .. code-block:: python
     :linenos:
 
-    doc = apidoc.generate()
+    doc = api_doc.generate()
 
 The complete script for this API Documentation can be found in ``samples/doc_writer_sample.py``, and the generated ApiDocumentation can be found in ``samples/doc_writer_sample_output.py``.
 
