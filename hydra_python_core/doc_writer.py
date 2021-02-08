@@ -429,8 +429,8 @@ class HydraEntryPoint():
     def get(self) -> Dict[str, str]:
         """Create the EntryPoint object to be returnd for the get function."""
         object_ = {
-            "@context": "/{}/contexts/EntryPoint.jsonld".format(self.api),
-            "@id": "/{}".format(self.api),
+            "@context": "{}{}/contexts/EntryPoint.jsonld".format(self.url,self.api),
+            "@id": "{}{}".format(self.url,self.api),
             "@type": "EntryPoint",
 
         }
@@ -439,7 +439,7 @@ class HydraEntryPoint():
             if item.generate() in self.collections:
                 collection_returned = item.generate()
                 collection_id = uri.replace(
-                    "{}EntryPoint".format(DocUrl.doc_url), "/{}".format(self.api))
+                    "{}EntryPoint".format(DocUrl.doc_url), "{}{}".format(self.url,self.api))
                 collection_to_append = {
                     "@id": collection_id,
                     'title': collection_returned['hydra:title'],
@@ -455,7 +455,7 @@ class HydraEntryPoint():
 
             else:
                 object_[item.name] = uri.replace(
-                    "{}EntryPoint".format(DocUrl.doc_url), "/{}".format(self.api))
+                    "{}EntryPoint".format(DocUrl.doc_url), "{}{}".format(self.url,self.api))
 
         return object_
 
@@ -660,9 +660,10 @@ class HydraIriTemplate():
 
     def generate(self) -> Dict[str, Any]:
         """Get IriTemplate as a python dict"""
+        base_url = DocUrl.doc_url.rsplit('/',2)[0]
         iri_template = {
             "@type": "hydra:IriTemplate",
-            "hydra:template": self.template,
+            "hydra:template": "{}{}".format(base_url,self.template),
             "hydra:variableRepresentation": self.variable_rep,
             "hydra:mapping": [x.generate() for x in self.mapping]
         }
