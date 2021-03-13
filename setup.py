@@ -23,7 +23,7 @@ except ImportError:
 
 setup(
     name='hydra_python_core',
-    version='0.1',
+    version='0.2',
     packages=find_packages(),
     license='MIT',
     description='Core functions for Hydrus',
