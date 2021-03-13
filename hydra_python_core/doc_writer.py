@@ -277,7 +277,7 @@ class HydraCollection():
         self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
-                                                 False, False, False,
+                                                  True, True, False,
                                                  "The members of {}".format(collection_name))]
         self.manages = manages
 
