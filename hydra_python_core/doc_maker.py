@@ -112,7 +112,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # additional context entries
     for entry in _context:
         apidoc.add_to_context(entry, _context[entry])
-
+    apidoc.add_to_context("Collection","hydra:collection")
     # make endpoint classes
     for endpoint_classes in _endpoint_class:
         if endpoint_classes['@id'] == hydra['Resource'] or endpoint_classes['@id'] == hydra['Collection'] or \
@@ -372,5 +372,3 @@ def check_namespace(id_: str = None) -> str:
     if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('#') != -1:
         id_ = "{}{}".format(DocUrl.doc_url, id_.split('#')[-1])
     return id_
-
-
