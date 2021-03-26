@@ -1,6 +1,7 @@
 """API Doc templates generator."""
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import quote, urljoin
+import re
 
 
 class HydraDoc:
@@ -380,10 +381,10 @@ class HydraEntryPoint():
         self.url = base_url
         self.api = entrypoint
         self.entrypoint = HydraClass("EntryPoint", "The main entry point or homepage of the API.",
-                                     _id="{}#EntryPoint".format(urljoin(self.url, self.api)))
+                                     _id="{}?resource=EntryPoint".format(urljoin(self.url, self.api)))
         self.entrypoint.add_supported_op(EntryPointOp(
             "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
-            type_="{}/{}#EntryPoint".format(base_url, entrypoint)))
+            type_="{}/{}?resource=EntryPoint".format(base_url, entrypoint)))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -426,7 +427,7 @@ class HydraEntryPoint():
         return self.entrypoint.generate()
 
     def get(self) -> Dict[str, str]:
-        """Create the EntryPoint object to be returnd for the get function."""
+        """Create the EntryPoint object to be returned for the get function."""
         object_ = {
             "@context": "{}{}/contexts/EntryPoint.jsonld".format(self.url,self.api),
             "@id": "{}{}".format(self.url,self.api),
@@ -437,8 +438,7 @@ class HydraEntryPoint():
             uri = item.id_
             if item.generate() in self.collections:
                 collection_returned = item.generate()
-                collection_id = uri.replace(
-                    "{}EntryPoint".format(DocUrl.doc_url), "{}{}".format(self.url,self.api))
+                collection_id = uri
                 collection_to_append = {
                     "@id": collection_id,
                     'title': collection_returned['hydra:title'],
@@ -453,9 +453,7 @@ class HydraEntryPoint():
                     object_['collections'].append(collection_to_append)
 
             else:
-                object_[item.name] = uri.replace(
-                    "{}EntryPoint".format(DocUrl.doc_url), "{}{}".format(self.url,self.api))
-
+                object_[item.name] = uri
         return object_
 
 
@@ -467,11 +465,13 @@ class EntryPointCollection():
         self.name = collection.name
         self.supportedOperation = collection.supportedOperation
         self.manages = collection.manages
-        if collection.path:
+        if collection.path: 
             self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
+            self.base_url = DocUrl.doc_url
         else:
-            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(self.name, safe=''))
-
+            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, quote(collection.path, safe=''))
+            self.base_url = DocUrl.doc_url
+    
     def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
         object_ = {
@@ -512,9 +512,11 @@ class EntryPointClass():
         self.supportedOperation = class_.supportedOperation
         if class_.path:
             self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, class_.path)
+            self.base_url = DocUrl.doc_url
         else:
-            self.id_ = "{}EntryPoint/{}".format(DocUrl.doc_url, self.name)
-
+            self.id_ = "{}/EntryPoint/{}".format(DocUrl.doc_url, self.name)
+            self.base_url = DocUrl.doc_url
+          
     def generate(self) -> Dict[str, Any]:
         """Get as Python Dict."""
         object_ = {
@@ -523,7 +525,7 @@ class EntryPointClass():
                 "@type": "hydra:Link",
                 "label": self.name,
                 "description": self.desc,
-                "domain": "{}EntryPoint".format(DocUrl.doc_url),
+                "domain": "{}EntryPoint".format(self.base_url),
                 "range": "{}{}".format(DocUrl.doc_url, self.name),
                 "supportedOperation": []
             },
@@ -753,8 +755,9 @@ class Context():
                             collection.name: collection.collection_id}
 
         elif entrypoint is not None:
+            entrypoint = "{}EntryPoint".format(DocUrl.doc_url)
             self.context = {
-                "EntryPoint": "{}EntryPoint".format(DocUrl.doc_url),
+                "EntryPoint": entrypoint,
             }
 
         else:
@@ -840,4 +843,4 @@ class DocUrl:
     doc_url = ''
 
     def __init__(self, base_url: str, api_name: str, doc_name: str) -> None:
-        DocUrl.doc_url = "{}/{}#".format(urljoin(base_url, api_name), doc_name)
+        DocUrl.doc_url = "{}/{}?resource=".format(urljoin(base_url, api_name), doc_name)
