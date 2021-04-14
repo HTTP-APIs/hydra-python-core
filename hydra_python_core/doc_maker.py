@@ -107,7 +107,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
             API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL, doc_name)
     else:
         apidoc = HydraDoc(
-            entrypoint, _title, _description, entrypoint, base_url, doc_name)
+            entrypoint['@id'], _title, _description, entrypoint['@id'], base_url, doc_name)
 
     # additional context entries
     for entry in _context:
