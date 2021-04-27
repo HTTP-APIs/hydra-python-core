@@ -662,7 +662,7 @@ class HydraStatus():
     def generate(self, status_type: str = "Status") -> Dict[str, Any]:
         """Get as Python dict."""
         status = {
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.hydra-cg.com/spec/latest/core/core.jsonld",
             "@type": status_type,
             "statusCode": self.code,
             "title": self.title,
