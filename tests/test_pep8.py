@@ -1,15 +1,16 @@
 """Run PEP8 code format checker on all python files except samples directory."""
 
 import os
+from os.path import dirname, join
 import unittest
+
 import pep8
-from os.path import dirname, abspath
 
 
 class Pep8Test(unittest.TestCase):
     def test_pep8(self):
         """Test method to check PEP8 compliance over the entire project."""
-        self.file_structure = dirname(dirname(abspath(__file__)))
+        self.file_structure = join(dirname(dirname(__file__)), 'hydra_python_core')
         print("Testing for PEP8 compliance of python files in {}".format(
                 self.file_structure))
         style = pep8.StyleGuide()

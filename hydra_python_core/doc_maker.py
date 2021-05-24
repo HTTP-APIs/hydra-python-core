@@ -5,8 +5,16 @@ import re
 import json
 from pyld import jsonld
 import requests
-from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp,
-                                          HydraClassOp, HydraStatus, HydraLink, HydraCollection, DocUrl)
+from hydra_python_core.doc_writer import (
+    HydraDoc,
+    HydraClass,
+    HydraClassProp,
+    HydraClassOp,
+    HydraStatus,
+    HydraLink,
+    HydraCollection,
+    DocUrl,
+)
 from typing import Any, Dict, Match, Optional, Tuple, Union, List
 from hydra_python_core.namespace import hydra, rdfs
 from urllib.parse import urlparse
@@ -14,8 +22,9 @@ from urllib.parse import urlparse
 jsonld.set_document_loader(jsonld.requests_document_loader())
 
 
-def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
-               API_NAME: str = None) -> HydraDoc:
+def create_doc(
+    doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None, API_NAME: str = None
+) -> HydraDoc:
     """
     Create the HydraDoc object from the API Documentation.
 
@@ -27,17 +36,16 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     """
 
     # These keys must be there in the APIDOC: @context, @id, @type
-    if not all(key in doc for key in ('@context', '@id', '@type')):
+    if not all(key in doc for key in ("@context", "@id", "@type")):
         raise SyntaxError("Please make sure doc contains @context, @id and @type")
 
-
-    _context = doc['@context']
-    base_url = ''
-    entrypoint = ''
-    doc_name = 'vocab'
-    doc_url = ''
-    _id = ''
-    _entrypoint = ''
+    _context = doc["@context"]
+    base_url = ""
+    entrypoint = ""
+    doc_name = "vocab"
+    doc_url = ""
+    _id = ""
+    _entrypoint = ""
     _title = "The default title"
     _description = "This is the default description"
     _classes = []
@@ -50,64 +58,70 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     expanded_doc = jsonld.expand(doc)
     for item in expanded_doc:
-        _id = item['@id']
+        _id = item["@id"]
         # Extract base_url, entrypoint and API name
-        base_url = urlparse(_id).scheme + '//' + urlparse(_id).netloc
+        base_url = urlparse(_id).scheme + "//" + urlparse(_id).netloc
         entrypoint = _entrypoint
-        doc_name = urlparse(_id).path.split('/')[-1]
-        doc_url = DocUrl(HYDRUS_SERVER_URL, api_name=API_NAME, doc_name=doc_name).doc_url
-        for entrypoint in item[hydra['entrypoint']]:
-            _entrypoint = entrypoint['@id']
-        if hydra['title'] in item:
-            for title in item[hydra['title']]:
-                _title = title['@value']
-        if hydra['description'] in item:
-            for description in item[hydra['description']]:
-                _description = description['@value']
-        for classes in item[hydra['supportedClass']]:
+        doc_name = urlparse(_id).path.split("/")[-1]
+        doc_url = DocUrl(
+            HYDRUS_SERVER_URL, api_name=API_NAME, doc_name=doc_name
+        ).doc_url
+        for entrypoint in item[hydra["entrypoint"]]:
+            _entrypoint = entrypoint["@id"]
+        if hydra["title"] in item:
+            for title in item[hydra["title"]]:
+                _title = title["@value"]
+        if hydra["description"] in item:
+            for description in item[hydra["description"]]:
+                _description = description["@value"]
+        for classes in item[hydra["supportedClass"]]:
             isCollection = False
-            if hydra['manages'] in classes:
+            if hydra["manages"] in classes:
                 isCollection = True
                 _collections.append(classes)
-            for supported_prop in classes[hydra['supportedProperty']]:
-                for prop in supported_prop[hydra['property']]:
-                    if '@type' in prop:
-                        for prop_type in prop['@type']:
-                            if prop_type == hydra['Link']:
+            for supported_prop in classes[hydra["supportedProperty"]]:
+                for prop in supported_prop[hydra["property"]]:
+                    if "@type" in prop:
+                        for prop_type in prop["@type"]:
+                            if prop_type == hydra["Link"]:
                                 # find the range of the link
-                                for resource_range in prop[rdfs['range']]:
-                                    _endpoints.append(check_namespace(resource_range['@id']))
+                                for resource_range in prop[rdfs["range"]]:
+                                    _endpoints.append(
+                                        check_namespace(resource_range["@id"])
+                                    )
             if not isCollection:
                 _classes.append(classes)
-        for status in item[hydra['possibleStatus']]:
+        for status in item[hydra["possibleStatus"]]:
             _possible_status.append(status)
     for classes in _classes:
-        if classes['@id'] == hydra['Resource'] or classes['@id'] == hydra['Collection']:
+        if classes["@id"] == hydra["Resource"] or classes["@id"] == hydra["Collection"]:
             continue
         endpoint = False
-        if classes['@id'].find("EntryPoint") != -1:
-            classes['@id'] = "{}{}".format(doc_url, "EntryPoint")
+        if classes["@id"].find("EntryPoint") != -1:
+            classes["@id"] = "{}{}".format(doc_url, "EntryPoint")
         else:
-            classes['@id'] = check_namespace(classes['@id'])
+            classes["@id"] = check_namespace(classes["@id"])
         for endpoints in _endpoints:
-            if classes['@id'] == endpoints:
+            if classes["@id"] == endpoints:
                 endpoint = True
                 _endpoint_class.append(classes)
         if not endpoint:
             _non_endpoint_classes.append(classes)
 
     for collections in _collections:
-        collections['@id'] = check_namespace(collections['@id'])
+        collections["@id"] = check_namespace(collections["@id"])
         for endpoints in _endpoints:
-            if collections['@id'] == endpoints:
+            if collections["@id"] == endpoints:
                 _endpoint_collection.append(collections)
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
-            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL, doc_name)
+            API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL, doc_name
+        )
     else:
         apidoc = HydraDoc(
-            entrypoint, _title, _description, entrypoint, base_url, doc_name)
+            entrypoint, _title, _description, entrypoint, base_url, doc_name
+        )
 
     # additional context entries
     for entry in _context:
@@ -115,16 +129,22 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     # make endpoint classes
     for endpoint_classes in _endpoint_class:
-        if endpoint_classes['@id'] == hydra['Resource'] or endpoint_classes['@id'] == hydra['Collection'] or \
-                endpoint_classes['@id'].find("EntryPoint") != -1:
+        if (
+            endpoint_classes["@id"] == hydra["Resource"]
+            or endpoint_classes["@id"] == hydra["Collection"]
+            or endpoint_classes["@id"].find("EntryPoint") != -1
+        ):
             continue
         class_ = create_class(endpoint_classes, endpoint=True)
         apidoc.add_supported_class(class_)
 
     # make non-endpoint classes
     for classes in _non_endpoint_classes:
-        if classes['@id'] == hydra['Resource'] or classes['@id'] == hydra['Collection'] or \
-                classes['@id'].find("EntryPoint") != -1:
+        if (
+            classes["@id"] == hydra["Resource"]
+            or classes["@id"] == hydra["Collection"]
+            or classes["@id"].find("EntryPoint") != -1
+        ):
             continue
         class_ = create_class(classes, endpoint=False)
         apidoc.add_supported_class(class_)
@@ -145,6 +165,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     apidoc.gen_EntryPoint()
     return apidoc
 
+
 def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
     """
      Creates the instance of HydraCollection from expanded APIDOC
@@ -156,38 +177,49 @@ def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
     collection_name = "The default collection name"
     collection_description = "The default collection description"
 
-    if hydra['title'] in endpoint_collection:
-        collection_name = endpoint_collection[hydra['title']][0]['@value']
+    if hydra["title"] in endpoint_collection:
+        collection_name = endpoint_collection[hydra["title"]][0]["@value"]
 
-    if hydra['description'] in endpoint_collection:
-        collection_description = endpoint_collection[hydra['description']][0]['@value']
+    if hydra["description"] in endpoint_collection:
+        collection_description = endpoint_collection[hydra["description"]][0]["@value"]
 
     manages = {}
-    if hydra['object'] in endpoint_collection[hydra['manages']][0]:
-        manages['object'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['object']][0]['@id'])
-    if hydra['subject'] in endpoint_collection[hydra['manages']][0]:
-        manages['subject'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['subject']][0]['@id'])
-    if hydra['property'] in endpoint_collection[hydra['manages']][0]:
-        manages['property'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['property']][0]['@id'])
+    if hydra["object"] in endpoint_collection[hydra["manages"]][0]:
+        manages["object"] = check_namespace(
+            endpoint_collection[hydra["manages"]][0][hydra["object"]][0]["@id"]
+        )
+    if hydra["subject"] in endpoint_collection[hydra["manages"]][0]:
+        manages["subject"] = check_namespace(
+            endpoint_collection[hydra["manages"]][0][hydra["subject"]][0]["@id"]
+        )
+    if hydra["property"] in endpoint_collection[hydra["manages"]][0]:
+        manages["property"] = check_namespace(
+            endpoint_collection[hydra["manages"]][0][hydra["property"]][0]["@id"]
+        )
     is_get = False
     is_post = False
     is_put = False
     is_del = False
 
-    for supported_operations in endpoint_collection[hydra['supportedOperation']]:
-        if supported_operations[hydra['method']][0]['@value'] == 'GET':
+    for supported_operations in endpoint_collection[hydra["supportedOperation"]]:
+        if supported_operations[hydra["method"]][0]["@value"] == "GET":
             is_get = True
-        if supported_operations[hydra['method']][0]['@value'] == 'PUT':
+        if supported_operations[hydra["method"]][0]["@value"] == "PUT":
             is_post = True
-        if supported_operations[hydra['method']][0]['@value'] == 'POST':
+        if supported_operations[hydra["method"]][0]["@value"] == "POST":
             is_put = True
-        if supported_operations[hydra['method']][0]['@value'] == 'PUT':
+        if supported_operations[hydra["method"]][0]["@value"] == "PUT":
             is_del = True
 
-    collection_ = HydraCollection(collection_name=collection_name,
-                                  collection_description=collection_description,
-                                  manages=manages, get=is_get,
-                                  post=is_post, put=is_put, delete=is_del)
+    collection_ = HydraCollection(
+        collection_name=collection_name,
+        collection_description=collection_description,
+        manages=manages,
+        get=is_get,
+        post=is_post,
+        put=is_put,
+        delete=is_del,
+    )
     return collection_
 
 
@@ -204,14 +236,13 @@ def create_class(expanded_class: Dict[str, Any], endpoint: bool) -> HydraClass:
     class_title = "A Class"
     class_description = "The description of the class"
 
-    if hydra['title'] in expanded_class:
-        class_title = expanded_class[hydra['title']][0]['@value']
+    if hydra["title"] in expanded_class:
+        class_title = expanded_class[hydra["title"]][0]["@value"]
 
-    if hydra['description'] in expanded_class:
-        class_description = expanded_class[hydra['description']][0]['@value']
+    if hydra["description"] in expanded_class:
+        class_description = expanded_class[hydra["description"]][0]["@value"]
 
-    class_ = HydraClass(class_title,
-                        class_description, endpoint=endpoint)
+    class_ = HydraClass(class_title, class_description, endpoint=endpoint)
 
     # add supported Property
     for supported_property in expanded_class[hydra["supportedProperty"]]:
@@ -219,7 +250,7 @@ def create_class(expanded_class: Dict[str, Any], endpoint: bool) -> HydraClass:
         class_.add_supported_prop(prop_)
 
     # add supported operations
-    for supported_operations in expanded_class[hydra['supportedOperation']]:
+    for supported_operations in expanded_class[hydra["supportedOperation"]]:
         op_ = create_operation(supported_operations)
         class_.add_supported_op(op_)
 
@@ -240,35 +271,37 @@ def create_operation(supported_operation: Dict[str, Any]) -> HydraClassOp:
     op_returns_header = []
     op_possible_status = []
 
-    if hydra['title'] in supported_operation:
-        op_title = supported_operation[hydra['title']][0]['@value']
+    if hydra["title"] in supported_operation:
+        op_title = supported_operation[hydra["title"]][0]["@value"]
 
-    op_method = supported_operation[hydra['method']][0]['@value']
+    op_method = supported_operation[hydra["method"]][0]["@value"]
 
-    if hydra['expects'] in supported_operation:
-        op_expects = check_namespace(supported_operation[hydra['expects']][0]['@id'])
+    if hydra["expects"] in supported_operation:
+        op_expects = check_namespace(supported_operation[hydra["expects"]][0]["@id"])
 
-    if hydra['returns'] in supported_operation:
-        op_returns = check_namespace(supported_operation[hydra['returns']][0]['@id'])
+    if hydra["returns"] in supported_operation:
+        op_returns = check_namespace(supported_operation[hydra["returns"]][0]["@id"])
 
-    if hydra['expectsHeader'] in supported_operation:
-        for header in supported_operation[hydra['expectsHeader']]:
-            op_expects_header.append(header['@value'])
+    if hydra["expectsHeader"] in supported_operation:
+        for header in supported_operation[hydra["expectsHeader"]]:
+            op_expects_header.append(header["@value"])
 
-    if hydra['returnsHeader'] in supported_operation:
-        for header in supported_operation[hydra['returnsHeader']]:
-            op_returns_header.append(header['@value'])
+    if hydra["returnsHeader"] in supported_operation:
+        for header in supported_operation[hydra["returnsHeader"]]:
+            op_returns_header.append(header["@value"])
 
-    if hydra['possibleStatus'] in supported_operation:
-        op_possible_status = create_status(supported_operation[hydra['possibleStatus']])
+    if hydra["possibleStatus"] in supported_operation:
+        op_possible_status = create_status(supported_operation[hydra["possibleStatus"]])
 
-    op_ = HydraClassOp(title=op_title,
-                       method=op_method,
-                       expects=op_expects,
-                       returns=op_returns,
-                       expects_header=op_expects_header,
-                       returns_header=op_returns_header,
-                       possible_status=op_possible_status)
+    op_ = HydraClassOp(
+        title=op_title,
+        method=op_method,
+        expects=op_expects,
+        returns=op_returns,
+        expects_header=op_expects_header,
+        returns_header=op_returns_header,
+        possible_status=op_possible_status,
+    )
     return op_
 
 
@@ -285,15 +318,15 @@ def create_status(possible_status: List[Any]) -> List[HydraStatus]:
         status_id = None
         status_title = "The default title for status"
         status_desc = "The default description of status"
-        if hydra['description'] in status:
-            status_desc = status[hydra['description']][0]['@value']
-        status_code = status[hydra['statusCode']][0]['@value']
+        if hydra["description"] in status:
+            status_desc = status[hydra["description"]][0]["@value"]
+        status_code = status[hydra["statusCode"]][0]["@value"]
 
-        if '@id' in status:
-            status_id = status['@id']
+        if "@id" in status:
+            status_id = status["@id"]
 
-        if hydra['title'] in status:
-            status_title = status[hydra['title']][0]['@value']
+        if hydra["title"] in status:
+            status_title = status[hydra["title"]][0]["@value"]
 
         status_ = HydraStatus(status_code, status_id, status_title, status_desc)
         status_list.append(status_)
@@ -301,7 +334,9 @@ def create_status(possible_status: List[Any]) -> List[HydraStatus]:
     return status_list
 
 
-def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, HydraClassProp]:
+def create_property(
+    supported_property: Dict[str, Any]
+) -> Union[HydraLink, HydraClassProp]:
     """
     Creates the HydraClassProp from the expanded supported property
 
@@ -311,25 +346,27 @@ def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, Hydr
     prop_id = ""
     prop_title = "The title of Property"
 
-    if hydra['property'] in supported_property:
-        prop_id = check_namespace(supported_property[hydra['property']][0]['@id'])
-        if '@type' in supported_property[hydra['property']][0]:
-            if supported_property[hydra['property']][0]['@type'][0] == hydra['Link']:
-                prop_id = create_link(supported_property[hydra['property']][0])
+    if hydra["property"] in supported_property:
+        prop_id = check_namespace(supported_property[hydra["property"]][0]["@id"])
+        if "@type" in supported_property[hydra["property"]][0]:
+            if supported_property[hydra["property"]][0]["@type"][0] == hydra["Link"]:
+                prop_id = create_link(supported_property[hydra["property"]][0])
     else:
-        raise KeyError("{} is missing".format(hydra['property']))
+        raise KeyError("{} is missing".format(hydra["property"]))
 
-    if hydra['title'] in supported_property:
-        prop_title = supported_property[hydra['title']][0]['@value']
-    prop_read = supported_property[hydra['readable']][0]['@value']
-    prop_require = supported_property[hydra['required']][0]['@value']
-    prop_write = supported_property[hydra['writeable']][0]['@value']
+    if hydra["title"] in supported_property:
+        prop_title = supported_property[hydra["title"]][0]["@value"]
+    prop_read = supported_property[hydra["readable"]][0]["@value"]
+    prop_require = supported_property[hydra["required"]][0]["@value"]
+    prop_write = supported_property[hydra["writeable"]][0]["@value"]
 
-    prop_ = HydraClassProp(prop=prop_id,
-                           title=prop_title,
-                           required=prop_require,
-                           read=prop_read,
-                           write=prop_write)
+    prop_ = HydraClassProp(
+        prop=prop_id,
+        title=prop_title,
+        required=prop_require,
+        read=prop_read,
+        write=prop_write,
+    )
     return prop_
 
 
@@ -340,22 +377,22 @@ def create_link(supported_property: Dict[str, Any]) -> HydraLink:
     :param supported_property: expanded Property
     :return: instance of HydraLink
     """
-    prop_title = 'The default Link title'
-    prop_desc = 'The default Link description'
+    prop_title = "The default Link title"
+    prop_desc = "The default Link description"
 
-    prop_id = check_namespace(supported_property['@id'])
-    if hydra['description'] in supported_property:
-        prop_desc = supported_property[hydra['description']]
-    if hydra['title'] in supported_property:
-        prop_title = supported_property[hydra['title']][0]['@value']
+    prop_id = check_namespace(supported_property["@id"])
+    if hydra["description"] in supported_property:
+        prop_desc = supported_property[hydra["description"]]
+    if hydra["title"] in supported_property:
+        prop_title = supported_property[hydra["title"]][0]["@value"]
 
-    prop_domain = check_namespace(supported_property[rdfs['domain']][0]['@id'])
-    prop_range = check_namespace(supported_property[rdfs['range']][0]['@id'])
+    prop_domain = check_namespace(supported_property[rdfs["domain"]][0]["@id"])
+    prop_range = check_namespace(supported_property[rdfs["range"]][0]["@id"])
 
     link_ = HydraLink(prop_id, prop_title, prop_desc, prop_domain, prop_range)
 
-    if hydra['supportedOperation'] in supported_property:
-        for operations in supported_property[hydra['supportedOperation']]:
+    if hydra["supportedOperation"] in supported_property:
+        for operations in supported_property[hydra["supportedOperation"]]:
             operation = create_operation(operations)
             link_.add_supported_op(operation)
 
@@ -369,8 +406,6 @@ def check_namespace(id_: str = None) -> str:
     :param id_ The id to check
     :return: correct url
     """
-    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('#') != -1:
-        id_ = "{}{}".format(DocUrl.doc_url, id_.split('#')[-1])
+    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find("#") != -1:
+        id_ = "{}{}".format(DocUrl.doc_url, id_.split("#")[-1])
     return id_
-
-
