@@ -320,6 +320,7 @@ class HydraCollection:
                 "The members of {}".format(collection_name),
             )
         ]
+
         self.manages = manages
 
         if get:
