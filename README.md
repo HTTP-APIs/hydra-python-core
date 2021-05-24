@@ -14,7 +14,7 @@ https://hydra-python-core.readthedocs.io/en/develop/
 To install the library:
 
 ```bash
-pip install git+https://github.com/HTTP-APIs/hydra-python-core.git#egg=hydra_python_core
+pip install hydra_python_core
 ```
 
 **Note :-** If using hydrus, the library doesn't need to be installed separately as it is already a part of `requirements.txt` for hydrus.
@@ -31,3 +31,6 @@ from hydra_python_core import doc_maker
 ```
 
 *Porting out from hydrus the hydraspecs directory*
+
+### Tests
+After installation: `python-m unittest`
