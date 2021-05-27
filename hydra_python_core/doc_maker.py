@@ -369,8 +369,8 @@ def check_namespace(id_: str = None) -> str:
     :param id_ The id to check
     :return: correct url
     """
-    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('#') != -1:
-        id_ = "{}{}".format(DocUrl.doc_url, id_.split('#')[-1])
+    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('?resource=') != -1:
+        id_ = "{}{}".format(DocUrl.doc_url, id_.split('?resource=')[-1])
     return id_
 
 

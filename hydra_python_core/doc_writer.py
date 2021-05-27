@@ -380,10 +380,10 @@ class HydraEntryPoint():
         self.url = base_url
         self.api = entrypoint
         self.entrypoint = HydraClass("EntryPoint", "The main entry point or homepage of the API.",
-                                     _id="{}#EntryPoint".format(urljoin(self.url, self.api)))
+                                     _id="{}?resource=EntryPoint".format(urljoin(self.url, self.api)))
         self.entrypoint.add_supported_op(EntryPointOp(
             "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
-            type_="{}/{}#EntryPoint".format(base_url, entrypoint)))
+            type_="{}/{}?resource=EntryPoint".format(base_url, entrypoint)))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -840,4 +840,4 @@ class DocUrl:
     doc_url = ''
 
     def __init__(self, base_url: str, api_name: str, doc_name: str) -> None:
-        DocUrl.doc_url = "{}/{}#".format(urljoin(base_url, api_name), doc_name)
+        DocUrl.doc_url = "{}/{}?resource=".format(urljoin(base_url, api_name), doc_name)
