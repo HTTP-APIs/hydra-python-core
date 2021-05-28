@@ -23,14 +23,8 @@ class Pep8Test(unittest.TestCase):
                     filename = "{0}/{1}".format(root, file)
                     filenames.append(filename)
         check = style.check_files(filenames)
-        if check.counters['E701']:
-            e701_count = check.counters['E701']
-            check.total_errors -= e701_count
-            self.assertEqual(
-                check.total_errors, 0, "PEP8 style errors: %d" % check.total_errors)
-        else:
-            self.assertEqual(
-                check.total_errors, 0, "PEP8 style errors: %d" % check.total_errors)
+        self.assertEqual(
+            check.total_errors, 0, "PEP8 style errors: %d" % check.total_errors)
 
 
 if __name__ == "__main__":

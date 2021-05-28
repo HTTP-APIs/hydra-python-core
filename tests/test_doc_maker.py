@@ -405,5 +405,32 @@ class TestCreateStatus(unittest.TestCase):
         self.assertIsInstance(obj[0], doc_writer.HydraStatus)
 
 
+class TestFragments(unittest.TestCase):
+    """
+        Test Class for checking fragments in id's
+    """
+    def test_fragments(self):
+        server_url = "http://hydrus.com/"
+        api_name = "test_api"
+        self.doc = doc_writer_sample_output.doc
+        apidoc = doc_maker.create_doc(self.doc, server_url, api_name)
+        for class_ in apidoc.parsed_classes:
+            resource = apidoc.parsed_classes[class_]['class']
+            resource_id = resource.id_
+            regex = r"(\W*\?resource=\W*)([a-zA-Z]+)"
+            match_groups = re.search(regex, resource_id)
+
+            assert match_groups.groups()[0] is not None
+            assert match_groups.groups()[1] == class_
+
+        for collection in apidoc.collections:
+            resource_id = apidoc.collections[collection]['collection'].collection_id
+            regex = r"(\W*\?resource=\W*)([a-zA-Z]+)"
+            match_groups = re.search(regex, resource_id)
+
+            assert match_groups.groups()[0] is not None
+            assert match_groups.groups()[1] == collection
+
+
 if __name__ == '__main__':
     unittest.main()

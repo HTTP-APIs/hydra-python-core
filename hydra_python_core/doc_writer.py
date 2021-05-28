@@ -401,7 +401,7 @@ class HydraEntryPoint():
                 entrypoint),
             entrypoint=self)
 
-        self.collections: List[EntryPointCollection] = []
+        self.collections = list()
 
     def add_Class(self, class_: HydraClass) -> None:
         """Add supportedProperty to the EntryPoint.
