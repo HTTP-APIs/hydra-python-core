@@ -87,7 +87,7 @@ class TestDocWriter(unittest.TestCase):
         context = doc_writer.Context('http://petstore.swagger.io/v2',
                                      entrypoint=hydra_entry_point_mock)
 
-        expected_context = {'EntryPoint': 'EntryPoint'}
+        expected_context = {'EntryPoint': 'http://hydrus.com/test_api/vocab?resource=EntryPoint'}
         self.assertEqual(expected_context, context.generate())
 
     def test_context_with_class(self):
@@ -119,11 +119,11 @@ class TestDocWriter(unittest.TestCase):
                     class_=mocked_hydra_class)
 
                 expected_context = {
-                'hydra': 'http://www.w3.org/ns/hydra/core#',
-                'members': 'http://www.w3.org/ns/hydra/core#member',
-                'object': 'http://schema.org/object',
-                'Pet': 'vocab:Pet',
-                'id': ''
+                    'hydra': 'http://www.w3.org/ns/hydra/core#',
+                    'members': 'http://www.w3.org/ns/hydra/core#member',
+                    'object': 'http://schema.org/object',
+                    'Pet': 'vocab:Pet',
+                    'id': ''
                 }
                 self.assertEqual(expected_context, context.generate())
 
@@ -135,7 +135,7 @@ class TestDocWriter(unittest.TestCase):
         Test method to test if correct context is generated when HydraCollection is passed
 
         """
-        mock_doc_url = "{}/{}?resource=".format("http://hydrus.com/","api")
+        mock_doc_url = "{}/{}?resource=".format("http://hydrus.com/", "api")
 
         mocked_hydra_class = hydra_class()
         mocked_hydra_class.title = "Pet"
@@ -144,14 +144,15 @@ class TestDocWriter(unittest.TestCase):
         mocked_hydra_collection = hydra_collection()
         mocked_hydra_collection.class_ = mocked_hydra_class
         mocked_hydra_collection.name = "{}Collection".format(mocked_hydra_class.title)
-        mocked_hydra_collection.collection_id = "{}{}".format(mock_doc_url,mocked_hydra_collection.name)
+        mocked_hydra_collection.collection_id = "{}{}".format(mock_doc_url,
+                                                              mocked_hydra_collection.name)
         context = doc_writer.Context(
             'http://petstore.swagger.io/v2',
             collection=mocked_hydra_collection)
         expected_context = {
-        'hydra': 'http://www.w3.org/ns/hydra/core#',
-        'members': 'http://www.w3.org/ns/hydra/core#member',
-        'PetCollection': 'http://hydrus.com//api?resource=PetCollection'
+            'hydra': 'http://www.w3.org/ns/hydra/core#',
+            'members': 'http://www.w3.org/ns/hydra/core#member',
+            'PetCollection': 'http://hydrus.com//api?resource=PetCollection'
         }
         self.assertEqual(expected_context, context.generate())
 

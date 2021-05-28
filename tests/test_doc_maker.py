@@ -323,8 +323,13 @@ class TestCreateOperation(unittest.TestCase):
           }
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            title="UpdateClass", method="POST", expects="https://hydrus.com/api/dummyClass",
-            returns="null", returns_header=["Content-Type", "Content-Length"], possible_status=[], expects_header=[])
+            title="UpdateClass",
+            method="POST",
+            expects="https://hydrus.com/api/dummyClass",
+            returns="null",
+            returns_header=["Content-Type", "Content-Length"],
+            possible_status=[],
+            expects_header=[])
 
         mock_op.reset_mock()
         op["http://www.w3.org/ns/hydra/core#expects"] = [
@@ -334,8 +339,13 @@ class TestCreateOperation(unittest.TestCase):
         ]
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            title="UpdateClass", method="POST", expects="http://hydrus.com/test",
-            returns="null", returns_header=["Content-Type", "Content-Length"], possible_status=[], expects_header=[])
+            title="UpdateClass",
+            method="POST",
+            expects="http://hydrus.com/test",
+            returns="null",
+            returns_header=["Content-Type", "Content-Length"],
+            possible_status=[],
+            expects_header=[])
 
         mock_op.reset_mock()
         op["http://www.w3.org/ns/hydra/core#returns"] = [
@@ -345,8 +355,13 @@ class TestCreateOperation(unittest.TestCase):
         ]
         obj = doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            title="UpdateClass", method="POST", expects="http://hydrus.com/test",
-            returns="http://hydrus.com/test", returns_header=["Content-Type", "Content-Length"], possible_status=[], expects_header=[])
+            title="UpdateClass",
+            method="POST",
+            expects="http://hydrus.com/test",
+            returns="http://hydrus.com/test",
+            returns_header=["Content-Type", "Content-Length"],
+            possible_status=[],
+            expects_header=[])
 
         self.assertIsInstance(obj, doc_writer.HydraClassOp)
 
