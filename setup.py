@@ -16,10 +16,8 @@ except ImportError:
         from pip.download import PipSession
         from pip.req import parse_requirements
 
-    install_requires = parse_requirements('requirements.txt',session=PipSession())
+    install_requires = parse_requirements('requirements.txt', session=PipSession())
     dependencies = [str(package.req) for package in install_requires]
-
-
 
 setup(
     name='hydra_python_core',

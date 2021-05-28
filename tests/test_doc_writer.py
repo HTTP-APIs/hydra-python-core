@@ -13,51 +13,62 @@ class TestDocWriter(unittest.TestCase):
         """
         context = doc_writer.Context('https://hydrus.com/api')
         expected_context = {
-            "hydra": "http://www.w3.org/ns/hydra/core#",
-            "property": {
-                "@type": "@id",
-                "@id": "hydra:property"
+            'hydra': 'http://www.w3.org/ns/hydra/core#',
+            'property': {
+                '@type': '@id',
+                '@id': 'hydra:property'
             },
-            "supportedClass": "hydra:supportedClass",
-            "supportedProperty": "hydra:supportedProperty",
-            "supportedOperation": "hydra:supportedOperation",
-            "label": "rdfs:label",
-            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-            "vocab": "https://hydrus.com/api/vocab#",
-            "domain": {
-                "@type": "@id",
-                "@id": "rdfs:domain"
+            'supportedClass': 'hydra:supportedClass',
+            'supportedProperty': 'hydra:supportedProperty',
+            'supportedOperation': 'hydra:supportedOperation',
+            'label': 'rdfs:label',
+            'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+            'domain': {
+                '@type': '@id',
+                '@id': 'rdfs:domain'
             },
-            "ApiDocumentation": "hydra:ApiDocumentation",
-            "range": {
-                "@type": "@id",
-                "@id": "rdfs:range"
+            'ApiDocumentation': 'hydra:ApiDocumentation',
+            'range': {
+                '@type': '@id',
+                '@id': 'rdfs:range'
             },
-            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-            "title": "hydra:title",
-            "expects": {
-                "@type": "@id",
-                "@id": "hydra:expects"
+            'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+            'title': 'hydra:title',
+            'expects': {
+                '@type': '@id',
+                '@id': 'hydra:expects'
             },
-            "returns": {
-                "@id": "hydra:returns",
-                "@type": "@id"
+            'returns': {
+                '@id': 'hydra:returns',
+                '@type': '@id'
             },
-            "readable": "hydra:readable",
-            "writeable": "hydra:writeable",
-            "possibleStatus": "hydra:possibleStatus",
-            "required": "hydra:required",
-            "method": "hydra:method",
-            "statusCode": "hydra:statusCode",
-            "description": "hydra:description",
-            "expectsHeader": "hydra:expectsHeader",
-            "returnsHeader": "hydra:returnsHeader",
-            "manages": "hydra:manages",
-            "subClassOf": {
-                "@id": "rdfs:subClassOf",
-                "@type": "@id"
+            'entrypoint': {
+                '@id': 'hydra:entrypoint',
+                '@type': '@id'
             },
-            "search": "hydra:search"
+            'object': {
+                '@id': 'hydra:object',
+                '@type': '@id'
+            },
+            'subject': {
+                '@id': 'hydra:subject',
+                '@type': '@id'
+            },
+            'readable': 'hydra:readable',
+            'writeable': 'hydra:writeable',
+            'possibleStatus': 'hydra:possibleStatus',
+            'required': 'hydra:required',
+            'method': 'hydra:method',
+            'statusCode': 'hydra:statusCode',
+            'description': 'hydra:description',
+            'expectsHeader': 'hydra:expectsHeader',
+            'returnsHeader': 'hydra:returnsHeader',
+            'manages': 'hydra:manages',
+            'subClassOf': {
+                '@id': 'rdfs:subClassOf',
+                '@type': '@id'
+            },
+            'search': 'hydra:search'
         }
         self.assertEqual(expected_context, context.generate())
 
@@ -76,10 +87,7 @@ class TestDocWriter(unittest.TestCase):
         context = doc_writer.Context('http://petstore.swagger.io/v2',
                                      entrypoint=hydra_entry_point_mock)
 
-        expected_context = {
-            "EntryPoint": "vocab:EntryPoint",
-            "vocab": "http://petstore.swagger.io/v2/vocab#"
-        }
+        expected_context = {'EntryPoint': 'http://hydrus.com/test_api/vocab?resource=EntryPoint'}
         self.assertEqual(expected_context, context.generate())
 
     def test_context_with_class(self):
@@ -111,14 +119,12 @@ class TestDocWriter(unittest.TestCase):
                     class_=mocked_hydra_class)
 
                 expected_context = {
-                    "vocab": "http://petstore.swagger.io/v2/vocab#",
-                    "hydra": "http://www.w3.org/ns/hydra/core#",
-                    "members": "http://www.w3.org/ns/hydra/core#member",
-                    "object": "http://schema.org/object",
-                    "Pet": "vocab:Pet",
-                    "id": ""
+                    'hydra': 'http://www.w3.org/ns/hydra/core#',
+                    'members': 'http://www.w3.org/ns/hydra/core#member',
+                    'object': 'http://schema.org/object',
+                    'Pet': 'vocab:Pet',
+                    'id': ''
                 }
-
                 self.assertEqual(expected_context, context.generate())
 
     @patch('hydra_python_core.doc_writer.HydraClass', spec=doc_writer.HydraClass)
@@ -129,26 +135,25 @@ class TestDocWriter(unittest.TestCase):
         Test method to test if correct context is generated when HydraCollection is passed
 
         """
+        mock_doc_url = "{}/{}?resource=".format("http://hydrus.com/", "api")
+
         mocked_hydra_class = hydra_class()
-        mocked_hydra_class.id_ = "vocab:Pet"
         mocked_hydra_class.title = "Pet"
         mocked_hydra_class.desc = "Pet"
 
         mocked_hydra_collection = hydra_collection()
         mocked_hydra_collection.class_ = mocked_hydra_class
-        mocked_hydra_collection.name = "{}Collection".format(
-            mocked_hydra_class.title)
+        mocked_hydra_collection.name = "{}Collection".format(mocked_hydra_class.title)
+        mocked_hydra_collection.collection_id = "{}{}".format(mock_doc_url,
+                                                              mocked_hydra_collection.name)
         context = doc_writer.Context(
             'http://petstore.swagger.io/v2',
             collection=mocked_hydra_collection)
         expected_context = {
-            "vocab": "http://petstore.swagger.io/v2/vocab#",
-            "hydra": "http://www.w3.org/ns/hydra/core#",
-            "members": "http://www.w3.org/ns/hydra/core#member",
-            "PetCollection": "vocab:PetCollection",
-            "Pet": "vocab:Pet"
+            'hydra': 'http://www.w3.org/ns/hydra/core#',
+            'members': 'http://www.w3.org/ns/hydra/core#member',
+            'PetCollection': 'http://hydrus.com//api?resource=PetCollection'
         }
-
         self.assertEqual(expected_context, context.generate())
 
 

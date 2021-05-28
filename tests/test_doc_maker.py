@@ -323,8 +323,13 @@ class TestCreateOperation(unittest.TestCase):
           }
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            title="UpdateClass", method="POST", expects="https://hydrus.com/api/dummyClass",
-            returns="null", returns_header=["Content-Type", "Content-Length"], possible_status=[], expects_header=[])
+            title="UpdateClass",
+            method="POST",
+            expects="https://hydrus.com/api/dummyClass",
+            returns="null",
+            returns_header=["Content-Type", "Content-Length"],
+            possible_status=[],
+            expects_header=[])
 
         mock_op.reset_mock()
         op["http://www.w3.org/ns/hydra/core#expects"] = [
@@ -334,8 +339,13 @@ class TestCreateOperation(unittest.TestCase):
         ]
         doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            title="UpdateClass", method="POST", expects="http://hydrus.com/test",
-            returns="null", returns_header=["Content-Type", "Content-Length"], possible_status=[], expects_header=[])
+            title="UpdateClass",
+            method="POST",
+            expects="http://hydrus.com/test",
+            returns="null",
+            returns_header=["Content-Type", "Content-Length"],
+            possible_status=[],
+            expects_header=[])
 
         mock_op.reset_mock()
         op["http://www.w3.org/ns/hydra/core#returns"] = [
@@ -345,8 +355,13 @@ class TestCreateOperation(unittest.TestCase):
         ]
         obj = doc_maker.create_operation(op)
         mock_op.assert_called_once_with(
-            title="UpdateClass", method="POST", expects="http://hydrus.com/test",
-            returns="http://hydrus.com/test", returns_header=["Content-Type", "Content-Length"], possible_status=[], expects_header=[])
+            title="UpdateClass",
+            method="POST",
+            expects="http://hydrus.com/test",
+            returns="http://hydrus.com/test",
+            returns_header=["Content-Type", "Content-Length"],
+            possible_status=[],
+            expects_header=[])
 
         self.assertIsInstance(obj, doc_writer.HydraClassOp)
 
@@ -388,6 +403,33 @@ class TestCreateStatus(unittest.TestCase):
         obj = doc_maker.create_status(status)
         mock_status.assert_called_once_with(200, None, '', 'dummyClass updated.')
         self.assertIsInstance(obj[0], doc_writer.HydraStatus)
+
+
+class TestFragments(unittest.TestCase):
+    """
+        Test Class for checking fragments in id's
+    """
+    def test_fragments(self):
+        server_url = "http://hydrus.com/"
+        api_name = "test_api"
+        self.doc = doc_writer_sample_output.doc
+        apidoc = doc_maker.create_doc(self.doc, server_url, api_name)
+        for class_ in apidoc.parsed_classes:
+            resource = apidoc.parsed_classes[class_]['class']
+            resource_id = resource.id_
+            regex = r"(\W*\?resource=\W*)([a-zA-Z]+)"
+            match_groups = re.search(regex, resource_id)
+
+            assert match_groups.groups()[0] is not None
+            assert match_groups.groups()[1] == class_
+
+        for collection in apidoc.collections:
+            resource_id = apidoc.collections[collection]['collection'].collection_id
+            regex = r"(\W*\?resource=\W*)([a-zA-Z]+)"
+            match_groups = re.search(regex, resource_id)
+
+            assert match_groups.groups()[0] is not None
+            assert match_groups.groups()[1] == collection
 
 
 if __name__ == '__main__':
