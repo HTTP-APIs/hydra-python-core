@@ -6,7 +6,8 @@ import json
 from pyld import jsonld
 import requests
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp,
-                                          HydraClassOp, HydraStatus, HydraLink, HydraCollection, DocUrl)
+                                          HydraClassOp, HydraStatus, HydraLink,
+                                          HydraCollection, DocUrl)
 from typing import Any, Dict, Match, Optional, Tuple, Union, List
 from hydra_python_core.namespace import hydra, rdfs
 from urllib.parse import urlparse
@@ -29,7 +30,6 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # These keys must be there in the APIDOC: @context, @id, @type
     if not all(key in doc for key in ('@context', '@id', '@type')):
         raise SyntaxError("Please make sure doc contains @context, @id and @type")
-
 
     _context = doc['@context']
     base_url = ''
@@ -117,7 +117,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     # make endpoint classes
     for endpoint_classes in _endpoint_class:
-        if endpoint_classes['@id'] == hydra['Resource'] or endpoint_classes['@id'] == hydra['Collection'] or \
+        if endpoint_classes['@id'] == hydra['Resource'] or \
+            endpoint_classes['@id'] == hydra['Collection'] or \
                 endpoint_classes['@id'].find("EntryPoint") != -1:
             continue
         class_ = create_class(endpoint_classes, endpoint=True)
@@ -147,6 +148,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     apidoc.gen_EntryPoint()
     return apidoc
 
+
 def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
     """
      Creates the instance of HydraCollection from expanded APIDOC
@@ -166,11 +168,14 @@ def create_collection(endpoint_collection: Dict[str, Any]) -> HydraCollection:
 
     manages = {}
     if hydra['object'] in endpoint_collection[hydra['manages']][0]:
-        manages['object'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['object']][0]['@id'])
+        object_id = endpoint_collection[hydra['manages']][0][hydra['object']][0]['@id']
+        manages['object'] = check_namespace(object_id)
     if hydra['subject'] in endpoint_collection[hydra['manages']][0]:
-        manages['subject'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['subject']][0]['@id'])
+        subject_id = endpoint_collection[hydra['manages']][0][hydra['subject']][0]['@id']
+        manages['subject'] = check_namespace(subject_id)
     if hydra['property'] in endpoint_collection[hydra['manages']][0]:
-        manages['property'] = check_namespace(endpoint_collection[hydra['manages']][0][hydra['property']][0]['@id'])
+        property_id = endpoint_collection[hydra['manages']][0][hydra['property']][0]['@id']
+        manages['property'] = check_namespace(property_id)
     is_get = False
     is_post = False
     is_put = False
@@ -366,13 +371,11 @@ def create_link(supported_property: Dict[str, Any]) -> HydraLink:
 
 def check_namespace(id_: str = None) -> str:
     """
-    A helper method to check if the classes and properties are in the same namespace and if not bring them
-    into the right namespace
+    A helper method to check if the classes and properties are in the same
+    namespace and if not bring them into the right namespace
     :param id_ The id to check
     :return: correct url
     """
-    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('#') != -1:
-        id_ = "{}{}".format(DocUrl.doc_url, id_.split('#')[-1])
+    if id_.find(DocUrl.doc_url) == -1 and id_ != "null" and id_.find('?resource=') != -1:
+        id_ = "{}{}".format(DocUrl.doc_url, id_.split('?resource=')[-1])
     return id_
-
-
