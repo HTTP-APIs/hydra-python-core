@@ -389,12 +389,12 @@ class HydraEntryPoint():
         """Initialize the Entrypoint."""
         self.url = base_url
         self.api = entrypoint
-        class_id = "{}?resource=EntryPoint".format(urljoin(self.url, self.api))
+        class_id = "{}#EntryPoint".format(urljoin(self.url, self.api))
         self.entrypoint = HydraClass("EntryPoint", "The main entry point or homepage of the API.",
                                      _id=class_id)
         self.entrypoint.add_supported_op(EntryPointOp(
             "_:entry_point".format(base_url), "GET", "The APIs main entry point.", None, None,
-            type_="{}/{}?resource=EntryPoint".format(base_url, entrypoint)))
+            type_="{}/{}#EntryPoint".format(base_url, entrypoint)))
         self.context = Context(
             "{}{}".format(
                 base_url,
@@ -673,7 +673,8 @@ class HydraStatus():
     def generate(self, status_type: str = "Status") -> Dict[str, Any]:
         """Get as Python dict."""
         status = {
-            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+            "@context": ("https://raw.githubusercontent.com/HydraCG/Specifications"
+                         "/master/spec/latest/core/core.jsonld"),
             "@type": status_type,
             "statusCode": self.code,
             "title": self.title,
