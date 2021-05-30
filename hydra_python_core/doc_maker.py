@@ -105,7 +105,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
             API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL, doc_name)
-    elif entrypoint.get('@id'):
+    elif entrypoint.get('@id') is not None:
         apidoc = HydraDoc(
             entrypoint.get('@id'), _title, _description, entrypoint.get('@id'), base_url, doc_name)
     else:
