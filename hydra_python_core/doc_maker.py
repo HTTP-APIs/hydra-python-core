@@ -105,9 +105,11 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
         apidoc = HydraDoc(
             API_NAME, _title, _description, API_NAME, HYDRUS_SERVER_URL, doc_name)
-    else:
+    elif entrypoint.get('@id') is not None:
         apidoc = HydraDoc(
-            entrypoint, _title, _description, entrypoint, base_url, doc_name)
+            entrypoint.get('@id'), _title, _description, entrypoint.get('@id'), base_url, doc_name)
+    else:
+        raise Exception("No EntryPoint found, please set the API variables.")
 
     # additional context entries
     for entry in _context:
