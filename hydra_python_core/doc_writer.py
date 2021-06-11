@@ -122,7 +122,7 @@ class HydraClass():
 
     def __init__(
             self, title: str, desc: str, path: str = None,
-            endpoint: bool = False, sub_classof: None = None, _id: str = None) -> None:
+            endpoint: bool = True, sub_classof: None = None, _id: str = None) -> None:
         """Initialize the Hydra_Class."""
         self.id_ = _id if _id is not None else "{}{}".format(DocUrl.doc_url, title)
         self.title = title
