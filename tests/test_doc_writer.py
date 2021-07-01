@@ -23,6 +23,7 @@ class TestDocWriter(unittest.TestCase):
             'supportedOperation': 'hydra:supportedOperation',
             'label': 'rdfs:label',
             'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+            "xsd": "https://www.w3.org/TR/xmlschema-2/#",
             'domain': {
                 '@type': '@id',
                 '@id': 'rdfs:domain'

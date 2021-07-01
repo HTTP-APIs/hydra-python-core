@@ -331,12 +331,20 @@ def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, Hydr
     prop_read = supported_property[hydra['readable']][0]['@value']
     prop_require = supported_property[hydra['required']][0]['@value']
     prop_write = supported_property[hydra['writeable']][0]['@value']
-
-    prop_ = HydraClassProp(prop=prop_id,
-                           title=prop_title,
-                           required=prop_require,
-                           read=prop_read,
-                           write=prop_write)
+    if rdfs['range'] in supported_property:
+        prop_range = supported_property[rdfs['range']][0]['@id']
+        prop_ = HydraClassProp(prop=prop_id,
+                               title=prop_title,
+                               required=prop_require,
+                               read=prop_read,
+                               write=prop_write,
+                               range=prop_range)
+    else:
+        prop_ = HydraClassProp(prop=prop_id,
+                               title=prop_title,
+                               required=prop_require,
+                               read=prop_read,
+                               write=prop_write)
     return prop_
 
 
