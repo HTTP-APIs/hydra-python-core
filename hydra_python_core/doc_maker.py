@@ -332,6 +332,17 @@ def create_property(supported_property: Dict[str, Any]) -> Union[HydraLink, Hydr
     prop_require = supported_property[hydra['required']][0]['@value']
     prop_write = supported_property[hydra['writeable']][0]['@value']
 
+    for namespace in supported_property:
+        if "range" in namespace:
+            prop_range = supported_property[namespace][0]['@id']
+            prop_ = HydraClassProp(prop=prop_id,
+                                   title=prop_title,
+                                   required=prop_require,
+                                   read=prop_read,
+                                   write=prop_write,
+                                   range=prop_range)
+            return prop_
+
     prop_ = HydraClassProp(prop=prop_id,
                            title=prop_title,
                            required=prop_require,

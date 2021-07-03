@@ -71,6 +71,7 @@ hydra = {
     "search": hydraNamespace + "search",
     "view": hydraNamespace + "view"
 }
+
 rdfNamespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
 rdf = {

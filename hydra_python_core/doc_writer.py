@@ -186,7 +186,7 @@ class HydraClassProp():
                  write: bool,
                  required: bool,
                  desc: str = "",
-                 ) -> None:
+                 **kwargs) -> None:
         """Initialize the Hydra_Prop."""
         self.prop = prop
         self.title = title
@@ -194,6 +194,7 @@ class HydraClassProp():
         self.write = write
         self.required = required
         self.desc = desc
+        self.kwargs = kwargs
 
     def generate(self) -> Dict[str, Any]:
         """Get the Hydra prop as a python dict."""
@@ -210,6 +211,8 @@ class HydraClassProp():
             prop["property"] = self.prop
         if len(self.desc) > 0:
             prop["description"] = self.desc
+        if "range" in self.kwargs:
+            prop["range"] = self.kwargs["range"]
         return prop
 
 
@@ -781,6 +784,7 @@ class Context():
                 "supportedOperation": "hydra:supportedOperation",
                 "label": "rdfs:label",
                 "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                "xsd": "https://www.w3.org/TR/xmlschema-2/#",
                 "domain": {
                     "@type": "@id",
                     "@id": "rdfs:domain"
