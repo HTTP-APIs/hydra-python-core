@@ -114,7 +114,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # additional context entries
     for entry in _context:
         apidoc.add_to_context(entry, _context[entry])
-
+    apidoc.add_to_context("Collection","hydra:collection")
     # make endpoint classes
     for endpoint_classes in _endpoint_class:
         if endpoint_classes['@id'] == hydra['Resource'] or \
